@@ -1,0 +1,15 @@
+/* types */
+AP.ImplType
+
+/* functions */
+class() - implicit function for all objects that simply returns the name of the class
+
+
+AP.GetImplTypeForImpl( String xxx ) - returns the ImplType object for the given kernel implementation
+
+AP.GetImplTypeForClass( xx.class() ) - returns the implementation found in the XML file for
+Process to file extension maps
+
+.destroy() - temporary do destroy objects until I get a chance to write a garbage collection 
+pass within the compiler.
+

@@ -1,0 +1,43 @@
+define - precedes the declaration of any top level structure.
+
+abstract - part of the definition of a top level structure or 
+function.  This indicates that this particular structure or 
+function cannot be instantiated but must be implemented 
+by either another top level structure or a function.  Functions
+implementing abstract methods must be preceded by the implements
+keyword
+
+class - indicates a top-level class container structure that
+can be instantiated as an object unless it is preceded by the 
+abstract keyword
+
+@public - indicates public members of a class
+
+@private - indicates private members of a class
+
+@protected - indicates non-public but sub-class accessible
+members of a class
+
+extends - indicates that a class inherits public and protected
+members from the class name which follows this keyword
+
+implements - can be used in two manners.  The first is in a 
+class declaration indicating that this class implements a given
+interface, the second is in a function declaration where the
+user is explicitly required to state that the function declaration 
+implements an inherited abstract method or interface method.
+
+overrides - keyword within a function declaration to indicate
+if a function overrides a method within a super-class, required 
+for overriding both abstract and implemented super-class methods.
+
+autogen - keyword that indicates automatic synthesis of access 
+functions for private variables. The functions are named in the 
+following way: get_variable_name, set_variable_name. 
+
+AP.XXX - AP.anything can be a reserved system implemented type
+for the AP runtime.  This is set due to some limitations on how
+things are defined.  For instance, the language types for file
+extensions are defined in XML format, the outlines for each process
+are defined in AP code, therefore there has to be a way to 
+match the two up.  
