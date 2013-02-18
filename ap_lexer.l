@@ -60,56 +60,12 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 "//"+[^\n]*            ; //eat line 
 
-"<"			      { TOKEN(LANGLE); }
-">"			      { TOKEN(RANGLE); }
-"["			      { TOKEN(LBRACK); }
-"]"			      { TOKEN(RBRACK); }
-"("			      { TOKEN(LPAREN); }
-")"			      { TOKEN(RPAREN); }
-"{"			      { TOKEN(LBRACE); }
-"}"			      { TOKEN(RBRACE); }
-":"			      { TOKEN(COLON);  }
-";"			      { TOKEN(SEMI);   }
-"."			      { TOKEN(DOT);    }
-","			      { TOKEN(COMMA);  }
-"*"			      { TOKEN(STAR);   }
-"="			      { TOKEN(EQUALS); }
-"->"		         { TOKEN(RARROW); }
-"=<"		         { TOKEN(SPLIT);  }
-">="		         { TOKEN(MERGE);  }
-"is"		         { TOKEN(IS);     }
-"at"              { TOKEN(AT);     }
-"measure"         { TOKEN(MSRESYM); }
-"array"           { TOKEN(ARRAY_TOKEN);	}
-"block"	         { TOKEN(BLOCK_TOKEN);	}
-"misc"	         { TOKEN(MISC_TOKEN);		}
-"constant"        { TOKEN(CONST_TOKEN);	}
-"config"		      { TOKEN(CONFIG_TOKEN);	}
-"resource"	      { TOKEN(RES_TOKEN);	}
-"impl"		      { TOKEN(IMPL_TOKEN);	}
-"input"		      { TOKEN(INPUT_TOKEN);	}
-"output"		      { TOKEN(OUTPUT_TOKEN);	}
-"linktype" 	      { TOKEN(LINKTYPE_TOKEN);	}
-"platform"	      { TOKEN(PLATFORM_TOKEN);	}
-"use"			      { TOKEN(USE_TOKEN);	}
-"map"			      { TOKEN(MAP_TOKEN);	}
-"typedef"	      { TOKEN(TYPEDEF_TOKEN);	}
-"knob"		      { TOKEN(KNOB_TOKEN);	}
-
-SIGNED8|SIGNED16|SIGNED32|SIGNED64  {
-                                       /* yylval->s_val = STOKEN( yytext ); */
-                                       TOKEN( BASICTYPE_TOKEN );
-                                    }
-
-UNSIGNED8|UNSIGNED16|UNSIGNED32|UNSIGNED64   {
-                                            /* yylval->s_val = STOKEN( yytext );*/
-                                                TOKEN( BASICTYPE_TOKEN );
-                                             }
-
-FLOAT32|FLOAT64|FLOAT96        {
-                                    /* yylval->s_val = STOKEN( yytext ); */
-                                    TOKEN( BASICTYPE_TOKEN );
-                               }
+"{"
+"}"
+"("
+")"
+"define"
+"class"
 
 STRING                         {
                                     /* yylval->s_val = STOKEN( yytext ); */
