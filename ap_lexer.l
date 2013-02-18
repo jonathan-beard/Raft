@@ -60,22 +60,70 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 "//"+[^\n]*            ; //eat line 
 
-"{"
-"}"
-"("
-")"
-"define"
-"class"
+"{"                     { TOKEN( LEFTBRACKET ); }
+"}"                     { TOKEN( RIGHTBRACKET ); }
+"("                     { TOKEN( LPAREN ); }
+")"                     { TOKEN( RPAREN ); }
+"<"                     { TOKEN( LCARROT ); }
+">"                     { TOKEN( RCARROT ); }
+":"                     { TOKEN( COLON ); }
+"@"                     { TOKEN( AT ); }
+"define"                { TOKEN( DEFINE ); }
+"class"                 { TOKEN( CLASS ); }
+"abstract"              { TOKEN( ABSTRACT ); }
+"interface"             { TOKEN( INTERFACE ); }
+"overrides"             { TOKEN( OVERRIDES ); }
+"implements"            { TOKEN( IMPLEMENTS ); }
+"extends"               { TOKEN( EXTENDS ); }
+"public"                { TOKEN( PUBLIC ); }
+"private"               { TOKEN( PRIVATE ); }
+"protected"             { TOKEN( PROTECTED ); }
+"void"                  { TOKEN( VOID ); }
+"this"                  { TOKEN( THIS ); }
+"for"                   { TOKEN( FOR ); }
+"foreach"               { TOKEN( FOREACH ); }
+"while"                 { TOKEN( WHILE ); }
+"if"                    { TOKEN( IF ); }
+"else"                  { TOKEN( ELSE ); }
+"?"                     { TOKEN( QUESTION ); }
+"/"                     { TOKEN( FORWARDSLASH ); }
+"-"                     { TOKEN( MINUS ); }
+"+"                     { TOKEN( PLUS ); }
+"=="                    { TOKEN( OP_EQ ); }
+"!="                    { TOKEN( OP_NEQ ); }
+"<="                    { TOKEN( OP_LEQ ); }
+">="                    { TOKEN( OP_GEQ ); }
+"!"                     { TOKEN( NOT ); }
+"||"                    { TOKEN( OP_LOR ); }
+"&&"                    { TOKEN( OP_LOAND ); }
+"-="                    { TOKEN( ASS_MINUS ); }
+"+="                    { TOKEN( ASS_PLUS ); }
+"="                     { TOKEN( EQUALS ); }
+"~"                     { TOKEN( TILDE ); }
+[\.]                    { TOKEN( PERIOD ); }
+"\^"                    { TOKEN( HAT ); }
+","                     { TOKEN( COMMA ); }
 
-STRING                         {
-                                    /* yylval->s_val = STOKEN( yytext ); */
-                                    TOKEN( BASICTYPE_TOKEN );
-			                      }
+"alignof"               { TOKEN( ALIGNOF ); }
+"bool"                  { TOKEN( BOOLEAN ); }
+"int8_t"                { TOKEN( INT8T ); }
+"int16_t"               { TOKEN( INT16T ); }
+"int32_t"               { TOKEN( INT32T ); }
+"int64_t"               { TOKEN( INT64T ); }
+"uint8_t"               { TOKEN( UINT8T ); }
+"uint16_t"              { TOKEN( UINT16T ); }
+"uint32_t"              { TOKEN( UINT32T ); }
+"uint64_t"              { TOKEN( UINT64T ); }
+"float32"               { TOKEN( FLOAT32 ); }
+"float64"               { TOKEN( FLOAT64 ); }
+"float96"               { TOKEN( FLOAT96 ); }
 
-"-"?{D}+		                   { 
-                                    yylval->lli_val = strtoll(yytext, nullptr, 10);
-			                           TOKEN(INT_TOKEN);		
-                               }
+
+{STRING}                { TOKEN( STRING ); }
+"-"?{D}+		            { 
+                           yylval->lli_val = strtoll(yytext, nullptr, 10);
+			                  TOKEN(INT_TOKEN);		
+                        }
 
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
                                     yylval->ld_val = strtold(yytext, 0);
@@ -83,12 +131,7 @@ STRING                         {
                                }
 
 {IDENT}			                { 
-                                    /* yylval->s_val = STOKEN( yytext );*/
-			                           TOKEN(IDENT_TOKEN); 		
-                               }
-{STRING}		                   { 
-                                    /* yylval->s_val = STOKEN( yytext ); */
-			                           TOKEN(STRING_TOKEN);		
+			                           TOKEN( IDENTIFIER ); 		
                                }
 
 .                              { PUSHTOSTREAM( yytext ); } /* everything else I forgot */
