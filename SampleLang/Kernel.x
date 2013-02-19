@@ -7,6 +7,8 @@
  */
 
 
+
+
 /**
  * Generic - extends Type which is the built-in
  * class for all basic types.  This class is to 
@@ -20,61 +22,47 @@
  * valid types for the language as specified within
  * the XML types specification file.
  */
-define class Generic : extends Type {
+define final system class Generic< Type {...} > : extends Type {
 @public:
    /**
     * Generic - Constructor, parameters are 
-    * one or more valid Type objects.
+    * one or more valid Type objects, or a
+    * valid type definition object
     * @param type - Type variable length array
     */
-   Generic( Type type = {...} ){
-      foreach( Type t : type ){
-         types.AddItem( t );
-      }
-   }
-
-@private:
-   Array<Type> types;
-
+   Generic( );
+   
+   Array<Type> get_types();  
 };
 
 /**
  * Input - simple class that defines an in-edge
- * AutoPipe port for each compute Kernel.  The 
- * two constructors provided allow the user to
- * specify either a Generic port type or a single
- * port type.
+ * AutoPipe port for each compute Kernel.  The
+ * class constructor modifiers <> force the user
+ * to specify a type, generic or a typedef, and
+ * allow the user to select data-flow semantics
+ * either ASDF or SDF.  If the user selects SDF
+ * then the user can further select Consume( XX )
+ * where XX is some number greater than zero, this
+ * field has no effect for ASDF
  */
-define class Input {
+define final system class Input< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
 @public:
    /** 
-    * Input constructor for a single type
-    * @param   n  - String name for port
-    * @param   t - Type for port
+    * Input constructor for a single type, the 
+    * implementation is built-into the runtime
     */
-   Input( String n, Type t ) : name( n ),
-                               type( t ),
-                               is_generic( false ){};
-   /**
-    * Input constructor for generic types
-    * @param   n - String name for port
-    * @param   g  - Generic object with types for ports
+   Input( );
+  
+   /** 
+    * HasType - returns true if this port either is
+    * of the parameter type or has the capability
+    * of being the type using generics
+    * @param   type - Type
+    * @return  bool - true if this port does have the type
     */
-   Input( String n, Generic g ) : name( n ),
-                                  generic_types( g ),
-                                  is_generic( true ){};
-   
-   autogen name, type, generic_types, is_generic;
+   bool HasType( Type type );
 
-@private:
-   /* port name */
-   String name;
-   /* port type if single port */
-   Type type;
-   /* valid types for port if multiple valid port types */
-   Generic generic_types;
-   /* set true if generic_types was set in constructor */
-   bool  is_generic;
 };
 
 /**
@@ -83,67 +71,79 @@ define class Input {
  * constructors provided allow for the user to specify
  * either a Generic port type or a single port type
  */
-define class Output {
+define final system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
 @public:
    /**
-    * Output constructor for a single data type
-    * @param n - String name for port
-    * @param t - Type object for port
+    * Output constructor for a single data type, the
+    * implementation is built-into the runtime
     */
-   Output( String n, Type t ) : name( n ),
-                                type( t ),
-                                is_generic( false ){};
-   /**
-    * Output constructor for generic types
-    * @param   n - String name for port
-    * @param   g - Generic object with types for ports
+   Output( );
+   
+   /** 
+    * HasType - returns true if this port either is
+    * of the parameter type or has the capability
+    * of being the type using generics
+    * @param   type - Type
+    * @return  bool - true if this port does have the type
     */
-   Output( String n, Generic g ) : name( n ),
-                                   generic_types( g ),
-                                   is_generic( true ){};
-   autogen name, type, generic_types, is_generic;
-
-@private:
-   /* port name */
-   String name;
-   /* port type if single port data type */
-   Type type;
-   /* valid types for port if multiple port types */
-   Generic generic_types;
-   /* set true if generic was set in the constructor */
-   bool is_generic;
+   bool HasType( Type type );
 };
 
+/**
+ * Config - system class that allows the user
+ * to specify compile time configuration parameters
+ * for specific AutoPipe kernels.
+ */
+define final system class Config< BasicType type >
+{
+@public:
+   /**
+    * Config - system implemented configuration parameter
+    */
+   Config( );
+   /**
+    * get_type - system method that returns the 
+    * type for this configuration parameter 
+    */
+   BasicType get_type();
+}
+
 /** 
- * Kernel - implementation for a Kernel, user
+ * Kernel - abstract implementation for a Kernel, user
  * has the option of either using the constructor
  * which is rather cumbersome or make a sub-class
  * of this method to make a cleaner invocation.  
  */
-define class Kernel {
+define abstract class Kernel {
+
+/* if you were to define ports in this abstract kernel
+ * you'd do so like this
+ */
+
+/**
+@ports:
+   Input<int64_t, SDF, 8>  x0;
+   Input<int32_t, SDF, 100> x1;
+**/
+
+/* If you were to define configuration parametsers to a 
+ * kernel this is how you'd do it
+ */
+/**
+@configs:
+   Config<int64_t> seed( 1000 );
+**/
+
 @public:
-   /**
-    * Kernel constructor, takes a list of implementations,
-    * In-Edge types and out-edge types
-    */
-   Kernel( String implementations = {...},
-           Input  in_edges = {...},
-           Ouput  out_edges = {...} )
+
+   void SetImplementations( String implementations = {...} )
    {
       foreach( String str : implementations ){
          impls.AddItem( str );
          ImplType type = AP.GetType( str );
          impl_types.AddItem( type );
       }
-      foreach( Input input : in_edges ){
-         inputs.AddItem( input );
-      }
-      foreach( Output output : out_edges ){
-         outputs.AddItem( output );
-      }
    }
-
-   autogen impls, inputs, outputs, impl_types;
 
 @private:
    /** 
@@ -157,12 +157,4 @@ define class Kernel {
     * implementation file extension maps to
     */
    Array<AP.ImplType>   impl_types; 
-   /**
-    * array of input objects
-    */
-   Array<Input>      inputs;
-   /**
-    * array of output objects
-    */
-   Array<Output>     outputs;
 };
