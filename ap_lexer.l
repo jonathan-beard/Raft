@@ -8,15 +8,16 @@
 
 #include <cstdio>
 #include <string>
-#include "ap_scanner.hpp"
+
+#include "AP_Scanner.hpp"
 #include "AP_Data.hpp"
 
 typedef APParse::AP_Parser::token token;
 
-#define PUSHTOSTREAM( x ) data.parsestream() << yytext; \
+#define PUSHTOSTREAM( x ) data.get_parsestream() << yytext; \
                           data.set_current_line( yylineno );
 
-#define TOKEN( x ) data.parsestream() << yytext; \
+#define TOKEN( x ) data.get_parsestream() << yytext; \
                    data.set_current_line( yylineno ); \
                    yylval->s_val = new std::string( yytext ); \
                    return( token::x );
@@ -99,6 +100,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "-="                    { TOKEN( ASS_MINUS ); }
 "+="                    { TOKEN( ASS_PLUS ); }
 "="                     { TOKEN( EQUALS ); }
+"*"                     { TOKEN( OP_MUL ); }
 "~"                     { TOKEN( TILDE ); }
 [\.]                    { TOKEN( PERIOD ); }
 "\^"                    { TOKEN( HAT ); }
@@ -117,8 +119,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float32"               { TOKEN( FLOAT32 ); }
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
-
-
+"vector"                { TOKEN( VECTOR ); }
 {STRING}                { TOKEN( STRING ); }
 "-"?{D}+		            { 
                            yylval->lli_val = strtoll(yytext, nullptr, 10);

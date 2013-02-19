@@ -8,7 +8,7 @@ CXXSTD = -std=c++11
 APCOMEXE = apcom
 APHEXE = aph
 
-APCOMCPPOBJ = apmain
+APCOMCPPOBJ = apmain AP_Data
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMLIBS = 
 APCOMFILES = $(addsuffix .cpp, $(APCOMCPPOBJ))
