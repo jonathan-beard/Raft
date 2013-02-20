@@ -6,7 +6,9 @@
  * @contact: jbeard@wustl.edu
  */
 
-
+/**
+ * NOTE: There's an implicit system class BasicType too
+ */
 
 
 /**

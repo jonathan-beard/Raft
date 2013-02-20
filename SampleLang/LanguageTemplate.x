@@ -18,15 +18,24 @@
  * String
  */
 
-import Kernel.x;
-import Thread.x;
-import Process.x;
-import Container.x;
+import AP.Kernel;
+import AP.Thread;
+import AP.Process;
+import AP.Container;
 
+
+/**
+ * Note: when you use generics such as this the 
+ * class invocation automatically gets a type 
+ * specifier such as GenInt< y0 = int64_t > some_name_for_object
+ * otherwise it is assumed that you want the runtime
+ * to automatically determine what the type should be
+ * if the run-time can't figure it out then an error is 
+ * thrown.
+ */
 define class GenInt : extends Kernel{
 @public:
-   GenInt( int64_t seed ) : y0.set_type( type ),
-                                               seed( seed )
+   GenInt( int64_t seed ) : seed( seed )
    {
       SetImplementations( "gen.c", "gen.vhd", "gen.cu" );
    }
@@ -35,12 +44,32 @@ define class GenInt : extends Kernel{
    Output< Generic( { int32_t, int64_t } ) > y0;
 
 @configs:
+   /* single type, no need to specify variables */
    Config< int64_t > seed;
 }
 
 define class Sum : extends Kernel{
 @public:
-   Sum( ) : 
+   Sum( )
+   {
+      SetImplementations( "sum.c", "sum.vhd" );
+   }
+
+@ports:
+   Input< Generic( { int32_t, int64_t, float } ) > x0;
+   Input< Generic( { int32_t, int64_t, float } ) > x1;
+   Output< Generic( {int32_t, int64_t, float } ) > y0;
+
+@private:
+   typedef Generic( {int32_t, int64_t, float } )
+}
+
+define class Print : extends Kernel{
+@public:
+   Print( )
+   {
+      SetImplementations( "print.cpp" );
+   }
 
 @ports:
    Input< Generic( { int32_t, int64_t, float } ) > x0;
@@ -48,5 +77,12 @@ define class Sum : extends Kernel{
 
 define main
 begin
-   
+   GenInt<int64_t> gen1, gen2;
+   Sum sum;
+   Print print;
+   CPlusPlusProcess A;
+   A.AddKernel( AP.MakeList( gen1, gen2, sum, print ) );
+   AutoLink( gen1.y0, sum.x0 );
+   AutoLink( gen2.y0, sum.x1 );
+   AutoLink( sum.y0, print.x0 );
 end
