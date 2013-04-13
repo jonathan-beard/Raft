@@ -37,6 +37,15 @@ define class GenInt : extends Kernel{
 @public:
    GenInt( int64_t seed ) : seed( seed )
    {
+      /**
+       * Calling this in a constructor will over-ride
+       * the default behavior of looking for all the 
+       * implimentations within the folder using the 
+       * name of the block.  Useful if you have some 
+       * block implementations that aren't quite done
+       * yet or those you don't want considered for
+       * compilation
+       */
       SetImplementations( "gen.c", "gen.vhd", "gen.cu" );
    }
 
@@ -49,12 +58,11 @@ define class GenInt : extends Kernel{
 }
 
 define class Sum : extends Kernel{
-@public:
-   Sum( )
-   {
-      SetImplementations( "sum.c", "sum.vhd" );
-   }
-
+   /**
+    * no @public or constructor needed if there's 
+    * nothing to do in the constructor, AP will 
+    * make a "default" constructor for you
+    */
 @ports:
    /**
     * Note on Ports:
@@ -89,18 +97,23 @@ define class Sum : extends Kernel{
 }
 
 define class Print : extends Kernel{
-@public:
-   Print( )
-   {
-      /* any initialization goes here */
-   }
-
+@public
+/** 
+ * no constructor needed, default constructor
+ * will call the Init function, the destructor will be
+ * called on shutdown.
+ */
+   int32_t main
 @ports:
    Input< Generic( { int32_t, int64_t, float } ) > x0;
 }
 
-define main
-begin
+void main( String args ){
+   /**
+    * Only one port and you don't need to provide a name for 
+    * the generic type, otherwise you'd need to specify
+    * x0 = int64_t
+    */
    GenInt<int64_t> gen1, gen2;
    Sum sum;
    Print print;
@@ -109,4 +122,4 @@ begin
    AutoLink( gen1.y0, sum.x0 );
    AutoLink( gen2.y0, sum.x1 );
    AutoLink( sum.y0, print.x0 );
-end
+}
