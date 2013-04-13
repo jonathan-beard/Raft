@@ -56,8 +56,32 @@ define class Sum : extends Kernel{
    }
 
 @ports:
+   /**
+    * Note on Ports:
+    * these are declarations of ports, types in 
+    * brackets are the valid generic types that
+    * we want to declare for each port, i.e. the
+    * underlying block itself can accept int32
+    * through floats.  The underlying run-time
+    * system infers the port type as long as some 
+    * information is available to do so, errors 
+    * are generated otherwise
+    */
+
+   /**
+    * x0 - Input port with generic input port
+    * @param - int32_t or int64_t or float
+    */
    Input< Generic( { int32_t, int64_t, float } ) > x0;
+   /**
+    * x1 - Input port with generic input port
+    * @param - int32_t or int64_t or float
+    */
    Input< Generic( { int32_t, int64_t, float } ) > x1;
+   /**
+    * y0 - Output port with generic input port
+    * @param - int32_t or int64_t or float
+    */
    Output< Generic( {int32_t, int64_t, float } ) > y0;
 
 @private:
@@ -68,7 +92,7 @@ define class Print : extends Kernel{
 @public:
    Print( )
    {
-      SetImplementations( "print.cpp" );
+      /* any initialization goes here */
    }
 
 @ports:
