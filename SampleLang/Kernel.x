@@ -14,13 +14,13 @@
 /**
  * Generic - extends Type which is the built-in
  * class for all basic types.  This class is to 
- * be used for specifying generic AutoPipe ports
+ * be used for specifying generic AutoPipe types
  * with the options for implementing the generic
  * type specified within the Generic constructor.
  * Within the implementation file itself the type
  * should be specified as GENERIC which will be 
  * replaced at compile time with the correct type
- * for the given port.  The types should also be 
+ * for the given variable.  The types should also be 
  * valid types for the language as specified within
  * the XML types specification file.
  */

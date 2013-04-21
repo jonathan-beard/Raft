@@ -112,7 +112,7 @@ void main( String args ){
    /**
     * Only one port and you don't need to provide a name for 
     * the generic type, otherwise you'd need to specify
-    * x0 = int64_t
+    * y0 = int64_t
     */
    GenInt<int64_t> gen1, gen2;
    Sum sum;
