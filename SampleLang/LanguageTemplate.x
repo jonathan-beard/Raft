@@ -103,7 +103,6 @@ define class Print : extends Kernel{
  * will call the Init function, the destructor will be
  * called on shutdown.
  */
-   int32_t main
 @ports:
    Input< Generic( { int32_t, int64_t, float } ) > x0;
 }
