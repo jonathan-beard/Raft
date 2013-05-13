@@ -57,7 +57,7 @@ public:
     * this reference or bad things could happy.
     * @return  NodeAbstract*
     */
-   NodeAbstract&        get_first_sibling();
+   NodeAbstract*        get_first_sibling();
 
    /**
     *  Verious getter / setter methods to set the local
@@ -71,23 +71,26 @@ public:
 
    NodeAbstract*        get_child();
    const Type&          get_type();
-   void                 set_type( const Type &type );
+   void                 set_type( const Type *type );
 
    int64_t              get_number();
 
    const std::string&   get_name();
+   void                 set_name( std::string name );
    void                 set_name( const std::string &name ); 
 
    /**
-    * invoke - invokes the visitor v on the root node passed in the parameter.
-    * The visitor has the option of returning an entirely new tree or re-using
-    * the same one, if a new one is returned by the visitor the old one is assumed
+    * invoke - invokes the visitor v on the root node passed in 
+    * the parameter.  The visitor has the option of returning 
+    * an entirely new tree or re-using the same one, if a new 
+    * one is returned by the visitor the old one is assumed
     * to be discadable so the destructor is called on it.  
     * @param   visitor - DefaultVisitor&
     * @param   root    - NodeAbstract*
     * @return  NodeAbstract* - always assumed to be the root
     */
-   static   NodeAbstract*  invoke( DefaultVisitor &visitor, NodeAbstract *root );
+   static   NodeAbstract*  invoke( DefaultVisitor *visitor, 
+                                   NodeAbstract *root );
 
 private:
    static int64_t              number_of_nodes;
@@ -95,8 +98,8 @@ private:
    NodeAbstract                *parent;
    NodeAbstract                *child;
    Siblings                    siblings;
-   Type                        t;
+   Type                        type;
    std::string                 name;
-}
+};
 
 #endif /* END _NODEABSTRACT_HPP_ */

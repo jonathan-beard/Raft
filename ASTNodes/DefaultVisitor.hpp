@@ -6,4 +6,24 @@
 #ifndef _DEFAULTVISITOR_HPP_
 #define _DEFAULTVISITOR_HPP_  1
 
+#include <ostream>
+
+/* declarations */
+class NodeAbstract;
+
+class DefaultVisitor {
+public:
+   DefaultVisitor();
+   DefaultVisitor( const DefaultVisitor &visitor );
+   virtual ~DefaultVisitor();
+
+protected:
+   virtual void Visit( NodeAbstract *node ) = 0;
+   virtual void VisitChildren( NodeAbstract *node );
+
+   virtual void Error(std::string s);
+private:
+   std::ostream &errstream;
+};
+
 #endif /* END _DEFAULTVISITOR_HPP_ */
