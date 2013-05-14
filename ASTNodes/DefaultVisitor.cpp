@@ -12,7 +12,7 @@
 
 DefaultVisitor::DefaultVisitor() : errstream( std::cerr )
 {
-     
+   /* nothing else to construct at the moment */
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
@@ -28,7 +28,16 @@ DefaultVisitor::~DefaultVisitor()
 
 void DefaultVisitor::VisitChildren( NodeAbstract *node )
 {
-    
+   assert( node != nullptr );
+   NodeAbstract *child = node->get_child();
+   if( child == nullptr ) return;
+   else /* by def child is in siblings list */
+   {
+      for( NodeAbstract *sib : child->get_siblings )
+      {
+         sib->Accept( (*this) );
+      }
+   }
 }
 
 void DefaultVisitor::Error( std::string s )

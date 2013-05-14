@@ -18,7 +18,9 @@ public:
    virtual ~DefaultVisitor();
 
 protected:
+   /* default visit, you must have at least this one */
    virtual void Visit( NodeAbstract *node ) = 0;
+
    virtual void VisitChildren( NodeAbstract *node );
 
    virtual void Error(std::string s);

@@ -49,7 +49,7 @@ public:
     * Orphan - gets rid of siblings and parents.
     */
    void                 Orphan();
-   
+
 
    /**
     * get_first_sibling - returns the first sibling
@@ -78,19 +78,28 @@ public:
    const std::string&   get_name();
    void                 set_name( std::string name );
    void                 set_name( const std::string &name ); 
+   
+   /**
+    * Accept - method calls the visit method of the visitor
+    * from the calling node.  The visitor should have a 
+    * proper visit method defined, else the default visitor
+    * will be called.
+    * @param   visitor - DefaultVisitor&
+    */
+   void                 Accept( DefaultVisitor &visitor );
 
    /**
     * invoke - invokes the visitor v on the root node passed in 
     * the parameter.  The visitor has the option of returning 
     * an entirely new tree or re-using the same one, if a new 
     * one is returned by the visitor the old one is assumed
-    * to be discadable so the destructor is called on it.  
+    * to be discadable so the destructor is called on it. The
+    * root param will be set to the current tree.
     * @param   visitor - DefaultVisitor&
     * @param   root    - NodeAbstract*
-    * @return  NodeAbstract* - always assumed to be the root
     */
-   static   NodeAbstract*  invoke( DefaultVisitor *visitor, 
-                                   NodeAbstract *root );
+   static   void  invoke( DefaultVisitor &visitor, 
+                          NodeAbstract *root );
 
 private:
    static int64_t              number_of_nodes;

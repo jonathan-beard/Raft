@@ -156,10 +156,20 @@ void                    NodeAbstract::set_name( const std::string &name )
    this->name = name;
 }
 
-NodeAbstract*  NodeAbstract::invoke( DefaultVisitor *visitor,
-                                     NodeAbstract   *root )
+void  NodeAbstract::Accept( DefaultVisitor &visitor )
+{
+   visitor->visit( this );
+}
+
+void  NodeAbstract::invoke( DefaultVisitor &visitor,
+                            NodeAbstract   *root )
 {  
-   assert( visitor != nullptr );
    assert( root    != nullptr );
-   visitor->
+   /**
+    * technically we could work around this, but will probably be
+    * easier for students using Crafting a Compiler and the
+    * Aho/Lam/Sethi/Ullman Compilers book to recognize and modify
+    * this visitor pattern.
+    */
+   root->Accept( visitor );
 }
