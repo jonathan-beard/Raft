@@ -18,10 +18,10 @@
  * String
  */
 
-import AP.Kernel;
-import AP.Thread;
-import AP.Process;
-import AP.Container;
+#include "Kernel.ap"
+#include "Thread.ap"
+#include "Process.ap"
+#include "Container.ap"
 
 
 /**

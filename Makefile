@@ -8,8 +8,8 @@ CXXSTD = -std=c++11
 APCOMEXE = apcom
 APHEXE = aph
 
-APCOMCPPOBJ = apmain AP_Data
-APCOMSOBJ =  ap_parser ap_lexer
+APCOMCPPOBJ = apmain ap_data app ap_prep
+#APCOMSOBJ =  ap_parser ap_lexer
 APCOMLIBS = 
 APCOMFILES = $(addsuffix .cpp, $(APCOMCPPOBJ))
 APCOMOBJS  = $(addsuffix .o, $(APCOMCPPOBJ))
@@ -22,6 +22,7 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
+				 $(APCOMOBJS) \
 				 ap_parser.tab.cc ap_parser.tab.hh \
 				 location.hh position.hh \
 			    stack.hh ap_parser.output ap_parser.o \
@@ -29,13 +30,13 @@ CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
 				 ap_lexer.yy.cc aph_lexer.yy.cc $(EXE)\
 
 .PHONY: all
-all: aph apcom
+all:  apcom
 
 apcom: $(APCOMFILES)
-	$(MAKE) $(APCOMSOBJ)
+#	$(MAKE) $(APCOMSOBJ)
 	$(MAKE) $(APCOMOBJS)
-	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APCOMEXE) $(APCOMOBJS) \
-	ap_parser.o ap_lexer.o $(LIBS)
+	$(CXX) $(CXXFLAGS) $(CXXSTD) -o test $(APCOMOBJS)
+#	ap_parser.o ap_lexer.o $(LIBS)
 
 aph: $(APHFILES)
 	$(MAKE) $(APHSOBJ)

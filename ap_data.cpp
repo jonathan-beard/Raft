@@ -4,7 +4,7 @@
  * @version: Mon Feb 18 17:39:01 2013
  */
 #include <cstdlib> /* for exit defines */
-#include "AP_Data.hpp"
+#include "ap_data.hpp"
 
 AP_Data::~AP_Data()
 {
@@ -34,6 +34,20 @@ void AP_Data::Final()
       exit( EXIT_SUCCESS );
    }
 }
+
+std::ostream& AP_Data::PrintErrors( std::ostream &stream )
+{
+   stream << *ap_errorstream;
+   return( stream );
+}
+
+std::ostream& AP_Data::PrintParseErrors( std::ostream &stream )
+{
+   stream << *ap_parsestream;
+   return( stream );
+}
+
+
 
 void AP_Data::reset_ap_parsestream()
 {
