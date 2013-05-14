@@ -1,0 +1,1164 @@
+terminal  Symbol   OP_GE, OP_LE, OP_EQ, OP_NE, OP_GT, OP_LT;
+terminal  Symbol   OP_LAND, OP_LOR;
+terminal  Symbol   INSTANCEOF;
+terminal  Symbol   HAT, TILDE;
+terminal  Symbol   BOOLEAN;
+terminal  Symbol   CLASS;
+terminal  Symbol   ELSE;
+terminal  Symbol   IF, INT,FLOAT,DOUBLE;
+terminal  Symbol   NEW, NULL;
+terminal  Symbol   PRIVATE, PUBLIC;
+terminal  Symbol   RETURN;
+terminal  Symbol   STATIC, SUPER;
+terminal  Symbol   THIS;
+terminal  Symbol   VOID;
+terminal  Symbol   WHILE;
+terminal  Symbol   ASS_ADD;
+terminal  Symbol   LPAREN, RPAREN, LBRACE, RBRACE, EQUALS;
+terminal  Symbol   PERIOD, COLON, SEMICOLON, COMMA, PIPE, AND, ASTERICK;
+terminal  Symbol   PLUSOP, MINUSOP, RSLASH, PERCENT, QUESTION;
+terminal  Symbol   BANG; 
+terminal  Symbol   FOR;
+terminal  String   IDENTIFIER, LITERAL;
+terminal  Integer  INTNUMBER;
+terminal  Double   FLOATNUMBER; //double, width should be narrowed in type checking
+terminal	Symbol	INCREMENT;
+terminal	Symbol 	DECREMENT;
+
+non terminal	AbstractNode	LocalDeclaration;
+non terminal   AbstractNode	    ForIterationStatement;
+non terminal	AbstractNode	BasicFor;
+non terminal	AbstractNode	InitFor;
+non terminal   AbstractNode		ForStatement;
+non terminal   AbstractNode     CompilationUnit;
+non terminal   AbstractNode     FieldVariableDeclaration;
+non terminal   AbstractNode     MethodDeclaration;
+non terminal   AbstractNode     MethodDeclarator;
+non terminal   AbstractNode     ParameterList,  Parameter;
+non terminal   AbstractNode     MethodBody, ConstructorDeclaration;
+non terminal   AbstractNode     StaticInitializer;
+non terminal   AbstractNode     Block;
+non terminal   AbstractNode     LocalVariableDeclarationsAndStatements;
+non terminal   AbstractNode     LocalVariableDeclarationOrStatement;
+non terminal   AbstractNode     LocalVariableDeclarationStatement ;
+non terminal   AbstractNode     Statement, EmptyStatement;
+non terminal   AbstractNode     ExpressionStatement, SelectionStatement;
+non terminal   AbstractNode     IterationStatement;
+non terminal   AbstractNode     PrimaryExpression;
+non terminal   AbstractNode     ComplexPrimary, ComplexPrimaryNoParenthesis;
+non terminal   AbstractNode     FieldAccess, MethodCall, MethodReference;
+non terminal   AbstractNode     ArgumentList, AllocationExpression;
+non terminal   AbstractNode     PostfixExpression;
+non terminal   AbstractNode     UnaryExpression, LogicalUnaryExpression;
+non terminal   AbstractNode     LogicalUnaryOperator, ArithmeticUnaryOperator;
+non terminal   AbstractNode     CastExpression, MultiplicativeExpression;
+non terminal   AbstractNode     AdditiveExpression, ShiftExpression, RelationalExpression;
+non terminal   AbstractNode     EqualityExpression, AndExpression, ExclusiveOrExpression;
+non terminal   AbstractNode     InclusiveOrExpression, ConditionalAndExpression;
+non terminal   AbstractNode     ConditionalOrExpression;
+non terminal   AbstractNode     ConditionalExpression, AssignmentExpression;
+non terminal   AbstractNode     AssignmentOperator;
+non terminal   AbstractNode     Expression;
+non terminal   AbstractNode     ReturnStatement;
+
+non terminal   IDNode     Identifier, SpecialName;
+non terminal   AbstractNode     Literal, NotJustName;
+non terminal   AbstractNode     Number;
+non terminal   IDNode     DeclaratorName; 
+non terminal   VariableNode     FieldVariableDeclaratorName; 
+non terminal   IDNode     MethodDeclaratorName; 
+non terminal   AbstractNode     LocalVariableDeclaratorName; 
+non terminal   AbstractNode     TypeDeclarations;
+non terminal   AbstractNode     TypeDeclaration;
+non terminal   AbstractNode     	ClassDeclaration;
+non terminal   AbstractNode     ClassBody;
+non terminal   ModNode     	Modifiers;
+non terminal   ModNode	  	ModifiersP;
+non terminal   ModNode	  	ModifiersS;
+non terminal   AbstractNode     FieldDeclarations;
+non terminal   AbstractNode     FieldDeclaration;
+non terminal   AbstractNode     FieldVariableDeclarators;
+non terminal   AbstractNode     LocalVariableDeclarators;
+non terminal   IDNode     QualifiedName; 
+non terminal   IDNode     TypeName, TypeSpecifier;
+non terminal   IDNode     PrimitiveType;
+
+start with CompilationUnit;
+
+
+CompilationUnit
+        ::=	TypeDeclarations:td
+		{:
+			AbstractNode prog = makeNode("Program").adoptChildren(td);
+			System.out.println(); //makes the formatting nicer
+			prog.walkTree(new PrintTree(System.out));
+		:}
+        ;
+
+TypeDeclarations
+        ::= TypeDeclaration:td
+		{: RESULT = td; :}
+        |   TypeDeclarations:tds  TypeDeclaration:td
+		{: RESULT = tds.makeSibling(td);  :}
+        ;
+
+TypeDeclaration
+        ::= ClassDeclaration:rhs
+		{: RESULT = rhs; :}
+        ;
+
+
+ClassDeclaration
+        ::= Modifiers:mods CLASS:cl Identifier:id ClassBody:clb
+      {: RESULT = new ClassNode(id).setModNode(mods).adoptChildren(clb); :}
+	;
+
+/*
+ * Modified to only allow standard combinations of modifiers
+ * public static, static public, private static, static private, 
+ * public, private, static
+ */
+Modifiers
+	::= PUBLIC
+		{: RESULT = new ModNode(ModNode.PUB); :}
+	|   PRIVATE
+		{: RESULT = new ModNode(ModNode.PRI); :}
+	|   STATIC
+		{: RESULT = new ModNode(ModNode.STAT); :}
+	|   ModifiersP:mds PUBLIC
+		{: RESULT = mds.set(ModNode.PUB); :}
+	|   ModifiersP:mds PRIVATE
+		{: RESULT = mds.set(ModNode.PRI); :}
+	|   ModifiersS:mds STATIC
+		{: RESULT = mds.set(ModNode.STAT); :}
+	;
+
+
+ModifiersP
+	::=STATIC
+		{: RESULT = new ModNode().set(ModNode.STAT); :}
+	;
+	
+ModifiersS
+	::= PUBLIC
+		{: RESULT = new ModNode().set(ModNode.PUB); :}
+	|	PRIVATE
+		{: RESULT = new ModNode().set(ModNode.PRI); :}
+	;
+	
+Identifier
+	::= IDENTIFIER:id
+	{:RESULT = new IDNode(id); :}
+	;
+
+
+ClassBody
+	::= LBRACE FieldDeclarations:fds RBRACE
+	{: 
+		//ignore first node, it's a FieldNode used to gather the rest.....
+		RESULT = makeNode("Class Body").adoptChildren(fds.getChild()); 
+	:}
+	|   LBRACE RBRACE
+	{: 
+		FieldNode fn = new FieldNode("Fields");
+		RESULT = makeNode("Class Body").adoptChildren(fn); //nothing to do, empty class :}
+	;
+
+FieldDeclarations
+	::= FieldDeclaration:fd
+	{: 
+		FieldNode fn = new FieldNode("Fields");
+		fn.fieldMap.get(fd.getName()).adoptChildren(fd.getChild()); 
+		RESULT = fn; 
+	:}
+    |   FieldDeclarations:fds FieldDeclaration:fd
+    {: 
+    	FieldNode fn = (FieldNode) fds;
+    	fn.fieldMap.get(fd.getName()).adoptChildren(fd.getChild());
+    	RESULT = fn; 
+    
+    :}
+    ;
+
+FieldDeclaration
+	::= FieldVariableDeclaration:fvd SEMICOLON
+	{: RESULT = makeNode("Fields").adoptChildren(fvd); :}
+	|   MethodDeclaration:rhs
+	{: RESULT = makeNode("Methods").adoptChildren(rhs); :}
+	|   ConstructorDeclaration:rhs
+	{: RESULT = makeNode("Constructors").adoptChildren(rhs); :}
+	|   StaticInitializer:si
+	{: RESULT = makeNode("Statics").adoptChildren(si); :}
+	|   ClassDeclaration:cd                     /* Inner classes */
+	{: RESULT = makeNode("Inner Classes").adoptChildren(cd); :}
+	;
+
+TypeSpecifier
+        ::= TypeName:rhs
+        {: RESULT = rhs; :}
+        ;
+
+TypeName
+	::= PrimitiveType:rhs
+		{: RESULT = rhs; :} 
+	|   QualifiedName:rhs
+		{: RESULT = rhs; :}
+	;
+
+/*
+ * Extra credit:  other types
+ */
+PrimitiveType
+        ::=	BOOLEAN:tok
+        {: 
+        		String t = HELPER.typeMap.get(symString.symToString[tok.sym]);
+        		IDNode tempNode = new IDNode(t);
+        		RESULT = tempNode; 
+        :}
+        | 	INT:tok
+        {:  
+        		String t = HELPER.typeMap.get(symString.symToString[tok.sym]);
+        		IDNode tempNode = new IDNode(t);
+        		RESULT = tempNode; 
+        :}
+        | 	VOID:tok
+        {: 	
+        		String t = HELPER.typeMap.get(symString.symToString[tok.sym]);
+        		IDNode tempNode = new IDNode(t);
+        		RESULT = tempNode; 
+        :}
+        |	FLOAT:tok
+        {:
+          		String t = HELPER.typeMap.get(symString.symToString[tok.sym]);
+        		IDNode tempNode = new IDNode(t);
+        		RESULT = tempNode; 
+        :}
+        |	DOUBLE:tok
+        {:
+        		String t = HELPER.typeMap.get(symString.symToString[tok.sym]);
+        		IDNode tempNode = new IDNode(t);
+        		RESULT = tempNode; 
+        :}
+        ;
+
+QualifiedName
+        ::= Identifier:id
+        	{:	
+        		RESULT = id; 
+        	:}
+        |   QualifiedName:qn PERIOD Identifier:id
+        	{: 
+        		qn.addName(id);
+        		RESULT = qn; 
+        	:}
+        ;
+
+FieldVariableDeclaration
+	::= Modifiers:m TypeSpecifier:t FieldVariableDeclarators:fvds
+	{:
+		VariableNode vn = new VariableNode(t);
+		vn.setNodeType(VAL.INSTANCE_DECLARATION);
+		vn.setModNode(m);
+		vn.adoptChildren(fvds);
+		RESULT = vn;
+	:}
+	;
+	
+FieldVariableDeclarators
+	::=  FieldVariableDeclaratorName:v
+	{: RESULT = v; :}
+	|    FieldVariableDeclarators:fds COMMA FieldVariableDeclaratorName:v
+	{: 
+		RESULT = fds.makeSibling(v); 
+	:}
+	;
+	
+FieldVariableDeclaratorName ::= Identifier:in 
+	{: 
+		IDNode temp = new IDNode(in.toString());
+		VariableNode vn = new VariableNode(temp);
+		vn.setNodeType(VAL.INSTANCE);
+		RESULT = vn; 
+	:};
+	
+
+	
+/*
+ * We require modifiers, but we'll skip the package stuff.
+ */
+MethodDeclaration
+	::= Modifiers:m TypeSpecifier:t MethodDeclarator:md     MethodBody:rhs
+	{:
+		VariableNode vn = new VariableNode(t);
+		vn.setNodeType(VAL.METHOD_RETURN_TYPE);
+		vn.setModNode(m);
+		md.adoptChildren(rhs);
+		vn.adoptChildren(md);
+		RESULT = vn;
+	:}
+	;
+
+MethodDeclarator
+	::= MethodDeclaratorName:dn LPAREN ParameterList:pl RPAREN
+	{:
+		VariableNode vn = new VariableNode(dn);
+		vn.setNodeType(VAL.METHOD_NAME);
+		AbstractNode params = makeNode("PARAMS");
+		params.setNodeType(VAL.METHOD_PARAMS);
+		params.adoptChildren(pl);
+		vn.adoptChildren(params);
+		RESULT = vn;
+	:}
+	|   MethodDeclaratorName:dn LPAREN RPAREN
+	{:
+		VariableNode vn = new VariableNode(dn);
+		vn.setNodeType(VAL.METHOD_NAME);
+		AbstractNode params = makeNode("PARAMS");
+		params.setNodeType(VAL.METHOD_PARAMS);
+		vn.adoptChildren(params);
+		RESULT = vn;
+	:}
+	;
+
+ParameterList
+	::= Parameter:rhs
+	{:
+		RESULT = rhs;
+	:}
+	|   ParameterList:spine COMMA Parameter:rhs
+	{:
+		RESULT = spine.makeSibling(rhs);
+	:}
+	;
+
+Parameter
+	::= TypeSpecifier:t DeclaratorName:dn
+	{:
+		VariableNode p = new VariableNode(dn);
+		p.setSpecifiers(t);
+		p.setNodeType(VAL.METHOD_PARAM_DECLARATION);
+		RESULT = p;
+	:}
+	;
+
+DeclaratorName
+	::= Identifier:in
+	{: RESULT = in; :}
+   ;
+
+MethodDeclaratorName
+	::= Identifier:in
+	{: RESULT = in; :}
+   ;
+
+
+
+
+
+MethodBody
+	::= Block:rhs
+	{: RESULT = rhs; :}
+	;
+
+ConstructorDeclaration
+	::= Modifiers:m MethodDeclarator:md        Block:rhs
+	{: 
+		AbstractNode t = makeNode("V");
+		VariableNode vn = (VariableNode) md;
+		vn.setModNode(m);
+		vn.adoptChildren(rhs);
+		vn.setNodeType(VAL.CONSTRUCTOR_DECLARATOR);
+		t.adoptChildren(vn);
+		RESULT = t;
+	:}
+	;
+
+StaticInitializer
+	::= STATIC Block:rhs
+	{: 
+		rhs.setNodeType(VAL.STATIC_BLOCK);
+		RESULT = rhs; :}
+	;
+
+/*
+ * These can't be reorganized, because the order matters.
+ * For example:  int i;  i = 5;  int j = i;
+ */
+Block
+	::= LBRACE LocalVariableDeclarationsAndStatements:stmts RBRACE
+	{: 
+		AbstractNode an = new TemporaryNode("BLOCK");
+		an.adoptChildren(stmts);
+		RESULT = an;
+	:}
+	
+	|   LBRACE RBRACE
+	{:
+		RESULT = new TemporaryNode("BLOCK");
+	:}
+	;
+
+LocalVariableDeclarationsAndStatements
+	::= LocalVariableDeclarationOrStatement:rhs
+	{:	 
+		 RESULT = rhs; 
+	:}	
+	|   LocalVariableDeclarationsAndStatements:lvds LocalVariableDeclarationOrStatement:rhs
+	{:
+		 lvds.makeSibling(rhs);
+		 RESULT = lvds;
+	:}
+	;
+
+LocalVariableDeclarationOrStatement
+	::= LocalVariableDeclarationStatement:rhs
+	{: 
+   	 
+		RESULT = rhs; 
+	:}
+	|   Statement:rhs
+	{: 	
+		RESULT = rhs; 
+	:}
+	;
+
+LocalVariableDeclarationStatement
+	::= LocalDeclaration:rhs SEMICOLON
+	{:
+		RESULT = rhs;
+	:}
+	|	LocalDeclaration:lhs AssignmentOperator:op AssignmentExpression:rhs SEMICOLON
+	{:
+			lhs.makeSibling(op);
+			VariableNode vn = new VariableNode(new IDNode(lhs.getName()));
+			vn.setNodeType(VAL.LOCAL);
+			vn.setModNode(new ModNode(ModNode.VOID));
+			op.adoptChildren(vn);
+			op.adoptChildren(rhs);
+			RESULT = lhs;
+	:}
+	|   ClassDeclaration:cd                     /* Inner classes */
+	{: RESULT = cd; :}
+	;
+
+
+LocalDeclaration
+	::= TypeSpecifier:t LocalVariableDeclarators:rhs
+	{:
+		VariableNode vn = new VariableNode(t);
+		vn.setNodeType(VAL.LOCAL_DECLARATION_HEADING);
+		vn.setModNode(new ModNode(ModNode.VOID));
+		vn.adoptChildren(rhs);
+		RESULT = vn;
+	:}
+	;
+	
+LocalVariableDeclarators
+	::= LocalVariableDeclaratorName:v
+	{: RESULT = v; :}
+	|   LocalVariableDeclarators:fds COMMA LocalVariableDeclaratorName:v
+	{: RESULT = fds.makeSibling(v); :}
+	;
+
+LocalVariableDeclaratorName
+	::= Identifier:in
+	
+	{:
+		VariableNode vn = new VariableNode(in);
+		vn.setNodeType(VAL.LOCAL_DECLARATION);
+		RESULT = vn;	
+	:}
+ 
+ 	;
+ 	
+Statement
+	::= EmptyStatement: es
+	{: RESULT = es; :}
+	|   ExpressionStatement:rhs SEMICOLON
+	{: RESULT = rhs; :}
+   |   SelectionStatement:rhs
+   {: RESULT = rhs; :}
+   |   IterationStatement:is
+   {: RESULT = is; :}
+	|   ReturnStatement:rs
+	{: RESULT = rs; :}
+	|   Block:rhs
+	{: RESULT = rhs; :}
+	;
+
+EmptyStatement
+	::= SEMICOLON
+	{: RESULT = makeNode("empty"); :}
+    ;
+
+ExpressionStatement
+	::= Expression:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+	;
+	
+Expression
+	::= AssignmentExpression:rhs
+	{: 
+		
+		RESULT = rhs; 
+	:}
+    ;
+/*
+ *  You will eventually have to address the shift/reduce error that
+ *     occurs when the second IF-rule is uncommented.
+ *
+ */
+
+SelectionStatement
+	::= IF LPAREN Expression:ex RPAREN Statement:stOne ELSE Statement:stTwo
+	{: 
+		AbstractNode an = makeNode("IF");
+		an.adoptChildren(ex);
+		an.adoptChildren(stOne);
+		an.adoptChildren(stTwo);
+		RESULT = an; 
+	:}
+/*	|   IF LPAREN Expression RPAREN Statement
+ */
+	;
+
+/* 
+ * Extra Credit:  FOR statement, DO statement
+ */
+IterationStatement
+	::= WHILE LPAREN Expression:ex RPAREN Statement:st
+	{: 
+		AbstractNode an = makeNode("WHILE");
+		an.adoptChildren(ex);
+		st.setNodeType(VAL.EXECUTION_BLOCK);
+		an.adoptChildren(st);
+		RESULT = an;
+	:}
+	| ForIterationStatement:fs
+	{: RESULT = fs; :}
+	;
+
+ForIterationStatement
+	::= BasicFor:bf
+	{:
+		RESULT = bf;
+	:}
+	;
+
+BasicFor ::= FOR LPAREN InitFor:init RelationalExpression:ex SEMICOLON AssignmentExpression:ass RPAREN ForStatement:st
+		 {:
+		 	AbstractNode an = makeNode("FOR");
+		 	an.adoptChildren(init);
+		 	an.adoptChildren(ex);
+		 	an.adoptChildren(ass);
+		 	an.adoptChildren(st);
+		 	RESULT = an;
+		 :}
+		 ;
+		 
+ForStatement ::= LBRACE Statement:st RBRACE
+			 {: 
+			 	RESULT = st;
+			 :}
+			 | SEMICOLON //treat as if just 
+			 | LBRACE RBRACE //treat like semi
+			 ;
+
+InitFor ::= LocalVariableDeclarationStatement:ob
+		{:
+			RESULT = ob;
+		:}
+		;
+		
+
+ReturnStatement
+	::= RETURN Expression:ex SEMICOLON
+	{: 
+		AbstractNode an = makeNode(VAL.RETURN_OP.toString());
+		an.setNodeType(VAL.RETURN_OP);
+		an.adoptChildren(ex);
+		RESULT = an;
+	:}
+	|   RETURN            SEMICOLON
+	{: 
+		RESULT = makeNode("Return");
+	:}
+	;
+
+PrimaryExpression
+	::= QualifiedName:t
+	{: 
+		VariableNode vn = new VariableNode(t);
+		vn.setNodeType(VAL.LOCAL);
+		RESULT = vn; 
+	:}
+	|   NotJustName:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+	;
+
+NotJustName
+	::= SpecialName:sn
+	{: 		
+		VariableNode vn = new VariableNode(sn);
+		vn.setNodeType(VAL.ACCESS_MODIFIER);
+		RESULT = vn;  
+	:}
+	|   AllocationExpression:ae
+	{: RESULT = ae; :}
+	|   ComplexPrimary:cp
+	{: RESULT = cp; :}
+	;
+
+SpecialName
+	::= THIS:tok
+	{: RESULT = new IDNode(symString.symToString[tok.sym]); :}
+	|   NULL:tok
+	{: RESULT = new IDNode(symString.symToString[tok.sym]); :}
+		|   SUPER:tok
+	{: RESULT = new IDNode(symString.symToString[tok.sym]); :}
+	;
+
+AllocationExpression
+	::= NEW:tok TypeName:tn LPAREN ArgumentList:list RPAREN
+	{: 
+		AbstractNode an = new TemporaryNode(symString.symToString[tok.sym]);
+		AbstractNode typeName = makeNode(tn.toString());
+		AbstractNode argList = makeNode("ARGS");
+		argList.adoptChildren(list);
+		argList.setNodeType(VAL.CREATE_INSTANCE_ARGS);
+		typeName.setNodeType(VAL.QUALIFIED_NAME); 
+		an.setNodeType(VAL.CREATE_INSTANCE);
+		an.adoptChildren(typeName);
+		an.adoptChildren(argList);
+		RESULT = an;
+	:}
+	|   NEW:tok TypeName:tn LPAREN              RPAREN
+	{:
+		AbstractNode an = new TemporaryNode(symString.symToString[tok.sym]);
+		AbstractNode typeName = makeNode(tn.toString());
+		typeName.setNodeType(VAL.QUALIFIED_NAME); 
+		an.setNodeType(VAL.CREATE_INSTANCE);
+		an.adoptChildren(typeName);
+		RESULT = an;
+	:}
+	;
+	
+ComplexPrimary
+	::= LPAREN Expression:rhs RPAREN
+	{: RESULT = rhs; :}
+	|   ComplexPrimaryNoParenthesis:rhs
+	{: RESULT = rhs; :}
+	;
+
+ComplexPrimaryNoParenthesis
+	::= Literal:rhs
+	{: RESULT = rhs; :}
+	|   Number:rhs
+	{: RESULT = rhs; :}
+	|   FieldAccess:fa
+	{: RESULT = fa; :}
+	|   MethodCall:mc
+	{: 
+		RESULT = mc; 
+	:}
+	;
+
+FieldAccess
+	::= NotJustName:njn PERIOD Identifier:id
+	{: 
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append(njn.toString());
+		sb.append(", ");
+		sb.append(id.toString());
+		sb.append("]");
+		AbstractNode an = makeNode(sb.toString());
+		an.setNodeType(VAL.FIELD_ACCESS);
+		RESULT = an;
+	:}
+	;
+
+
+MethodCall
+	::= MethodReference:rhs LPAREN ArgumentList:args RPAREN
+	{:
+			 AbstractNode an = makeNode("ARGS");
+			 an.adoptChildren(args);
+          RESULT = rhs.makeSibling(an);
+ 	:}
+	|   MethodReference:rhs LPAREN RPAREN
+	
+	{: 
+		AbstractNode an = makeNode("ARGS");
+		RESULT = rhs.makeSibling(an);
+	:}
+	;
+
+MethodReference
+	::= ComplexPrimaryNoParenthesis:rhs
+	{: RESULT = rhs; :}
+	|   QualifiedName:rhs
+	{: 
+		VariableNode vn = new VariableNode(rhs);
+		vn.setNodeType(VAL.METHOD_REF);
+		RESULT = vn;
+	:}
+	|   SpecialName:rhs
+	{:
+		VariableNode vn = new VariableNode(rhs);
+		vn.setNodeType(VAL.ACCESS_METHOD);
+		RESULT = vn;
+	:}
+	;
+
+
+
+ArgumentList
+	::= Expression:ex
+	{:
+		RESULT = ex;
+	:}
+	|   ArgumentList:lhs COMMA Expression:ex
+	{:
+		RESULT = lhs.makeSibling(ex);
+	:}
+	;
+
+
+/*
+ * Extra credit, add post increment and decrement
+ */
+PostfixExpression
+	::= PrimaryExpression:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+   ;
+
+
+
+/*
+ * Here we go.  Following are a bunch of rules to handle the right priority and
+ * associativity of operators.  These rules can be treated fairly uniformly 
+ * for now
+ * However, be aware that down the road, you will want subclassees that 
+ * can distinguish
+ * the nodes by type, so that you can generate different code for 
+ * plus vs. minus, for example.
+ */
+
+/*
+ * What kind of associativity do we get for assignment expressions - why?
+ * All binary expressions have left to right associativity for assignment
+ * because the productions are reduced in left to right order
+ * i.e. lhs 'assignment' rhs, where rhs is evaluated after the lhs
+ * following through the assignment expression rhs, we reduce through
+ * another rhs (assignment expression) associating the chain of operations
+ * from the lhs through to the rhs.  
+ * I'd like to see this modified a bit, in phase operations to re-arrange 
+ * mathematical operators based on overflow/underflow (i.e. b-c+d where c+d
+ * returns overflow whereas evaluating b-c then +d can be contained withing
+ * the specified bit width) considerations and/or speed of operations 
+ * (i.e. large matrix multiply order).  
+ */
+
+AssignmentExpression
+	::= ConditionalExpression:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+	|   UnaryExpression:lhs AssignmentOperator:op AssignmentExpression:rhs
+	{: 
+		if(op.getNodeType() == VAL.ASSIGN_OPERATOR){
+			lhs.makeSibling(rhs);
+			op.adoptChildren(lhs);
+			RESULT = op;
+		}else{
+			VariableNode vn = new VariableNode(new IDNode(lhs.getName()));
+			//vn.setNodeType(VAL.LOCAL);
+			vn.setModNode(new ModNode(ModNode.VOID));
+			op.adoptChildren(vn);
+			//assume farthest child is the assignment operator we want to add to
+			AbstractNode temp = op;
+			AbstractNode next = op.getChild();
+			while(next!=null){
+				temp = next;
+				next = temp.getChild();
+			}
+			lhs.makeSibling(rhs);
+			temp.adoptChildren(lhs);
+			RESULT = op;
+		}
+	:}
+	| UnaryExpression:lhs INCREMENT
+	{:
+		AbstractNode an = makeNode("Assign Add");
+		an.setNodeType(VAL.ASS_ADD_OPERATOR);
+		AbstractNode po = makeNode("plus op");
+		po.setNodeType(VAL.PLUS_OPERATOR);
+		an.adoptChildren(lhs);
+		
+		
+		VariableNode vn = new VariableNode(new IDNode(lhs.getName()));
+		vn.setModNode(new ModNode(ModNode.VOID));
+		
+		//one node
+		AbstractNode one = makeNode(1);
+		
+		po.adoptChildren(vn);
+		po.adoptChildren(one);
+		
+		RESULT = an.adoptChildren(po);
+		
+	:}
+	| UnaryExpression:lhs DECREMENT
+	{:
+		AbstractNode an = makeNode("Assign Add");
+		an.setNodeType(VAL.ASS_ADD_OPERATOR);
+		AbstractNode po = makeNode("minus op");
+		po.setNodeType(VAL.PLUS_OPERATOR);
+		an.adoptChildren(lhs);
+		
+		
+		VariableNode vn = new VariableNode(new IDNode(lhs.getName()));
+		vn.setModNode(new ModNode(ModNode.VOID));
+		
+		//one node
+		AbstractNode one = makeNode(1);
+		
+		po.adoptChildren(vn);
+		po.adoptChildren(one);
+		
+		RESULT = an.adoptChildren(po);
+	:}
+	;
+
+AssignmentOperator
+	::= EQUALS
+	{: 
+		AbstractNode an = makeNode("Assign");
+		an.setNodeType(VAL.ASSIGN_OPERATOR);
+		RESULT = an;
+	:}
+	|   ASS_ADD   /* There are more of these if you're interested */
+	{:
+		AbstractNode an = makeNode("Assign Add");
+		an.setNodeType(VAL.ASS_ADD_OPERATOR);
+		AbstractNode po = makeNode("plus op");
+		po.setNodeType(VAL.PLUS_OPERATOR);
+		an.adoptChildren(po);
+		RESULT = an;
+	:}
+	;
+
+ConditionalExpression
+	::= ConditionalOrExpression:rhs
+	{:
+		RESULT = rhs;
+	:}
+	|   ConditionalOrExpression:left QUESTION Expression:exp COLON ConditionalExpression:right
+	{:
+		AbstractNode an = makeNode("If");
+		left.makeSibling(exp);
+		left.makeSibling(right);
+		an.adoptChildren(left);
+		RESULT = an;
+	:}
+	;
+
+ConditionalOrExpression
+	::= ConditionalAndExpression:rhs
+	{: 
+		RESULT = rhs;
+	:}
+	|   ConditionalOrExpression:left OP_LOR:op ConditionalAndExpression:right   /* short-circuit OR */
+	{:
+		RESULT = left.adoptChildren(right);
+	:}
+	;
+
+ConditionalAndExpression
+	::= InclusiveOrExpression:rhs
+	{: 
+		RESULT = rhs;
+	:}
+	|   ConditionalAndExpression:left OP_LAND:op InclusiveOrExpression:right   /* short-circuit AND */
+	{:
+		RESULT = left.adoptChildren(right);
+	:}
+	;
+
+InclusiveOrExpression
+	::= ExclusiveOrExpression:rhs
+	{:
+		RESULT = rhs;
+	:}
+	|   InclusiveOrExpression:left PIPE:op ExclusiveOrExpression:right
+	{:
+		RESULT = left.adoptChildren(right);
+	:}
+	;
+
+ExclusiveOrExpression
+	::= AndExpression:rhs
+	{:
+		RESULT = rhs;
+	:}
+	|   ExclusiveOrExpression:left HAT:op AndExpression:right
+	{:
+		RESULT = left.adoptChildren(right);
+	:}
+	;
+
+AndExpression
+	::= EqualityExpression:rhs
+   {: 
+   	RESULT = rhs;
+   :}
+   |   AndExpression:left AND:op EqualityExpression:right
+   {:
+   	RESULT = left.adoptChildren(right);
+   :}
+   ;
+
+EqualityExpression
+	::= RelationalExpression:rhs
+   {:
+   	RESULT = rhs;
+   :}
+   |   EqualityExpression:left OP_EQ:op RelationalExpression:right
+   {:
+   	RESULT = left.adoptChildren(right);
+   :}
+   |   EqualityExpression:left OP_NE:op RelationalExpression:right
+   {:
+   	RESULT = left.adoptChildren(right);
+   :}
+   ;
+ 
+RelationalExpression
+	::= ShiftExpression:rhs
+	{:
+		RESULT = rhs;
+	:}
+   |   RelationalExpression:left OP_GT:op    ShiftExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.OP_GT.toString());
+		an.adoptChildren(left);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}	
+	|   RelationalExpression:left OP_LT:op    ShiftExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.OP_LT.toString());
+		an.adoptChildren(left);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}	
+	|   RelationalExpression:left OP_LE:op      ShiftExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.OP_LE.toString());
+		an.adoptChildren(left);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}	
+	|   RelationalExpression:left OP_GE:op      ShiftExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.OP_GT.toString());
+		an.adoptChildren(left);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}	
+	|   RelationalExpression:left INSTANCEOF:op TypeSpecifier:rhs
+	{:
+		AbstractNode an = makeNode(VAL.OP_INSTANCE_OF.toString());
+		an.adoptChildren(left);
+		VariableNode vn = new VariableNode(rhs);
+		vn.setNodeType(VAL.CLASS_OBJECT);
+		an.adoptChildren(vn);
+		RESULT = an;
+	:}	
+	;
+
+ShiftExpression
+        ::= AdditiveExpression:rhs
+ 	{: 
+ 		RESULT = rhs;
+ 	:}
+   ;
+
+AdditiveExpression
+	::= MultiplicativeExpression:rhs
+	{:
+		RESULT = rhs;
+	:}
+   |   AdditiveExpression:lhs PLUSOP:op MultiplicativeExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.PLUS_OPERATOR.toString());
+		an.setNodeType(VAL.PLUS_OPERATOR);
+		an.adoptChildren(lhs);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}
+	|   AdditiveExpression:lhs MINUSOP:op MultiplicativeExpression:rhs
+	{:
+		AbstractNode an = makeNode(VAL.MINUSOP.toString());
+		an.setNodeType(VAL.MINUSOP);
+		an.adoptChildren(lhs);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}
+   ;
+
+MultiplicativeExpression
+	::= CastExpression:rhs
+	{:
+		RESULT = rhs; 
+	:}
+	|   MultiplicativeExpression:lhs ASTERICK:op CastExpression:rhs
+	{: 
+		AbstractNode an = makeNode(VAL.MULTOP.toString());
+		an.setNodeType(VAL.MULTOP);
+		an.adoptChildren(lhs);
+		an.adoptChildren(rhs);
+		RESULT =  an;
+	:}
+	|   MultiplicativeExpression:lhs RSLASH:op CastExpression:rhs
+	{: 
+		AbstractNode an = makeNode(VAL.DIVOP.toString());
+		an.setNodeType(VAL.DIVOP);
+		an.adoptChildren(lhs);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}
+	|   MultiplicativeExpression:lhs PERCENT:op CastExpression:rhs	/* remainder */
+	{: 
+		AbstractNode an = makeNode(VAL.MODOP.toString());
+		an.setNodeType(VAL.MODOP);
+		an.adoptChildren(lhs);
+		an.adoptChildren(rhs);
+		RESULT = an;
+	:}
+	;
+
+/*
+ * Be sure to introduce an explicit cast operator
+ */
+CastExpression
+	::= UnaryExpression:rhs						/* no cast */
+   {: 
+   	RESULT = rhs; 
+   :}
+   |   LPAREN PrimitiveType:s RPAREN CastExpression:lue		/* More casts coming */
+	{:
+		
+		AbstractNode an = makeNode("CAST");
+		AbstractNode castType = makeNode(s.toString());
+		castType.adoptChildren(lue);
+		an.adoptChildren(castType);
+		RESULT = an;
+	:}
+	|   LPAREN Expression:exp RPAREN LogicalUnaryExpression:lue	/* Final cast */
+	{:
+		AbstractNode an = makeNode("CAST");
+		an.adoptChildren(exp);
+		an.adoptChildren(lue);
+		RESULT = an;
+	:}
+	;
+
+/*
+ * Extra credit:  pre-increment and pre-decrement
+ */
+UnaryExpression
+	::= LogicalUnaryExpression:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+	|   ArithmeticUnaryOperator:op CastExpression:exp
+	{: 
+		AbstractNode an = null;
+		if(op.getNodeType() == VAL.MINUS_OPERATOR){
+			an = makeNode("op neg");
+			RESULT = an.adoptChildren(exp);
+		}else{
+			//System.out.println("THEN HERE: "+exp);
+			RESULT = exp;
+		}
+	:} 
+	;
+
+ArithmeticUnaryOperator
+	::= PLUSOP:rhs
+	{:
+		String name = HELPER.operatorMap.get(symString.symToString[rhs.sym]);
+		AbstractNode an = makeNode(name);
+		an.setNodeType(VAL.PLUS_OPERATOR);
+		RESULT = an;
+	:}
+	|   MINUSOP:rhs
+	{:
+		String name = HELPER.operatorMap.get(symString.symToString[rhs.sym]);
+		AbstractNode an = makeNode(name);
+		an.setNodeType(VAL.MINUS_OPERATOR);
+		RESULT = an;
+	:}
+	;
+
+LogicalUnaryExpression
+	::= PostfixExpression:rhs
+	{: 
+		RESULT = rhs; 
+	:}
+	|   LogicalUnaryOperator:op UnaryExpression:uexp
+	{: 
+		RESULT = op.adoptChildren(uexp); 
+	:}
+	;
+
+LogicalUnaryOperator
+	::= BANG:tok
+	{: 
+		String n = HELPER.operatorMap.get(symString.symToString[tok.sym]);
+		AbstractNode an = makeNode(n);
+		an.setNodeType(VAL.BOOLEAN_OPERATOR);
+		RESULT = an;
+	:}
+	|  TILDE:tok
+	{: 
+		String n = HELPER.operatorMap.get(symString.symToString[tok.sym]);
+		AbstractNode an = makeNode(n);
+		an.setNodeType(VAL.INTEGER_OPERATOR);
+		RESULT = an;
+	:}
+	;
+
+Literal
+	::= LITERAL:lit
+	{: 
+		AbstractNode an = makeNode(lit);
+		an.setNodeType(VAL.STRING_LITERAL);
+		RESULT = an;
+	:}
+	;
+
+Number
+	::= INTNUMBER:n
+		{: 
+			AbstractNode an = makeNode(n);
+			an.setNodeType(VAL.INTEGER_LITERAL);
+			RESULT = an; 
+		:}
+		
+	| FLOATNUMBER:n
+		{:
+			AbstractNode an = makeNode(n);
+			an.setNodeType(VAL.FLOAT_LITERAL);
+			RESULT = an;
+		:}
+	;
+
