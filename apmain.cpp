@@ -18,9 +18,23 @@ AP_Data ap_data;
 static void 
 parse_handler( int signal )
 {
-   ap_data.PrintParseErrors( std::cerr );
+   std::stringstream parse_errstream;
+   ap_data.PrintParseErrors( parse_errstream );
+   const std::string parse_err_str( parse_errstream.str() );
+   if( parse_err_str.length() > 0 )
+   {
+      std::cerr << "The following parse errors were detected:\n";
+      std::cerr << parse_err_str << "\n";
+   }
    ap_data.reset_ap_parsestream();
-   ap_data.PrintErrors( std::cerr );
+   std::stringstream errstream;
+   ap_data.PrintErrors( errstream );
+   const std::string err_str( errstream.str() );
+   if( err_str.length() > 0 )
+   {
+      std::cerr << "The following errors were detected:\n";
+      std::cerr << err_str << "\n";
+   }
    ap_data.reset_ap_errorstream();
 }
 

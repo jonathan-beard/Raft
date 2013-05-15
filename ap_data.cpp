@@ -6,6 +6,17 @@
 #include <cstdlib> /* for exit defines */
 #include "ap_data.hpp"
 
+AP_Data::AP_Data()
+: ap_parsestream( nullptr ),
+  ap_errorstream( nullptr ),
+  userstream( std::cout ),
+  errorstream( std::cerr ),
+  current_line( 0 )
+{
+   ap_parsestream = new APParseStream();
+   ap_errorstream = new APErrorStream();
+}
+
 AP_Data::~AP_Data()
 {
    if( ap_errorstream != nullptr )
@@ -37,13 +48,13 @@ void AP_Data::Final()
 
 std::ostream& AP_Data::PrintErrors( std::ostream &stream )
 {
-   stream << *ap_errorstream;
+   stream << get_ap_errorstream().str();
    return( stream );
 }
 
 std::ostream& AP_Data::PrintParseErrors( std::ostream &stream )
 {
-   stream << *ap_parsestream;
+   stream << get_ap_parsestream().str();
    return( stream );
 }
 

@@ -38,11 +38,7 @@ typedef std::ostream      UserStream;
 class AP_Data {
 public:
    /* constructor, initialize everything */
-   AP_Data() : ap_parsestream( nullptr ),
-               ap_errorstream( nullptr ),
-               userstream( std::cout ),
-               errorstream( std::cerr ),
-               current_line( 0 ){};
+   AP_Data();
    /**
     * ~AP_Data - virtual destructor, deletes all dynamic data 
     * if allocated.

@@ -24,7 +24,7 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
-				 $(APCOMOBJS) temp\
+				 $(APCOMOBJS) test\
 				 ap_parser.tab.cc ap_parser.tab.hh \
 				 location.hh position.hh \
 			    stack.hh ap_parser.output ap_parser.o \
