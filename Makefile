@@ -1,7 +1,9 @@
 CC    = clang
 CXX   = clang++
 
-CFLAGS = -Wall -O0  #$(CDEBUG)
+DEBUG = -g
+CFLAGS = -Wall -O0  $(DEBUG)
+CXXFLAGS = -Wall -O0 $(DEBUG)
 CSTD = -std=c99
 CXXSTD = -std=c++11
 
@@ -22,7 +24,7 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
-				 $(APCOMOBJS) \
+				 $(APCOMOBJS) temp\
 				 ap_parser.tab.cc ap_parser.tab.hh \
 				 location.hh position.hh \
 			    stack.hh ap_parser.output ap_parser.o \
