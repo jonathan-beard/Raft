@@ -93,7 +93,7 @@ AP_Prep::is_ap_file( std::vector< std::string > &tokens,
             filename = ss.str();
             /* don't need this anymore */
             free( buffer_name ); 
-            if( strcmp( buffer_ext, (char*) "x" ) != 0 ){
+            if( strcmp( buffer_ext, (char*) "ap" ) != 0 ){
                free( buffer_ext );
                return( false );
             }

@@ -61,12 +61,12 @@ main( const int argc, const char **argv )
 
    std::stringstream &output( app.output() );
    
-   std::cout << output.str() << std::endl; 
-  // std::set<std::string> &file_list( app.get_file_list() );
-  // auto &paths( app.get_include_paths() );
-  // for( std::pair< std::string, std::string> str : paths ){
-  //    std::cout << str.first << " - " << str.second << std::endl; 
-  // }
+   //std::cout << output.str() << std::endl; 
+   std::set<std::string> &file_list( app.get_file_list() );
+   auto &paths( app.get_include_paths() );
+   for( std::pair< std::string, std::string> str : paths ){
+      std::cout << str.first << " - " << str.second << std::endl; 
+   }
 
    //std::istringstream parser_stream( output.str() );
  

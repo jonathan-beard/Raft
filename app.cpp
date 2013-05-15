@@ -137,8 +137,10 @@ bool  APP::process(  const std::string app_path,
    fflush( nullptr );
    FILE *cpp_pipe( popen( cmd_buffer.str().c_str(), "r" ) );
    if( cpp_pipe == nullptr ){
-      data.get_ap_errorstream() << "Failed to execute pipe for cpp, exited with ";
-      data.get_ap_errorstream() << "error code: " << strerror( errno ) << "\n";
+      data.get_ap_errorstream() << 
+            "Failed to execute pipe for cpp, exited with ";
+      data.get_ap_errorstream() << 
+         "error code: " << strerror( errno ) << "\n";
       raise( TERM_ERR_SIG );
    }
    const size_t buffer_size( PIPE_BUFFER_SIZE );

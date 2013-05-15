@@ -67,11 +67,11 @@ private:
    
    static bool  process( const std::string         app_path,
                          const std::string         ap_file_path,
-                         std::set< std::string >   &files, 
-                         std::map< std::string , std::string > &verified_paths,
-                         std::stringstream         &buffer,
-                         AP_Data &data,
-                         std::vector< LocationFunction > &locations );
+                    std::set< std::string >   &files, 
+                    std::map< std::string , std::string > &verified_paths,
+                    std::stringstream         &buffer,
+                    AP_Data &data,
+                    std::vector< LocationFunction > &locations );
 
 
    static bool location_pwd( const std::string app_path,
