@@ -11,19 +11,19 @@
 #endif
 
 #undef YY_DECL
-#define YY_DECL int AP_Parse::AP_Scanner::yylex()
+#define YY_DECL int AP::AP_Scanner::yylex()
 
 #include "ap_parser.tab.hh"
 #include "AP_Data.hpp"
 
 
-namespace AP_Parse{
+namespace AP{
 
 /**
  * AP_Scanner - scanner class that'll be instantiated to 
  * produce a flex scanner.
  */
-class AP_Scanner{
+class AP_Scanner : public yyFlexLexer{
 public:
    /**
     * AP_Scanner - default constructor
@@ -35,10 +35,10 @@ public:
                                                 data( d ){};
    /**
     * yylex - this is the one that'll actually be called by Bison
-    * @param   lval - AP_Parse::AP_Parser::semantic_type ptr
+    * @param   lval - AP::AP_Parser::semantic_type ptr
     * @return int
     */
-   int yylex( AP_Parse::AP_Parser::semantic_type *lval )
+   int yylex( AP::AP_Parser::semantic_type *lval )
    {
       yylval = lval;
       return( yylex() );
@@ -46,12 +46,12 @@ public:
 private:
    int yylex();
    /* this is the ptr for returning from the scanner */
-   AP_Parse::AP_Parser::semantic_type *yylval;
+   AP::AP_Parser::semantic_type *yylval;
    /* AP_Data reference for scanner, used for errors, etc */
    AP_Data &data;
 };
 
-} /* end namespace AP_Parse */
+} /* end namespace AP */
 
 
 #endif /* END _AP_SCANNER_HPP_ */

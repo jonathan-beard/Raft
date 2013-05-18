@@ -12,19 +12,23 @@
 #include "AP_Scanner.hpp"
 #include "AP_Data.hpp"
 
-typedef APParse::AP_Parser::token token;
+typedef AP::AP_Parser::token token;
 
-#define PUSHTOSTREAM( x ) data.get_parsestream() << yytext; \
+#define PUSHTOSTREAM( x ) data.get_ap_parsestream() << yytext; \
                           data.set_current_line( yylineno );
 
-#define TOKEN( x ) data.get_parsestream() << yytext; \
+#define TOKEN( x ) data.get_ap_parsestream() << yytext; \
                    data.set_current_line( yylineno ); \
-                   yylval->s_val = new std::string( yytext ); \
+                   yylval->sval = new std::string( yytext ); \
                    return( token::x );
 
 #define STOKEN( x ) ( new std::string( x ) )
 
+/* define yyterminate as this instead of NULL */
 #define yyterminate() return( token::END )
+
+/* msvc2010 requires that we exclude this header file */
+#define YY_NO_UNISTD_H
 
 %}
 
@@ -47,7 +51,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 %%
 \n                { 
-                    data.ResetParseStream(); 
+                    data.reset_ap_parsestream(); 
                     yylineno++;
                   }
 ^{DIRECTIVE}\n    { PUSHTOSTREAM( yytext ); }
@@ -88,7 +92,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "public"                { TOKEN( PUBLIC ); }
 "private"               { TOKEN( PRIVATE ); }
 "protected"             { TOKEN( PROTECTED ); }
-"return"                { TOEKN( RETURN ); }
+"return"                { TOKEN( RETURN ); }
 "void"                  { TOKEN( VOID ); }
 "this"                  { TOKEN( THIS ); }
 "for"                   { TOKEN( FOR ); }
@@ -96,7 +100,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "while"                 { TOKEN( WHILE ); }
 "if"                    { TOKEN( IF ); }
 "else"                  { TOKEN( ELSE ); }
-"null"                  { TOKEN( NULL ); }
+"null"                  { TOKEN( NILL ); }
 "new"                   { TOKEN( NEW ); }
 "void"                  { TOKEN( VOID ); }
 "++"                    { TOKEN( INCREMENT ); }
@@ -138,12 +142,12 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "vector"                { TOKEN( VECTOR ); }
 {STRING}                { TOKEN( STRING ); }
 "-"?{D}+		            { 
-                           yylval->lli_val = strtoll(yytext, nullptr, 10);
+                           //yylval->lli_val = strtoll(yytext, nullptr, 10);
 			                  TOKEN(INT_TOKEN);		
                         }
 
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
-                                    yylval->ld_val = strtold(yytext, 0);
+                                    //yylval->ld_val = strtold(yytext, 0);
 			                           TOKEN(FLOAT_TOKEN);		
                                }
 

@@ -6,23 +6,23 @@
 #include <unistd.h>
 
 #include "signalhooks.hpp"
-#include "x_driver.hpp"
-#include "Data.hpp"
+#include "ap_driver.hpp"
+#include "ap_ata.hpp"
 
 #ifndef ACCEPT
 #define ACCEPT 0
 #endif
 
-using namespace APParse;
+using namespace AP;
 
-X_Driver::X_Driver(Data &d) :  parser( nullptr),
-                               scanner( nullptr),
-                               data( d )
+AP_Driver::AP_Driver(Data &d) :  parser( nullptr),
+                                 scanner( nullptr),
+                                 data( d )
 {
  /* nothing else to really do here */
 }
 
-X_Driver::~X_Driver()
+AP_Driver::~AP_Driver()
 {
    if( parser != nullptr){
       delete( parser );
@@ -35,17 +35,17 @@ X_Driver::~X_Driver()
 }
 
 void
-X_Driver::parse( const char *filename )
+AP_Driver::parse( const char *filename )
 {
    assert( filename != nullptr );
    std::ifstream in_file( filename );
-   if( ! in_file.good() ) exit( EXIT_FAILURE );
-   scanner = new APParse::X_Scanner( &in_file , data );
+   if( ! in_file.good() ) exit( EAPIT_FAILURE );
+   scanner = new AP_Scanner( &in_file , data );
    assert( scanner != nullptr );
-   parser = new APParse::X_Parser( (*scanner), (*this), data );
+   parser = new AP_Parser( (*scanner), (*this), data );
    assert( parser != nullptr );
-   int retval( 0 );
-   errno = 0;
+   int retval( ACCEPT );
+   errno = EXIT_SUCCESS;
    if( (retval = parser->parse() ) != ACCEPT )
    {
       parse_error( errno, retval );
@@ -53,14 +53,14 @@ X_Driver::parse( const char *filename )
 }
 
 void
-X_Driver::parse( std::istringstream &iss )
+AP_Driver::parse( std::istringstream &iss )
 {
-   scanner = new APParse::X_Scanner( &iss , data );
+   scanner = new AP_Scanner( &iss , data );
    assert( scanner != nullptr );
-   parser = new APParse::X_Parser( (*scanner), (*this), data );
+   parser = new AP_Parser( (*scanner), (*this), data );
    assert( parser != nullptr );
-   int retval( 0 );
-   errno = 0;
+   int retval( ACCEPT );
+   errno = EXIT_SUCCESS;
    if( (retval = parser->parse() ) != ACCEPT )
    {
       parse_error( errno, retval );
@@ -69,11 +69,11 @@ X_Driver::parse( std::istringstream &iss )
 
 
 void 
-X_Driver::parse_error( int errorcode, int retval )
+AP_Driver::parse_error( int errorcode, int retval )
 {
    data.errorstream() << "Error calling parse(), ";
    data.errorstream() << "exited with code (" << retval << ") ";
-   if( errorcode != 0 ){
+   if( errorcode != EXIT_SUCCESS ){
       data.errorstream() << "and error code of \""
          << strerror( errorcode ) << "\"";
    }
