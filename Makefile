@@ -24,21 +24,22 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
+             $(addsuffix .o, $(APCOMSOBJ) )  \
+             $(addsuffix .o, $(APHSOBJ) )    \
 				 $(APCOMOBJS) test\
 				 ap_parser.tab.cc ap_parser.tab.hh \
 				 location.hh position.hh \
-			    stack.hh ap_parser.output ap_parser.o \
-				 ap_lexer.o aph_parser.o aph_lexer.o \
+			    stack.hh ap_parser.output \
 				 ap_lexer.yy.cc aph_lexer.yy.cc $(EXE)\
 
 .PHONY: all
 all:  apcom
 
 apcom: $(APCOMFILES)
-	$(MAKE) $(APCOMSOBJ)
 	$(MAKE) $(APCOMOBJS)
+	$(MAKE) $(APCOMSOBJS)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o test $(APCOMOBJS) \
-	ap_parser.o ap_lexer.o $(LIBS)
+	$(addsuffix .o, $(APCOMSOBJ))  $(LIBS)
 
 aph: $(APHFILES)
 	$(MAKE) $(APHSOBJ)
@@ -46,13 +47,13 @@ aph: $(APHFILES)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APHEXE) $(APHOBJS) \
 	aph_parser.o aph_lexer.o $(LIBS)
 
-ap_parser.o: ap_parser.yy
+ap_parser: ap_parser.yy
 	bison -d -v ap_parser.yy
 	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o ap_parser.o ap_parser.tab.cc
 
-ap_lexer.o: ap_lexer.l
+ap_lexer: ap_lexer.l
 	flex --outfile=ap_lexer.yy.cc $<
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c ap_lexer.yy.cc -o lexer.o
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c ap_lexer.yy.cc -o ap_lexer.o
 
 aph_parser: aph_parser.yy
 	bison -d -v aph_parser.yy
@@ -60,7 +61,7 @@ aph_parser: aph_parser.yy
 
 aph_lexer: aph_lexer.l
 	flex --outfile=aph_lexer.yy.cc $<
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c aph_lexer.yy.cc -o lexer.o
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c aph_lexer.yy.cc -o aph_lexer.o
 
 %.o: %.cpp
 	$(CXX) $(CXXSTD) -c $(CXXFLAGS) $(CXXSTD) -o $@ $<
