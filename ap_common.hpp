@@ -17,7 +17,7 @@ public:
  *  @param  dump_location - const std::string&, filename of dump
  */
 static void Dump( const std::string &dump_str, 
-                  const std::string dump_location );
+                  const std::string &dump_location );
 private:
    AP_Common(){};
    ~AP_Common(){};

@@ -88,7 +88,7 @@ template <class T> class Option{
              std::string flag, 
              std::string description,
              bool help = false) :
-         item(in) , _flag(flag), _description(description), _help(help){};
+          _help(help),item(in),_flag(flag),_description(description){};
 
       virtual ~Option(){};
       bool isHelp(){ return ( _help ); };

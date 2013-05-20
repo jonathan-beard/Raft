@@ -64,6 +64,13 @@ main( const int argc, char **argv )
    AP_Set_Options::SetOptions( cmd_args, ap_data );
 
    cmd_args.processArgs( argc, argv );
+  
+   if( options.help )
+   {
+      cmd_args.printArgs();
+      exit( EXIT_SUCCESS );
+   }
+
    if( options.is_string_default( options.input_filename ) )
    {
       std::cerr << "User must select at least one autopipe " << 
