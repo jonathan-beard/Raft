@@ -7,10 +7,11 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "command_arguments.h"
 #include "ap_data.hpp"
 #include "ap_prep.hpp"
 #include "app.hpp"
-//#include "ap_driver.hpp"
+#include "ap_driver.hpp"
 #include "signalhooks.hpp"
 
 AP_Data ap_data;
@@ -49,6 +50,13 @@ main( const int argc, const char **argv )
       exit( EXIT_FAILURE );
    }
 
+   /* set options object with defaults */
+   AP_Options_Vars options;
+   ap_data.set_options_vars( &options );
+
+   /* Get a Cmd State Object & Set Options */
+   CmdArgs cmd_args( argv[0] , ap_data );
+
    APP app( ap_data );
    auto *files( AP_Prep::get_ap_includes( argv[1] , ap_data ) );
    assert( files != nullptr );
@@ -61,19 +69,21 @@ main( const int argc, const char **argv )
 
    std::stringstream &output( app.output() );
    
-   //std::cout << output.str() << std::endl; 
+   std::cout << output.str() << std::endl; 
+  
+/*  
    std::set<std::string> &file_list( app.get_file_list() );
    auto &paths( app.get_include_paths() );
    for( std::pair< std::string, std::string> str : paths ){
       std::cout << str.first << " - " << str.second << std::endl; 
    }
-
-   //std::istringstream parser_stream( output.str() );
+*/
+   std::istringstream parser_stream( output.str() );
  
-   //APParse::X_Driver driver( data );
-   //std::cout << "Calling parse!!\n";
-   //driver.parse( parser_stream );
-   //std::cout << "Done with parse!!\n";
+   AP::AP_Driver driver( ap_data );
+   std::cout << "Calling parse!!\n";
+   driver.parse( parser_stream );
+   std::cout << "Done with parse!!\n";
    /* just in case raise parse error stream to flush it if there are any */
    
    raise( PARSE_ERR_SIG );

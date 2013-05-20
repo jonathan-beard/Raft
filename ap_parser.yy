@@ -124,11 +124,11 @@
 %%
 
 S        :     END
-         |     T  END
+         |     S T
+         |     T
          ;
 
-T        :    T
-         |    LEFTBRACE  
+T        :    LEFTBRACE  
          |    RIGHTBRACE  
          |    LEFTBRACKET  
          |    RIGHTBRACKET  
@@ -156,7 +156,6 @@ T        :    T
          |    PRIVATE  
          |    PROTECTED  
          |    RETURN  
-         |    VOID  
          |    THIS  
          |    FOR  
          |    FOREACH  

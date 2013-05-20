@@ -5,6 +5,7 @@
  */
 #include <cstdlib> /* for exit defines */
 #include "ap_data.hpp"
+#include "ap_option_vars.hpp"
 
 AP_Data::AP_Data()
 : ap_parsestream( nullptr ),
@@ -100,4 +101,14 @@ uint64_t AP_Data::get_current_line()
    return( current_line );
 }  
 
+void     AP_Data::set_options_vars( AP_Options_Vars *vars )
+{
+   assert( vars != nullptr );
+   (this)->options = vars;
+}
 
+AP_Options_Vars&  AP_Data::get_options_vars()
+{
+   assert( (this)->options != nullptr );
+   return( (*(this)->options) );
+}

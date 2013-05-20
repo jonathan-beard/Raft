@@ -20,6 +20,8 @@
 #include <cstdint>
 #endif
 
+struct AP_Options_Vars;
+
 /* type definition for autopipe errorstream */
 typedef std::stringstream APErrorStream;
 /* type definition for autopipe parse stream */
@@ -113,6 +115,22 @@ public:
     */
    uint64_t       get_current_line();
 
+   /**
+    * set method for options vars, set should be called
+    * at least once immediately after the options are set from
+    * the command line or to defaults 
+    * @param   vars - AP_Options_Vars ptr
+    */
+   void           set_options_vars( AP_Options_Vars *vars );
+   /**
+    * get_options_vars - set must be called before calling this
+    * which is otherwise cought by an assertion.  This is a 
+    * convenience method so you only have to provide one param
+    * to most functions which is the whole data class.
+    * @return  AP_Options_Vars&
+    */
+   AP_Options_Vars&  get_options_vars();
+
 private:
    /* auto pipe parse stream, initially nullptr */
    APParseStream    *ap_parsestream;
@@ -124,6 +142,9 @@ private:
    ErrorStream       &errorstream;
    /* the current line number, for use with scanner */
    uint64_t current_line;
+
+   /* global options */
+   AP_Options_Vars   *options;
 };
 
 #endif /* END _AP_DATA_HPP_ */

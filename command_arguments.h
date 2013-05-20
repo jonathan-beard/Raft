@@ -53,7 +53,6 @@
 #include <string.h>
 #endif
 
-#include "CmdError.h"
 
 #ifndef TERM_WIDTH
 #define TERM_WIDTH 80
@@ -64,6 +63,9 @@
 #endif
 
 #ifdef __cplusplus
+
+#include "ap_data.hpp"
+#include "ap_option_vars.hpp"
 
 /**
  * Option - simple template for options to be added to the 
@@ -177,7 +179,7 @@ class CmdArgs{
        * Default Constructor - 
        * @param   name - std::string, name of program using CmdArgs
        */
-      CmdArgs(std::string name);
+      CmdArgs(std::string name, AP_Data &d);
       ~CmdArgs();
       /**
        * printArgs - print all the options
@@ -195,18 +197,20 @@ class CmdArgs{
       /**
        * processArgs - to be called when all the options
        * are registered and you're ready to set the variables
-       * @param   _argc - int, with number of strings in _argv
-       * @param   _argv - char**, with list of strings from the
+       * @param   argc - int, with number of strings in _argv
+       * @param   argv - char**, with list of strings from the
        * command line 
        */
-      void processArgs(int _argc, char **_argv);
+      void processArgs(int argc, char **argv);
    private:
-      std::vector<Option<int64_t>* >      _vInt;
-      std::vector<Option<bool>* >         _vBool;
-      std::vector<Option<std::string>* >  _vString;
-      std::vector<Option<double>* >       _vDouble;
+     
+      std::vector<Option<int64_t>* >      vInt;
+      std::vector<Option<bool>* >         vBool;
+      std::vector<Option<std::string>* >  vString;
+      std::vector<Option<double>* >       vDouble;
 
-      std::string _name;
+      std::string name;
+      AP_Data     &data;
 };
 #endif
 

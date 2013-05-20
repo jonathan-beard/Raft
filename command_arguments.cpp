@@ -23,11 +23,14 @@
 #include <iostream>
 #include <algorithm>
 #include <queue>
-#include "CmdArgs.h"
+#include "command_arguments.h"
 
 
-CmdArgs::CmdArgs(std::string name){
-   _name = name.substr( 2 );
+CmdArgs::CmdArgs(const std::string n, AP_Data &d)
+   : name( n ),
+     data( d )
+{
+  /* nothing to do here, move along */
 }
 
 CmdArgs::~CmdArgs(){}
@@ -37,21 +40,21 @@ void CmdArgs::printArgs(){
    memset(stars, '*', sizeof(char) * 81);
    stars[80] = '\0';
    std::cout << stars << std::endl;
-   std::cout << "Options menu for: " << _name << std::endl;
-   for_each( _vInt.begin(),
-             _vInt.end(),
-             [&](Option<int64_t> *x){ std::cout << x->toString() << std::endl;});
+   std::cout << "Options menu for: " << name << std::endl;
+   for_each( vInt.begin(),
+       vInt.end(),
+       [&](Option<int64_t> *x){ std::cout << x->toString() << std::endl;});
    
-   for_each( _vDouble.begin(),
-             _vDouble.end(),
-             [&](Option<double> *x){ std::cout << x->toString() << std::endl;});
+   for_each( vDouble.begin(),
+             vDouble.end(),
+       [&](Option<double> *x){ std::cout << x->toString() << std::endl;});
    
-   for_each( _vBool.begin(),
-             _vBool.end(),
-             [&](Option<bool> *x){ std::cout << x->toString() << std::endl;});
+   for_each( vBool.begin(),
+             vBool.end(),
+      [&](Option<bool> *x){ std::cout << x->toString() << std::endl;});
 
-   for_each( _vString.begin(),
-             _vString.end(),
+   for_each( vString.begin(),
+             vString.end(),
              [&](Option<std::string> *x){ std::cout << 
                                           x->toString() << 
                                           std::endl;});
@@ -60,47 +63,39 @@ void CmdArgs::printArgs(){
    std::cout << stars << std::endl;
 };
 
-/* TODO make generic later */
+/* TODO make more generic later */
 void CmdArgs::addOption(Option<int64_t> *option){
-   if(option == nullptr){
-      errorH("Option can't be null",__LINE__,__FILE__);
-   }
-   _vInt.push_back(option);
+   assert( option != nullptr );
+   vInt.push_back(option);
 }
 
 void CmdArgs::addOption(Option<bool> *option){
-   if(option == nullptr){
-      errorH("Option can't be null",__LINE__,__FILE__);
-   }
-   _vBool.push_back(option);
+   assert( option != nullptr );
+   vBool.push_back(option);
 }
 
 void CmdArgs::addOption(Option<std::string> *option){
-   if(option == nullptr){
-      errorH("Option can't be null",__LINE__,__FILE__);
-   }
-   _vString.push_back(option);
+   assert( option != nullptr );
+   vString.push_back(option);
 }
 
 void CmdArgs::addOption(Option<double> *option){
-   if(option == nullptr){
-      errorH("Option can't be null",__LINE__,__FILE__);
-   }
-   _vDouble.push_back(option);
+   assert( option != nullptr );
+   vDouble.push_back(option);
 }
 
 void CmdArgs::processArgs(int argc, char **argv){
    std::queue<std::string> ignored_options;
    for(int i = 1 ; i < argc; i++){
       
-      for( auto it( _vInt.begin() ); it != _vInt.end(); ++it){
+      for( auto it( vInt.begin() ); it != vInt.end(); ++it){
          if(strcmp( /* given argument */ argv[i], /* given flag */ (*it)->getFlag() ) == 0){
             const int64_t value = strtoll( argv[++i], NULL, 10);
             (*it)->setValue( value ); 
             goto END;
          }
       }
-      for(auto it( _vBool.begin()); it != _vBool.end(); ++it){
+      for(auto it( vBool.begin()); it != vBool.end(); ++it){
          if(strcmp( argv[i] , (*it)->getFlag() ) == 0){
             bool input = false;
             if( (*it)->isHelp() ){
@@ -112,7 +107,14 @@ void CmdArgs::processArgs(int argc, char **argv){
                }else if( strcmp( argv[i+1] , "false" ) == 0){
                   input = false;
                }else{
-                  errorH("Invalid input at processArgs, check input!!",__LINE__,__FILE__);
+                  std::stringstream ss;
+                  for( jnt j = 1; j < argc; j++ )
+                     ss << argv[j] << " ";
+                  data.get_ap_errorstream() << 
+                     "Invalid input at processArgs, check input!! \n" <<
+                     "Given: " << ss.str() << "\n";
+                     "Exiting!!\n";
+                  raise( TERM_ERR_SIG );
                }
             }
             ++i;
@@ -120,7 +122,7 @@ void CmdArgs::processArgs(int argc, char **argv){
             goto END;
          }  
       }
-      for(auto it(_vString.begin()); it != _vString.end(); ++it){
+      for(auto it(vString.begin()); it != vString.end(); ++it){
          if( strcmp( argv[i] , (*it)->getFlag() ) == 0){
             (*it)->setValue( argv[i+1] );
             ++i;
@@ -133,7 +135,8 @@ void CmdArgs::processArgs(int argc, char **argv){
    }
    
    if(! ignored_options.empty() ){
-      std::cerr << "The following options were unknown and ignored: " << std::endl;
+      std::cerr << 
+         "The following options were unknown and ignored: " << std::endl;
    }
    while(! ignored_options.empty() ){
       std::string option = ignored_options.front();

@@ -16,11 +16,13 @@ typedef AP::AP_Parser::token token;
 
 #define PUSHTOSTREAM( x ) data.get_ap_parsestream() << yytext; \
                           data.set_current_line( yylineno );
+                   
+//yylval->sval = new std::string( yytext ); 
 
 #define TOKEN( x ) data.get_ap_parsestream() << yytext; \
                    data.set_current_line( yylineno ); \
-                   yylval->sval = new std::string( yytext ); \
-                   return( token::x );
+                   std::cerr << yytext << "\n"; \
+                   return( token::x )
 
 #define STOKEN( x ) ( new std::string( x ) )
 
@@ -102,7 +104,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "else"                  { TOKEN( ELSE ); }
 "null"                  { TOKEN( NILL ); }
 "new"                   { TOKEN( NEW ); }
-"void"                  { TOKEN( VOID ); }
 "++"                    { TOKEN( INCREMENT ); }
 "--"                    { TOKEN( DECREMENT ); }
 "?"                     { TOKEN( QUESTION ); }
