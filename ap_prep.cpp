@@ -17,7 +17,7 @@
 
 std::set< std::string >*
 AP_Prep::get_ap_includes ( const std::string main_ap,
-                          AP_Data &data )
+                           AP::AP_Data &data )
 {
    std::set< std::string > *ret_val( nullptr );
    std::ifstream in_file( main_ap.c_str(), std::ifstream::in );

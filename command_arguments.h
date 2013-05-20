@@ -65,7 +65,6 @@
 #ifdef __cplusplus
 
 #include "ap_data.hpp"
-#include "ap_option_vars.hpp"
 
 /**
  * Option - simple template for options to be added to the 
@@ -178,8 +177,9 @@ class CmdArgs{
       /**
        * Default Constructor - 
        * @param   name - std::string, name of program using CmdArgs
+       * @param   d  - AP::AP_Data&, for error streams
        */
-      CmdArgs(std::string name, AP_Data &d);
+      CmdArgs(std::string name, AP::AP_Data &d);
       ~CmdArgs();
       /**
        * printArgs - print all the options
@@ -210,7 +210,7 @@ class CmdArgs{
       std::vector<Option<double>* >       vDouble;
 
       std::string name;
-      AP_Data     &data;
+      AP::AP_Data     &data;
 };
 #endif
 

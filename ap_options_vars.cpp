@@ -3,7 +3,9 @@
  * @author: Jonathan Beard
  * @version: Fri Dec 14 13:41:06 2012
  */
-#include "AP_Options_Vars.hpp"
+#include <cassert>
+
+#include "ap_options_vars.hpp"
 
 AP_Options_Vars::AP_Options_Vars()
 {
@@ -42,15 +44,22 @@ void AP_Options_Vars::load_defaults()
    hardware_map_image = false;
 
    /* params for mapping */
-   map_scheme = "random";
+   map_objective = "random.mo";
    hardware_defs_file = "hwdef.xml";
    comm_hardware_defs_file = "commdef.xml";
    hardware_configuration_rules = "hw.config";
    /* global max allowable buffer size */
-   max_buffer_size = (1 << 32 );
+   max_buffer_size = (1 << 31 );
 
    /* generate deployment package for multiple targets */
    generate_run_package = false;
+
+   /* dump options */
+   dump_cpp_output = false;
+   dump_include_file_list = false;
+   dump_parse_stream = false;
+
+   input_filename = get_default_string();
 }
 
 std::string AP_Options_Vars::get_default_string(){

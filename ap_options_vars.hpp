@@ -72,7 +72,7 @@ struct AP_Options_Vars{
    bool            hardware_map_image;
 
    /* specs for mapping */
-   std::string     map_scheme;
+   std::string     map_objective; // objectives for performance
    std::string     hardware_defs_file;
    std::string     comm_hardware_defs_file;
    std::string     hardware_configuration_rules;
@@ -81,6 +81,14 @@ struct AP_Options_Vars{
 
    /* generate deployment package for multiple targets */
    bool           generate_run_package; 
+
+   /* dump options */
+   bool           dump_cpp_output;
+   bool           dump_include_file_list;
+   bool           dump_parse_stream;
+
+   /* input file */
+   std::string    input_filename;
 };
 
 #endif /* END _APOPTIONSVARS_HPP_ */

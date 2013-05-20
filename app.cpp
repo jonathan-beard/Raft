@@ -22,7 +22,7 @@
 #define APBASE "APBASE"
 #endif
 
-APP::APP( AP_Data &d ) : data( d )
+APP::APP( AP::AP_Data &d ) : data( d )
 {
    locations.push_back( location_pwd );
    locations.push_back( location_home );
@@ -73,7 +73,7 @@ bool  APP::process(  const std::string app_path,
                      std::set< std::string > &files,
                      std::map< std::string, std::string > &verified_paths,
                      std::stringstream &buffer,
-                     AP_Data &data, 
+                     AP::AP_Data &data, 
                      std::vector< LocationFunction > &locations )
 {
    bool error( false );

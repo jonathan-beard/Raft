@@ -26,7 +26,7 @@
 
 class APP{
 public:
-   APP( AP_Data &d );
+   APP( AP::AP_Data &d );
    virtual ~APP();
 
    /**
@@ -70,7 +70,7 @@ private:
                     std::set< std::string >   &files, 
                     std::map< std::string , std::string > &verified_paths,
                     std::stringstream         &buffer,
-                    AP_Data &data,
+                    AP::AP_Data &data,
                     std::vector< LocationFunction > &locations );
 
 
@@ -98,6 +98,6 @@ private:
    std::map< std::string, std::string >         verified_paths; 
    std::stringstream                            buffer;
    std::vector< LocationFunction >              locations;
-   AP_Data                                      &data;
+   AP::AP_Data                                      &data;
 };
 #endif /* END _APP_HPP_ */

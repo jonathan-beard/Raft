@@ -10,8 +10,11 @@ CXXSTD = -std=c++11
 APCOMEXE = apcom
 APHEXE = aph
 
-APCOMCPPOBJ = apmain ap_data app ap_prep ap_option_vars command_arguments
-APCOMSOBJS =  ap_parser ap_lexer
+APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
+				  command_arguments ap_set_options ap_driver \
+				  ap_common
+APCOMSOBJ =  ap_parser ap_lexer
+APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 
 APCOMFILES = $(addsuffix .cpp, $(APCOMCPPOBJ))
 APCOMOBJS  = $(addsuffix .o, $(APCOMCPPOBJ))
@@ -24,7 +27,7 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 
 
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
-             $(addsuffix .o, $(APCOMSOBJ) )  \
+             $(APCOMSOBJS)\
              $(addsuffix .o, $(APHSOBJ) )    \
 				 $(APCOMOBJS) test\
 				 ap_parser.tab.cc ap_parser.tab.hh \
@@ -36,10 +39,10 @@ CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
 all:  apcom
 
 apcom: $(APCOMFILES)
+	$(MAKE) $(APCOMSOBJ)
 	$(MAKE) $(APCOMOBJS)
-	$(MAKE) $(APCOMSOBJS)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o test $(APCOMOBJS) \
-	$(addsuffix .o, $(APCOMSOBJ))  $(LIBS)
+	$(APCOMSOBJS) $(LIBS)
 
 aph: $(APHFILES)
 	$(MAKE) $(APHSOBJ)

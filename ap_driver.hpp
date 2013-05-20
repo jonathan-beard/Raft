@@ -21,7 +21,7 @@ private:
    
    AP::AP_Parser  *parser;
    AP::AP_Scanner *scanner;
-   AP_Data &data;
+   AP::AP_Data    &data;
 };
 
 } /* end namespace AP */

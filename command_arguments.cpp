@@ -23,10 +23,12 @@
 #include <iostream>
 #include <algorithm>
 #include <queue>
+#include <cassert>
+
 #include "command_arguments.h"
+#include "signalhooks.hpp"
 
-
-CmdArgs::CmdArgs(const std::string n, AP_Data &d)
+CmdArgs::CmdArgs(const std::string n, AP::AP_Data &d)
    : name( n ),
      data( d )
 {
@@ -108,11 +110,10 @@ void CmdArgs::processArgs(int argc, char **argv){
                   input = false;
                }else{
                   std::stringstream ss;
-                  for( jnt j = 1; j < argc; j++ )
-                     ss << argv[j] << " ";
+                  for( int j(1); j < argc; j++ ) ss << argv[j] << " ";
                   data.get_ap_errorstream() << 
                      "Invalid input at processArgs, check input!! \n" <<
-                     "Given: " << ss.str() << "\n";
+                     "Given: " << ss.str() << "\n" <<
                      "Exiting!!\n";
                   raise( TERM_ERR_SIG );
                }

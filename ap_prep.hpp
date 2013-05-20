@@ -17,7 +17,7 @@ public:
 
 static std::set< std::string >*
 get_ap_includes( const std::string main_ap,
-                AP_Data &data );
+                 AP::AP_Data &data );
 
 static std::vector< std::string> *
 get_tokens( const std::string &line );

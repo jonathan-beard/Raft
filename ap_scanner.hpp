@@ -14,7 +14,7 @@
 #define YY_DECL int AP::AP_Scanner::yylex()
 
 #include "ap_parser.tab.hh"
-#include "AP_Data.hpp"
+#include "ap_data.hpp"
 
 
 namespace AP{

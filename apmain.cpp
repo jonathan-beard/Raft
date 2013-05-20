@@ -10,11 +10,15 @@
 #include "command_arguments.h"
 #include "ap_data.hpp"
 #include "ap_prep.hpp"
+#include "ap_options_vars.hpp"
+#include "ap_set_options.hpp"
 #include "app.hpp"
 #include "ap_driver.hpp"
+#include "ap_common.hpp"
 #include "signalhooks.hpp"
 
-AP_Data ap_data;
+
+AP::AP_Data ap_data;
 
 static void 
 parse_handler( int signal )
@@ -40,7 +44,7 @@ parse_handler( int signal )
 }
 
 int
-main( const int argc, const char **argv )
+main( const int argc, char **argv )
 {
    /* right now don't worry about arg counts */
    errno = 0;
@@ -53,24 +57,57 @@ main( const int argc, const char **argv )
    /* set options object with defaults */
    AP_Options_Vars options;
    ap_data.set_options_vars( &options );
-
+   
    /* Get a Cmd State Object & Set Options */
    CmdArgs cmd_args( argv[0] , ap_data );
+   
+   AP_Set_Options::SetOptions( cmd_args, ap_data );
 
+   cmd_args.processArgs( argc, argv );
+   if( options.is_string_default( options.input_filename ) )
+   {
+      std::cerr << "User must select at least one autopipe " << 
+                   "file for processing (-f)!!" << "\n";
+      exit( EXIT_FAILURE );
+   }
+   
    APP app( ap_data );
+
    auto *files( AP_Prep::get_ap_includes( argv[1] , ap_data ) );
    assert( files != nullptr );
+   std::stringstream *dump_include_list( nullptr );
+   if( options.dump_include_file_list )
+   {
+      dump_include_list = new std::stringstream();
+      assert( dump_include_list != nullptr );
+   }
    for( const std::string &str : (*files) ){
+      if( options.dump_include_file_list )
+      {
+         (*dump_include_list) << str << "\n";
+      }
       app.add_file( str );
    }
    delete( files );
-   
-   app.run( argv[1] );
+   if( options.dump_include_file_list )
+   {
+      const std::string include_dump_file( 
+         "include_dump_" + options.input_filename );
+      AP::AP_Common::Dump( (*dump_include_list).str(), 
+                           include_dump_file );
+      delete( dump_include_list );
+   }
 
-   std::stringstream &output( app.output() );
-   
-   std::cout << output.str() << std::endl; 
-  
+   app.run( options.input_filename );
+   std::stringstream &cpp_output( app.output() );
+   if( options.dump_cpp_output )
+   {
+      const std::string cpp_dump_filename( 
+            "cpp_dump_" + options.input_filename );
+      AP::AP_Common::Dump( cpp_output.str(), cpp_dump_filename ); 
+   }
+
+
 /*  
    std::set<std::string> &file_list( app.get_file_list() );
    auto &paths( app.get_include_paths() );
@@ -78,12 +115,14 @@ main( const int argc, const char **argv )
       std::cout << str.first << " - " << str.second << std::endl; 
    }
 */
+/*
    std::istringstream parser_stream( output.str() );
  
    AP::AP_Driver driver( ap_data );
    std::cout << "Calling parse!!\n";
    driver.parse( parser_stream );
    std::cout << "Done with parse!!\n";
+*/   
    /* just in case raise parse error stream to flush it if there are any */
    
    raise( PARSE_ERR_SIG );

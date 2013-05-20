@@ -9,8 +9,8 @@
 #include <cstdio>
 #include <string>
 
-#include "AP_Scanner.hpp"
-#include "AP_Data.hpp"
+#include "ap_scanner.hpp"
+#include "ap_data.hpp"
 
 typedef AP::AP_Parser::token token;
 

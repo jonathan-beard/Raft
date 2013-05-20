@@ -6,15 +6,14 @@
 #ifndef _AP_DATA_HPP_
 #define _AP_DATA_HPP_  1
 
-/* for std::cerr / std::cout */
 #include <iostream>
-/* for stream types */
 #include <sstream>
+#include <cassert>
 
 /* for std::int types */
 #ifdef __APPLE__
 /* Apple's c++ headers are a bit stale */
-#include <stdint.h>
+#include <tr1/cstdint>
 #else
 /* for everybody else with C++11 */
 #include <cstdint>
@@ -32,6 +31,8 @@ typedef std::ostream      ErrorStream;
 /* typedefinition for system user stream */
 typedef std::ostream      UserStream;
 
+
+namespace AP{
 
 /** 
  * AP_Data - class for various data elements that are used
@@ -147,4 +148,5 @@ private:
    AP_Options_Vars   *options;
 };
 
+} /* end namespace AP */
 #endif /* END _AP_DATA_HPP_ */

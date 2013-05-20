@@ -10,6 +10,7 @@
    namespace AP {
       class AP_Driver;
       class AP_Scanner;
+      class AP_Data;
    }
 }
 
@@ -20,6 +21,8 @@
 %lex-param     { AP_Driver  &driver  }
 %parse-param   { AP_Driver  &driver  }
 
+%lex-param     { AP_Data    &data    }
+%parse-param   { AP_Data    &data    }
 
 %code{
    #include <iostream>
@@ -28,11 +31,13 @@
 
    /* include for all driver functions */
    #include "ap_driver.hpp"
-   
+   #include "ap_data.hpp"
+
    /* define proper yylex */
    static int yylex(AP::AP_Parser::semantic_type *yylval,
                     AP::AP_Scanner               &scanner,
-                    AP::AP_Driver                &driver);
+                    AP::AP_Driver                &driver,
+                    AP::AP_Data                  &data );
 }
 
 /* token types */
@@ -221,7 +226,8 @@ AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
 static int
 yylex( AP::AP_Parser::semantic_type *yylval,
        AP::AP_Scanner               &scanner,
-       AP::AP_Driver                &driver )
+       AP::AP_Driver                &driver,
+       AP::AP_Data                  &data )
 {
    return( scanner.yylex( yylval ) );
 }

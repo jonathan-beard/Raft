@@ -5,7 +5,10 @@
  */
 #include <cstdlib> /* for exit defines */
 #include "ap_data.hpp"
-#include "ap_option_vars.hpp"
+#include "ap_options_vars.hpp"
+
+/* default namespace for AutoPipe */
+using namespace AP;
 
 AP_Data::AP_Data()
 : ap_parsestream( nullptr ),
