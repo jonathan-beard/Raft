@@ -17,6 +17,7 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
    cmd.addOption( new Option< bool >( options.help,
                      "-h",
                      "Print this message",
+                     nullptr,
                      true ) );
    cmd.addOption( new Option< bool >( options.verbose,
                      "-v",
@@ -122,5 +123,5 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
    cmd.addOption( new Option< std::string >(
                      options.input_filename,
                      "-f",
-                     "Specify Autopipe input filename" ) );
+                     "Specify Autopipe input filename" ));
 }

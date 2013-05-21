@@ -49,7 +49,7 @@ void AP_Options_Vars::load_defaults()
    comm_hardware_defs_file = "commdef.xml";
    hardware_configuration_rules = "hw.config";
    /* global max allowable buffer size */
-   max_buffer_size = (1 << 31 );
+   max_buffer_size = ( (int64_t) 1 << 31 );
 
    /* generate deployment package for multiple targets */
    generate_run_package = false;

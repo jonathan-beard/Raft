@@ -40,7 +40,7 @@
 #include <cinttypes>
 #include <cstdint>
 #endif
-
+#include <functional>
 #include <typeinfo>
 #include <cstring>
 #include <sstream>
@@ -66,6 +66,11 @@
 
 #include "ap_data.hpp"
 
+class OptionBase{
+
+};
+
+
 /**
  * Option - simple template for options to be added to the 
  * given program.
@@ -87,13 +92,28 @@ template <class T> class Option{
       Option(T &in, 
              std::string flag, 
              std::string description,
+             std::function< T (T& ) > function = nullptr,
              bool help = false) :
-          _help(help),item(in),_flag(flag),_description(description){};
+                  _help(help),
+                  item(in),
+                  _flag(flag),
+                  _description(description),
+                  F( function )
+                  {};
 
       virtual ~Option(){};
       bool isHelp(){ return ( _help ); };
       const char* getFlag(){ return( _flag.c_str() ); };
-      void setValue(T value){ item = value; }; 
+      void setValue(T value)
+      { 
+         if( F == nullptr )
+            item = value; 
+         else
+         {
+            /* pre-process */
+            item = F(value);
+         }
+      }; 
 
       std::string toString(){
          const size_t total_width( TERM_WIDTH );
@@ -107,11 +127,11 @@ template <class T> class Option{
          /* format the description + default properly */
          const size_t description_width( total_width - flag_width );
          std::stringstream desc;
-         desc << "// " << _description << ", default: " << format_item( item );
+    desc << "// " << _description << ", default: " << format_item( item );
          const std::string desc_str( desc.str() );
          if(desc_str.length() > description_width){
             /* width needs to be shortened and made multi-line */
-            char *space_buffer = (char*) malloc(sizeof(char) * flag_width + 4);
+    char *space_buffer = (char*) malloc(sizeof(char) * flag_width + 4);
             if(space_buffer == (char*)NULL){ 
                perror("Failed to initialize space buffer!!");
                exit( EXIT_FAILURE );
@@ -167,6 +187,7 @@ template <class T> class Option{
       T &item;
       std::string _flag;
       std::string _description;
+      std::function<T (T&) > F;
 };
 
 /**
@@ -204,7 +225,7 @@ class CmdArgs{
       void processArgs(int argc, char **argv);
    private:
      
-      std::vector<Option<int64_t>* >      vInt;
+      std::vector<Option<int64_t>*     >  vInt;
       std::vector<Option<bool>* >         vBool;
       std::vector<Option<std::string>* >  vString;
       std::vector<Option<double>* >       vDouble;

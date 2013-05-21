@@ -84,24 +84,31 @@ main( const int argc, char **argv )
    CmdArgs cmd_args( argv[0] , ap_data );
    
    AP_Set_Options::SetOptions( cmd_args, ap_data );
-
+   
+   /* only one argument, print menu and exit */
+   if( argc == 1 )
+   {
+      cmd_args.printArgs();
+      exit( EXIT_SUCCESS );
+   }
+   /* process arguments */
    cmd_args.processArgs( argc, argv );
-  
+   /* if help argument is true */
    if( options.help )
    {
       cmd_args.printArgs();
       exit( EXIT_SUCCESS );
    }
-
+   /* check to see if the input file name was set */
    if( options.is_string_default( options.input_filename ) )
    {
       std::cerr << "User must select at least one autopipe " << 
                    "file for processing (-f)!!" << "\n";
       exit( EXIT_FAILURE );
    }
-   
+   /* get a pre-processor object */
    APP app( ap_data );
-
+   /* get the included file to feed to pre-processor */ 
    auto *files( AP_Prep::get_ap_includes( options.input_filename , ap_data ) );
    assert( files != nullptr );
    std::stringstream *dump_include_list( nullptr );

@@ -45,7 +45,7 @@ void CmdArgs::printArgs(){
    std::cout << "Options menu for: " << name << std::endl;
    for_each( vInt.begin(),
        vInt.end(),
-       [&](Option<int64_t> *x){ std::cout << x->toString() << std::endl;});
+      [&](Option<int64_t> *x){ std::cout << x->toString() << std::endl;});
    
    for_each( vDouble.begin(),
              vDouble.end(),

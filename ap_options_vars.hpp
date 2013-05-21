@@ -89,6 +89,7 @@ struct AP_Options_Vars{
 
    /* input file */
    std::string    input_filename;
+   std::string    input_path;
 };
 
 #endif /* END _APOPTIONSVARS_HPP_ */
