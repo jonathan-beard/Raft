@@ -66,10 +66,6 @@
 
 #include "ap_data.hpp"
 
-class OptionBase{
-
-};
-
 
 /**
  * Option - simple template for options to be added to the 
