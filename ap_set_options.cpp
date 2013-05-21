@@ -118,4 +118,9 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                      options.dump_parse_stream,
                      "-dump_parse_stream",
                      "Dump parse stream" ) );
+
+   cmd.addOption( new Option< std::string >(
+                     options.input_filename,
+                     "-f",
+                     "Specify Autopipe input filename" ) );
 }

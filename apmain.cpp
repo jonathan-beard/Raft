@@ -43,6 +43,20 @@ parse_handler( int signal )
    ap_data.reset_ap_errorstream();
 }
 
+static void 
+term_error_handler( int signal )
+{
+   std::stringstream errstream;
+   ap_data.PrintErrors( errstream );
+   const std::string err_str( errstream.str() );
+   if( err_str.length() > 0 )
+   {
+      std::cerr << "The following errors were detected:\n";
+      std::cerr << err_str << "\n";
+   }
+   ap_data.reset_ap_errorstream();
+}
+
 int
 main( const int argc, char **argv )
 {
@@ -51,6 +65,14 @@ main( const int argc, char **argv )
    if( signal( PARSE_ERR_SIG, parse_handler ) == SIG_ERR )
    {
       perror( "Error setting parse_handler" );
+      exit( EXIT_FAILURE );
+   }
+   
+   /* right now don't worry about arg counts */
+   errno = 0;
+   if( signal( TERM_ERR_SIG, term_error_handler ) == SIG_ERR )
+   {
+      perror( "Error setting term_error_handler" );
       exit( EXIT_FAILURE );
    }
 
@@ -80,7 +102,7 @@ main( const int argc, char **argv )
    
    APP app( ap_data );
 
-   auto *files( AP_Prep::get_ap_includes( argv[1] , ap_data ) );
+   auto *files( AP_Prep::get_ap_includes( options.input_filename , ap_data ) );
    assert( files != nullptr );
    std::stringstream *dump_include_list( nullptr );
    if( options.dump_include_file_list )

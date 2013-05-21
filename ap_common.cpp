@@ -17,7 +17,7 @@ AP_Common::Dump( const std::string &dump_str,
       const std::string &dump_file )
 {
    assert( dump_file.length() > 0 );
-   std::ofstream out_file( dump_file );
+   std::ofstream out_file( dump_file.c_str() );
    if( out_file.is_open() )
    {
       out_file << dump_str << "\n";
