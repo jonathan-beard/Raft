@@ -117,7 +117,7 @@ void main( String args ){
    Sum sum;
    Print print;
    CPlusPlusProcess A;
-   A.AddKernel( AP.MakeList( gen1, gen2, sum, print ) );
+   A.AddKernel( List.MakeList( gen1, gen2, sum, print ) );
    AutoLink( gen1.y0, sum.x0 );
    AutoLink( gen2.y0, sum.x1 );
    AutoLink( sum.y0, print.x0 );
