@@ -28,6 +28,8 @@
 #include "command_arguments.h"
 #include "signalhooks.hpp"
 
+
+
 CmdArgs::CmdArgs(const std::string n, AP::AP_Data &d)
    : name( n ),
      data( d )
@@ -89,18 +91,41 @@ void CmdArgs::addOption(Option<double> *option){
 void CmdArgs::processArgs(int argc, char **argv){
    std::queue<std::string> ignored_options;
    for(int i = 1 ; i < argc; i++){
-      
+      for( auto it( options.begin() ); it != options.end(); ++it )
+      {
+         if( strcmp( /* given argument */ argv[i],
+                     /* given flag     */ (*it)->get_flag().c_str() ) == 0 )
+         {
+            /* increment past flag */
+            i++;
+            const bool success( (*it)->setValue( std::string( argv[i] ) ) );
+            if( success == true )
+            {
+               /* increment past value */
+               i++;
+            }
+            else
+            {
+               data.get_ap_errorstream() << "Invalid input for flag (" <<
+                  (*it)->get_flag() << ") : " << argv[i] << "\n";
+               raise( TERM_ERR_SIG );
+            }
+            goto END;
+         }
+      }
+
       for( auto it( vInt.begin() ); it != vInt.end(); ++it){
-         if(strcmp( /* given argument */ argv[i], /* given flag */ (*it)->getFlag() ) == 0){
+         if(strcmp( /* given argument */ argv[i], 
+                    /* given flag */ (*it)->get_flag().c_str() ) == 0){
             const int64_t value = strtoll( argv[++i], NULL, 10);
             (*it)->setValue( value ); 
             goto END;
          }
       }
       for(auto it( vBool.begin()); it != vBool.end(); ++it){
-         if(strcmp( argv[i] , (*it)->getFlag() ) == 0){
+         if(strcmp( argv[i] , (*it)->get_flag() ) == 0){
             bool input = false;
-            if( (*it)->isHelp() ){
+            if( (*it)->is_help() ){
                input = true;
             }else{
                if( (i+1) >= argc) break;
@@ -124,7 +149,7 @@ void CmdArgs::processArgs(int argc, char **argv){
          }  
       }
       for(auto it(vString.begin()); it != vString.end(); ++it){
-         if( strcmp( argv[i] , (*it)->getFlag() ) == 0){
+         if( strcmp( argv[i] , (*it)->get_flag() ) == 0){
             (*it)->setValue( argv[i+1] );
             ++i;
             goto END;

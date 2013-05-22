@@ -65,41 +65,29 @@
 #ifdef __cplusplus
 
 #include "ap_data.hpp"
+#include "command_option_base.hpp"
 
+<<<<<<< HEAD
 
 /**
  * Option - simple template for options to be added to the 
  * given program.
  */
 template <class T> class Option{
+=======
+template <class T> class Option : public OptionBase {
+>>>>>>> 646139b65719b240854d0032f48df25d0a3e6fea
    public:
-      /**
-       * Default Constructor - 
-       * @param in - T& a reference to the location of the variable
-       *             to be set.
-       * @param flag - std::string, flag you want to have associated
-       *               with this variable
-       * @param description - std::string, description of the variable
-       *                      to be set, will be printed
-       * @param help        - bool, set by default to false tells CmdArg
-       *                      that this variable is a help flag so it
-       *                      gets special treatment.
-       */
       Option(T &in, 
-             std::string flag, 
-             std::string description,
-             std::function< T (T& ) > function = nullptr,
-             bool help = false) :
-                  _help(help),
-                  item(in),
-                  _flag(flag),
-                  _description(description),
-                  F( function )
-                  {};
+             std::string Flag, 
+             std::string Description,
+             std::function< T (T& ) > Function = nullptr,
+             bool Help = false) : OptionBase( Flag, Description, Help ),
+                                  item( in ),
+                                  F( Function ){ };
 
-      virtual ~Option(){};
-      bool isHelp(){ return ( _help ); };
-      const char* getFlag(){ return( _flag.c_str() ); };
+      virtual ~Option(){ };
+
       void setValue(T value)
       { 
          if( F == nullptr )
