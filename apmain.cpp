@@ -109,7 +109,8 @@ main( const int argc, char **argv )
    /* get a pre-processor object */
    APP app( ap_data );
    /* get the included file to feed to pre-processor */ 
-   auto *files( AP_Prep::get_ap_includes( options.input_filename , ap_data ) );
+   auto *files( 
+      AP_Prep::get_ap_includes( options.input_full_path , ap_data ) );
    assert( files != nullptr );
    std::stringstream *dump_include_list( nullptr );
    if( options.dump_include_file_list )
@@ -134,7 +135,7 @@ main( const int argc, char **argv )
       delete( dump_include_list );
    }
 
-   app.run( options.input_filename );
+   app.run( options.input_full_path );
    std::stringstream &cpp_output( app.output() );
    if( options.dump_cpp_output )
    {

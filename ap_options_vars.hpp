@@ -88,6 +88,7 @@ struct AP_Options_Vars{
    bool           dump_parse_stream;
 
    /* input file */
+   std::string    input_full_path;
    std::string    input_filename;
    std::string    input_dir_path;
 };

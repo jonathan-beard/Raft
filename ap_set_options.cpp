@@ -127,19 +127,28 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                      "-dump_parse_stream",
                      "Dump parse stream" ) );
 
-   cmd.addOption( new OptionMultiple<std::string,2>(
-                     {{&options.input_filename,
-                       &options.input_dir_path}},
+   cmd.addOption( new OptionMultiple<std::string,3>(
+                     {{ &options.input_full_path,
+                        &options.input_filename,
+                        &options.input_dir_path}},
                      "-f",
                      "Specify Autopipe input filename",
-                       {{[&](const char *x, bool &v){
+                       {{[&](const char *x, bool &v) /* full pathname */
+                         {
+                           v = true;
+                           return( std::string( x ) );
+                         },
+                         [&](const char *x, bool &v) /* filename */
+                         {
                            std::string out(
-                   AP::AP_Common::GetFileNameFromPath( x, v ) );
+                              AP::AP_Common::GetFileNameFromPath( x, v ) );
                            return( out ); 
                          },
-                         [&](const char *x, bool &v){
+                         [&](const char *x, bool &v) /* dir path */
+                         {
                            std::string out(
-                   AP::AP_Common::ExtractPathNoFileName( x, v ) );
-                           return( out ); } }}
+                           AP::AP_Common::ExtractPathNoFileName( x, v ) );
+                           return( out ); 
+                         } }}
                         ) );
 }

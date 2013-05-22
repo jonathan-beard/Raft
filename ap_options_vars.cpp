@@ -59,6 +59,7 @@ void AP_Options_Vars::load_defaults()
    dump_include_file_list = false;
    dump_parse_stream = false;
 
+   input_full_path = get_default_string();
    input_filename = get_default_string();
    input_dir_path = get_default_string();
 }
