@@ -72,7 +72,7 @@ template <class T> class Option : public OptionBase {
       virtual std::string 
       toString()
       {
-         OptionBase::toString( );
+         OptionBase::toString( format_item( item ) );
       }
 
    private:
