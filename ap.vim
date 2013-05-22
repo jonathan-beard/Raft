@@ -10,10 +10,13 @@ endif
 " Keywords
 syn keyword AutopipeLanguageKeywords define abstract class @public @private @protected
 syn keyword AutopipeLanguageKeywords @ports @configs final system extends implements
-syn keyword AutopipeLanguageKeywords overrides autogen 
+syn keyword AutopipeLanguageKeywords overrides autogen
 
 " highlights
-hi def link apTodo   TODO FIXME
+hi def link AutopipeLanguageKeywords define
+hi def link AutopipeLanguageKeywords abstract
+hi def link AutopipeLanguageKeywords class
+hi def link apTodo   TODO
 
 " regions
 syn region apString start='"' end='"' contained
@@ -34,4 +37,4 @@ syn match apNumber '\d[[:digit:]]*[eE][\-+]\=\d\+' contained display
 syn match apNumber '[-+]\=\d[[:digit:]]*\.\d*[eE][\-+]\=\d\+' contained display
 syn match apNumber '\d[[:digit:]]*\.\d*[eE][\-+]\=\d\+' contained display
 
-
+let b:current_syntax = "ap"
