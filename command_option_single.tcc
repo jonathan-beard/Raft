@@ -6,8 +6,11 @@
 #ifndef _COMMAND_OPTION_SINGLE_TCC_
 #define _COMMAND_OPTION_SINGLE_TCC_  1
 
-
+#include <functional>
+#include <typeinfo>
 #include <cassert>
+#include <cstdint>
+#include <cstdlib>
 #include "command_option_base.hpp"
 
 template <class T> class Option : public OptionBase {
