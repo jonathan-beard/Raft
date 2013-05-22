@@ -1,5 +1,5 @@
-CC    = clang
-CXX   = clang++
+CC    = gcc
+CXX   = g++
 
 DEBUG = -g
 CFLAGS = -Wall -O0  $(DEBUG)
