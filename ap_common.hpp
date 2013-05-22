@@ -38,6 +38,9 @@ static bool MkDir( const std::string &dir );
 static std::string GetFileNameFromPath( const std::string path,
                                         bool strip_ext = false );
 
+static std::string GetFileNameFromPath( const char *Path,
+                                        bool &status );
+
 /**
  * ExtractPathNoFileName - Extracts the path from the full
  * path that included the filename.
@@ -45,6 +48,8 @@ static std::string GetFileNameFromPath( const std::string path,
  * @return  std::string - just the path, no filename
  */
 static std::string ExtractPathNoFileName( const std::string path );
+
+static std::string ExtractPathNoFileName( const char* Path, bool &status );
 
 private:
    AP_Common(){};

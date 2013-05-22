@@ -12,7 +12,7 @@ APHEXE = aph
 
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
 				  command_arguments ap_set_options ap_driver \
-				  ap_common
+				  ap_common command_option_base
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 

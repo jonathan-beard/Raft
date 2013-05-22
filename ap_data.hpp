@@ -104,6 +104,19 @@ public:
    APErrorStream& get_ap_errorstream();
 
    /**
+    *  get_userstream - returs the system wide user stream for output,
+    *  by default this is set to std::cout.
+    *  @return APUserStream&
+    */
+   UserStream&   get_userstream();
+   /**
+    *  get_errorstream - returns the system wide error stream for output
+    *  by default this is set to std::cerr
+    *  @return ErrorStream&
+    */
+   ErrorStream&  get_errorstream();
+
+   /**
     * set_current_line - sets the current line number stored to the param
     * line number, this method is intended for synchronizing with the 
     * scanner.

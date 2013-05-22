@@ -54,125 +54,9 @@
 #endif
 
 
-#ifndef TERM_WIDTH
-#define TERM_WIDTH 80
-#endif
-
-#ifndef FLAG_WIDTH
-#define FLAG_WIDTH 30
-#endif
-
-#ifdef __cplusplus
 
 #include "ap_data.hpp"
 #include "command_option_base.hpp"
-
-<<<<<<< HEAD
-
-/**
- * Option - simple template for options to be added to the 
- * given program.
- */
-template <class T> class Option{
-=======
-template <class T> class Option : public OptionBase {
->>>>>>> 646139b65719b240854d0032f48df25d0a3e6fea
-   public:
-      Option(T &in, 
-             std::string Flag, 
-             std::string Description,
-             std::function< T (T& ) > Function = nullptr,
-             bool Help = false) : OptionBase( Flag, Description, Help ),
-                                  item( in ),
-                                  F( Function ){ };
-
-      virtual ~Option(){ };
-
-      void setValue(T value)
-      { 
-         if( F == nullptr )
-            item = value; 
-         else
-         {
-            /* pre-process */
-            item = F(value);
-         }
-      }; 
-
-      std::string toString(){
-         const size_t total_width( TERM_WIDTH );
-         const size_t flag_width( FLAG_WIDTH );
-         std::stringstream s;
-         s.flags(std::ios::left);
-         s.width(flag_width);
-         s << _flag;
-         s.flags(std::ios::right);
-         
-         /* format the description + default properly */
-         const size_t description_width( total_width - flag_width );
-         std::stringstream desc;
-    desc << "// " << _description << ", default: " << format_item( item );
-         const std::string desc_str( desc.str() );
-         if(desc_str.length() > description_width){
-            /* width needs to be shortened and made multi-line */
-    char *space_buffer = (char*) malloc(sizeof(char) * flag_width + 4);
-            if(space_buffer == (char*)NULL){ 
-               perror("Failed to initialize space buffer!!");
-               exit( EXIT_FAILURE );
-            }
-            memset( space_buffer, 0x20 /* space */, sizeof(char) * 
-                                                      (flag_width + 4 ) );
-            space_buffer[ flag_width + 3 ] = '\0'; /* NULL term */ 
-            size_t char_count(1);
-            for( std::istringstream iss( desc_str ); iss.good();)
-            {
-               std::string curr_token;
-               iss >> curr_token;
-               char_count += ( curr_token.length() + 1 /* space */ );
-               if( char_count > description_width ){
-                  s << "\n";
-                  s << space_buffer;
-                  char_count = 1;
-               }
-               s << curr_token << " ";
-            }
-            free( space_buffer );
-         }else{
-            /* it fits */
-            s << desc_str;
-         }
-         return s.str();
-      };
-
-   private:
-
-      std::string format_item( T x ){
-         std::stringstream out;
-         out << x;
-         if( typeid(x) == typeid(bool) ){
-            if( *((bool*)(&x))  == true){
-               return("true");
-            }else{
-               return("false");
-            }
-         }else if( typeid(x) == typeid(double) ){
-            char buffer[100];
-            memset(buffer, '\0', sizeof(char) * 100);
-            snprintf(buffer, 100, "%0.3f", *((double*)(&x)));
-            std::stringstream ss;
-            ss << buffer;
-            return( ss.str() );
-         }
-         /* this should be the string case */ 
-         return( out.str() );
-      }
-
-      bool _help;
-      T &item;
-      std::string _flag;
-      std::string _description;
-      std::function<T (T&) > F;
-};
 
 /**
  * CmdArgs - actual cmd args class
@@ -195,10 +79,7 @@ class CmdArgs{
        * object, there is a method for int64_t, bool, std::string,
        * and double.  
        */
-      void addOption(Option<int64_t> *option);
-      void addOption(Option<bool> *option);
-      void addOption(Option<std::string> *option);
-      void addOption(Option<double> *option);
+      void addOption( OptionBase *option );
       /**
        * processArgs - to be called when all the options
        * are registered and you're ready to set the variables
@@ -208,40 +89,9 @@ class CmdArgs{
        */
       void processArgs(int argc, char **argv);
    private:
-     
-      std::vector<Option<int64_t>*     >  vInt;
-      std::vector<Option<bool>* >         vBool;
-      std::vector<Option<std::string>* >  vString;
-      std::vector<Option<double>* >       vDouble;
-
-      std::string name;
-      AP::AP_Data     &data;
+      std::vector< OptionBase * > options;
+      std::string                 name;
+      AP::AP_Data                 &data;
 };
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-/**
- * getCmdArgs - returns a pointer to a C++ style CmdArgs object
- * @return  (void*) - ptr to CmdArgs object
- */
-void* getCmdArgs();
-/**
- * destroyCmdArgs - pass a valid CmdArgs object ptr cast as a 
- * void* ptr to this method and it'll free the object.
- * @param   (void*)  - ptr to CmdArgs object
- */
-void  destroyCmdArgs(void *cmd_args);
-/**
- * _printArgs - prints all registered cmd line args to param stream
- * @param   FILE output stream to print args to
- */
- void _printArgs(FILE stream);
-
-
- #ifdef __cplusplus
- } /* END EXTERN C DEFINE */
- #endif
 
  #endif /* END __CMDARGS_H__ */

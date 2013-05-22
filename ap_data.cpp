@@ -94,6 +94,16 @@ APErrorStream& AP_Data::get_ap_errorstream()
    return( (*ap_errorstream) );
 }
 
+UserStream&  AP_Data::get_userstream()
+{
+   return( userstream );
+}
+
+ErrorStream&   AP_Data::get_errorstream()
+{
+   return( errorstream );
+}
+
 void  AP_Data::set_current_line( uint64_t line_number )
 {
    current_line = line_number;

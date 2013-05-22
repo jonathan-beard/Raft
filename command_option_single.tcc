@@ -18,7 +18,7 @@ template <class T> class Option : public OptionBase {
       Option(T &in, 
              std::string Flag, 
              std::string Description,
-             std::function< T (T& ) > Function = nullptr,
+             std::function< T (const char *, bool&) > Function = nullptr,
              bool Help = false) : OptionBase( Flag, Description, Help ),
                                   item( in ),
                                   F( Function )
@@ -33,9 +33,15 @@ template <class T> class Option : public OptionBase {
 
       virtual ~Option(){ };
 
-      virtual bool  
+      bool  
       setValue( const char* value )
       { 
+         if( F != nullptr )
+         {
+            bool success( true );
+            item = F( value , success );
+            return( success );
+         }
          T theRealValue;
          if( typeid(T) == typeid(bool) )
          {
@@ -51,7 +57,7 @@ template <class T> class Option : public OptionBase {
          }else if( typeid( T ) == typeid( int64_t ) )
          {
             errno = 0;
-            ((int64_t*)(&theRealValue)) = strtoll( value, NULL, 10 );
+            (*(int64_t*)(&theRealValue)) = strtoll( value, NULL, 10 );
             if( errno != EXIT_SUCCESS ) return( false );
          }else if( typeid( T ) == typeid( double ) )
          {
@@ -59,23 +65,14 @@ template <class T> class Option : public OptionBase {
             (*(double*)(&theRealValue)) = strtod( value, NULL );
             if( errno != EXIT_SUCCESS ) return( false );
          }
-
-         if( F == nullptr )
-         {
-            item = theRealValue; 
-         }
-         else
-         {
-            /* pre-process */
-            item = F( theRealValue );
-         }
+         item = theRealValue; 
          return( true );
       }
 
-      virtual std::string 
+      std::string 
       toString()
       {
-         OptionBase::toString( format_item( item ) );
+         return( OptionBase::toString( format_item( item ) ) );
       }
 
    private:
@@ -102,6 +99,6 @@ template <class T> class Option : public OptionBase {
       }
 
       T &item;
-      std::function<T (T&) > F;
+      std::function<T (const char*, bool&) > F;
 };
 #endif /* END _COMMAND_OPTION_SINGLE_TCC_ */

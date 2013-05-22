@@ -3,14 +3,27 @@
  * @author: Jonathan Beard
  * @version: Tue May 21 13:56:51 2013
  */
+#include <sstream>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <fstream>
+
 #include "command_option_base.hpp"
 
+#ifndef TERM_WIDTH
+#define TERM_WIDTH 80
+#endif
+
+#ifndef FLAG_WIDTH
+#define FLAG_WIDTH 30
+#endif
 
 OptionBase::OptionBase( const std::string Flag,
                         const std::string Description,
-                        bool  Help ) : flag( flag ),
+                        bool  Help ) : flag( Flag ),
                                        description( Description ),
-                                       is_help( Help )
+                                       help( Help )
 {
    /* nothing to do here */
 }
@@ -26,7 +39,7 @@ OptionBase::toString( const std::string defaultValue )
      std::stringstream s;
      s.flags(std::ios::left);
      s.width(flag_width);
-     s << _flag;
+     s << get_flag();
      s.flags(std::ios::right);
      
      /* format the description + default properly */
@@ -81,7 +94,7 @@ OptionBase::get_description()
 bool
 OptionBase::is_help()
 {
-   return( is_help );
+   return( help );
 }
 
 

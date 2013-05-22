@@ -16,10 +16,10 @@
 
 template <class T, int N> class OptionMultiple : public OptionBase {
 public:
-   OptionMultiple( std::array<T&, N > Items,
+   OptionMultiple( std::array<T*, N > Items,
                    std::string        Flag,
                    std::string        Description,
-                   std::array< std::function< T (T& ) > > Functions )
+               std::array< std::function< T (const char* , bool&) >,N > Functions )
                      : OptionBase( Flag, Description, false ),
                        items( Items ),
                        F( Functions ) 
@@ -35,41 +35,24 @@ public:
    virtual std::string 
    toString()
    {
-      OptionBase::toString( format_item( item.front() ) );
+      return( OptionBase::toString( format_item( *items.front() ) ) );
    }
 
    virtual bool  
    setValue( const char* value )
-   { 
+   {  
+      assert( value != nullptr );
       assert( F.size() == items.size() );
       auto it_function( F.begin() );
       auto it_item( items.begin() );
-      
-
-      T theRealValue;
-      if( typeid(T) == typeid(bool) )
+      for( ; it_function != F.end(); ++it_function, ++it_item )
       {
-         if( strcmp( value,  "true" ) == 0 )
-         {
-            (*(bool*)(&theRealValue)) = true;
-         }else if( strcmp( value, "false" ) == 0 )
-         {
-            (*(bool*)(&theRealValue)) = false;
-         }else{
+         bool success( true );
+         *(*it_item) = (*it_function)( value , success );
+         if( ! success ){
             return( false );
          }
-      }else if( typeid( T ) == typeid( int64_t ) )
-      {
-         errno = 0;
-         ((int64_t*)(&theRealValue)) = strtoll( value, NULL, 10 );
-         if( errno != EXIT_SUCCESS ) return( false );
-      }else if( typeid( T ) == typeid( double ) )
-      {
-         errno = 0;
-         (*(double*)(&theRealValue)) = strtod( value, NULL );
-         if( errno != EXIT_SUCCESS ) return( false );
       }
-      
       return( true );
    }
 
@@ -95,8 +78,9 @@ private:
       /* this should be the string case */ 
       return( out.str() );
    }
-   std::array<T&, N> items;
-   std::array< std::function< T (T& ) > > F;
+
+   std::array<T*, N> items;
+   std::array< std::function< T ( const char* , bool&) >, N > F;
 };
 
 #endif /* END _COMMAND_OPTION_MULTIPLE_HPP_ */

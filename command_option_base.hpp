@@ -6,16 +6,18 @@
 #ifndef _COMMAND_OPTION_BASE_HPP_
 #define _COMMAND_OPTION_BASE_HPP_  1
 
+#include <string>
+
 class OptionBase{
 public:
    OptionBase( const std::string flag,
-               const std::string description
+               const std::string description,
                bool  isHelp = false );
 
    virtual ~OptionBase();
 
 
-   virtual bool setValue( std::string value) = 0;
+   virtual bool setValue( const char *value ) = 0;
    virtual std::string toString() = 0;
 
    bool is_help();
@@ -28,6 +30,6 @@ protected:
 private:
    std::string flag;
    std::string description;
-   bool        is_help;
+   bool        help;
 };
 #endif /* END _COMMAND_OPTION_BASE_HPP_ */

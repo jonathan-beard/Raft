@@ -69,6 +69,30 @@ AP_Common::GetFileNameFromPath(std::string path, bool strip_ext)
    return(last_file);
 }
 
+std::string 
+AP_Common::GetFileNameFromPath(const char *Path, bool &status)
+{
+   bool strip_ext( false );
+   std::string path( Path );
+   std::string last_file;
+   size_t last_index = path.find_last_of('/');
+   if(last_index != path.length()){
+      last_file = path.substr(last_index + 1);
+   }else
+      last_file = path;
+   if(strip_ext){
+      std::stringstream ss;
+      for(auto it(last_file.begin()); it != last_file.end(); ++it){
+         if( (*it) == '.' ) break;
+         else
+            ss << (*it);      
+      }
+      last_file = ss.str();
+   }
+   status = true;
+   return(last_file);
+}
+
 
 std::string 
 AP_Common::ExtractPathNoFileName(std::string path)
@@ -80,5 +104,20 @@ AP_Common::ExtractPathNoFileName(std::string path)
    }else{
       dir_path  = "./";
    }      
+   return(dir_path);
+}
+
+std::string 
+AP_Common::ExtractPathNoFileName(const char *Path, bool &status)
+{
+   std::string path( Path );
+   std::string dir_path;
+   size_t last_index = path.find_last_of('/');
+   if(last_index <= path.length()){
+      dir_path = path.substr(0, last_index);
+   }else{
+      dir_path  = "./";
+   }
+   status = true;
    return(dir_path);
 }

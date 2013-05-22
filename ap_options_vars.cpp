@@ -60,6 +60,7 @@ void AP_Options_Vars::load_defaults()
    dump_parse_stream = false;
 
    input_filename = get_default_string();
+   input_dir_path = get_default_string();
 }
 
 std::string AP_Options_Vars::get_default_string(){

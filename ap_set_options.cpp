@@ -4,11 +4,15 @@
  * @version: Thu May 16 09:13:02 2013
  */
 #include <cassert>
+#include <array>
 
 #include "ap_set_options.hpp"
 #include "ap_data.hpp"
 #include "command_arguments.h"
 #include "ap_options_vars.hpp"
+#include "ap_common.hpp"
+#include "command_option_single.tcc"
+#include "command_option_multiple.tcc"
 
 void
 AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
@@ -17,7 +21,10 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
    cmd.addOption( new Option< bool >( options.help,
                      "-h",
                      "Print this message",
-                     nullptr,
+                     [](const char *x, bool &v){ 
+                        v = true;
+                        return( true ); 
+                     },
                      true ) );
    cmd.addOption( new Option< bool >( options.verbose,
                      "-v",
@@ -120,8 +127,19 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                      "-dump_parse_stream",
                      "Dump parse stream" ) );
 
-   cmd.addOption( new Option< std::string >(
-                     options.input_filename,
+   cmd.addOption( new OptionMultiple<std::string,2>(
+                     {{&options.input_filename,
+                       &options.input_dir_path}},
                      "-f",
-                     "Specify Autopipe input filename" ));
+                     "Specify Autopipe input filename",
+                       {{[&](const char *x, bool &v){
+                           std::string out(
+                   AP::AP_Common::GetFileNameFromPath( x, v ) );
+                           return( out ); 
+                         },
+                         [&](const char *x, bool &v){
+                           std::string out(
+                   AP::AP_Common::ExtractPathNoFileName( x, v ) );
+                           return( out ); } }}
+                        ) );
 }

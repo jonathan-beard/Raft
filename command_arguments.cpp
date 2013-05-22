@@ -45,128 +45,54 @@ void CmdArgs::printArgs(){
    stars[80] = '\0';
    std::cout << stars << std::endl;
    std::cout << "Options menu for: " << name << std::endl;
-   for_each( vInt.begin(),
-       vInt.end(),
-      [&](Option<int64_t> *x){ std::cout << x->toString() << std::endl;});
-   
-   for_each( vDouble.begin(),
-             vDouble.end(),
-       [&](Option<double> *x){ std::cout << x->toString() << std::endl;});
-   
-   for_each( vBool.begin(),
-             vBool.end(),
-      [&](Option<bool> *x){ std::cout << x->toString() << std::endl;});
-
-   for_each( vString.begin(),
-             vString.end(),
-             [&](Option<std::string> *x){ std::cout << 
-                                          x->toString() << 
-                                          std::endl;});
-
+   for_each( options.begin(),
+             options.end(),
+             [&]( OptionBase *option ){ 
+                  data.get_userstream() << 
+                        option->toString() << std::endl; } );
    std::cout << "End Options" << std::endl;
    std::cout << stars << std::endl;
-};
-
-/* TODO make more generic later */
-void CmdArgs::addOption(Option<int64_t> *option){
-   assert( option != nullptr );
-   vInt.push_back(option);
 }
 
-void CmdArgs::addOption(Option<bool> *option){
-   assert( option != nullptr );
-   vBool.push_back(option);
-}
 
-void CmdArgs::addOption(Option<std::string> *option){
+void 
+CmdArgs::addOption(OptionBase *option){
    assert( option != nullptr );
-   vString.push_back(option);
-}
-
-void CmdArgs::addOption(Option<double> *option){
-   assert( option != nullptr );
-   vDouble.push_back(option);
+   options.push_back(option);
 }
 
 void CmdArgs::processArgs(int argc, char **argv){
-   std::queue<std::string> ignored_options;
-   for(int i = 1 ; i < argc; i++){
+   std::queue< std::string > ignored_options;
+   for(int i = 1 ; i < argc; i++)
+   {
       for( auto it( options.begin() ); it != options.end(); ++it )
       {
-         if( strcmp( /* given argument */ argv[i],
-                     /* given flag     */ (*it)->get_flag().c_str() ) == 0 )
+       if( strcmp( /* given argument */ argv[i],
+                   /* given flag     */ (*it)->get_flag().c_str() ) == 0 )
          {
             /* increment past flag */
-            i++;
-            const bool success( (*it)->setValue( std::string( argv[i] ) ) );
-            if( success == true )
-            {
-               /* increment past value */
-               i++;
-            }
-            else
-            {
-               data.get_ap_errorstream() << "Invalid input for flag (" <<
-                  (*it)->get_flag() << ") : " << argv[i] << "\n";
-               raise( TERM_ERR_SIG );
-            }
-            goto END;
-         }
-      }
-
-      for( auto it( vInt.begin() ); it != vInt.end(); ++it){
-         if(strcmp( /* given argument */ argv[i], 
-                    /* given flag */ (*it)->get_flag().c_str() ) == 0){
-            const int64_t value = strtoll( argv[++i], NULL, 10);
-            (*it)->setValue( value ); 
-            goto END;
-         }
-      }
-      for(auto it( vBool.begin()); it != vBool.end(); ++it){
-         if(strcmp( argv[i] , (*it)->get_flag() ) == 0){
-            bool input = false;
-            if( (*it)->is_help() ){
-               input = true;
-            }else{
-               if( (i+1) >= argc) break;
-               if(strcmp( argv[i+1] , "true" ) == 0){
-                  input = true;
-               }else if( strcmp( argv[i+1] , "false" ) == 0){
-                  input = false;
-               }else{
-                  std::stringstream ss;
-                  for( int j(1); j < argc; j++ ) ss << argv[j] << " ";
-                  data.get_ap_errorstream() << 
-                     "Invalid input at processArgs, check input!! \n" <<
-                     "Given: " << ss.str() << "\n" <<
-                     "Exiting!!\n";
-                  raise( TERM_ERR_SIG );
-               }
-            }
-            ++i;
-            (*it)->setValue(input);
-            goto END;
-         }  
-      }
-      for(auto it(vString.begin()); it != vString.end(); ++it){
-         if( strcmp( argv[i] , (*it)->get_flag() ) == 0){
-            (*it)->setValue( argv[i+1] );
-            ++i;
-            goto END;
-         }
-      }
+          if(! (*it)->is_help() ) i++;
+          const bool success( (*it)->setValue(  argv[i]  ) );
+          if( success != true )
+          {
+             data.get_ap_errorstream() << "Invalid input for flag (" <<
+                (*it)->get_flag() << ") : " << argv[i] << "\n";
+             raise( TERM_ERR_SIG );
+          }
+          goto END;
+       }
+    }
       ignored_options.push( std::string( argv[i] ) );
       END:;
-
    }
    
    if(! ignored_options.empty() ){
-      std::cerr << 
+      data.get_errorstream() << 
          "The following options were unknown and ignored: " << std::endl;
    }
    while(! ignored_options.empty() ){
       std::string option = ignored_options.front();
       ignored_options.pop();
-      std::cerr << option << "\n";
+      data.get_errorstream() << option << std::endl;
    }
 }
