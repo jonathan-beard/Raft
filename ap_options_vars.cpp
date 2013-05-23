@@ -4,6 +4,8 @@
  * @version: Fri Dec 14 13:41:06 2012
  */
 #include <cassert>
+#include <unistd.h>
+#include <cstring>
 
 #include "ap_options_vars.hpp"
 
@@ -25,10 +27,15 @@ void AP_Options_Vars::load_defaults()
 
 
    /* set code directory to pwd */
-   const char *pwd = getenv( "PWD" );
-   assert( pwd != nullptr );
+   const size_t buffer_size( 4096 );
+   char pwd[ buffer_size ];
+   memset( pwd, '\0', sizeof(char) * buffer_size );
+   errno = EXIT_SUCCESS;
+   char *ret_val_pwd( nullptr );
+   ret_val_pwd = getcwd( pwd, buffer_size );
+   assert( ret_val_pwd != nullptr );
+   assert( errno == EXIT_SUCCESS );
    send_code_to_directory = std::string( pwd );
-
 
    /* optimization stuff */
    optimization_level = 0;

@@ -5,7 +5,7 @@ DEBUG = -g
 CFLAGS = -Wall -O0  $(DEBUG)
 CXXFLAGS = -Wall -O0 $(DEBUG)
 CSTD = -std=c99
-CXXSTD = -std=c++11 -stdlib=libc++
+CXXSTD = -std=c++11 #-stdlib=libc++
 
 
 APCOMEXE = apcom
@@ -30,11 +30,11 @@ APHOBJS = $(addsuffix .o, $(APHCPPOBJ))
 CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
              $(APCOMSOBJS)\
              $(addsuffix .o, $(APHSOBJ) )    \
-				 $(APCOMOBJS) test\
+				 $(APCOMOBJS)\
 				 ap_parser.tab.cc ap_parser.tab.hh \
 				 location.hh position.hh \
 			    stack.hh ap_parser.output \
-				 ap_lexer.yy.cc aph_lexer.yy.cc $(EXE)\
+				 ap_lexer.yy.cc aph_lexer.yy.cc $(APCOMEXE)\
 
 .PHONY: all
 all:  apcom
@@ -42,7 +42,7 @@ all:  apcom
 apcom: $(APCOMFILES)
 	$(MAKE) $(APCOMSOBJ)
 	$(MAKE) $(APCOMOBJS)
-	$(CXX) $(CXXFLAGS) $(CXXSTD) -o test $(APCOMOBJS) \
+	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APCOMEXE) $(APCOMOBJS) \
 	$(APCOMSOBJS) $(LIBS)
 
 aph: $(APHFILES)

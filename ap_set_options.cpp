@@ -83,7 +83,7 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                      "Output image for AP hardware mapped topology" ));
    cmd.addOption( new Option< std::string >(
                      options.map_objective,
-                     "-mapping_objectibe",
+                     "-mapping_objective",
                      "Objective for optimizations" ) );
    cmd.addOption( new Option< std::string >(
                      options.hardware_defs_file,

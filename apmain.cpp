@@ -112,6 +112,7 @@ main( const int argc, char **argv )
    auto *files( 
       AP_Prep::get_ap_includes( options.input_full_path , ap_data ) );
    assert( files != nullptr );
+   /* setup dump include file list */
    std::stringstream *dump_include_list( nullptr );
    if( options.dump_include_file_list )
    {
@@ -133,8 +134,9 @@ main( const int argc, char **argv )
       AP::AP_Common::Dump( (*dump_include_list).str(), 
                            include_dump_file );
       delete( dump_include_list );
+      dump_include_list = nullptr;
    }
-
+   assert( dump_include_list == nullptr );
    app.run( options.input_full_path );
    std::stringstream &cpp_output( app.output() );
    if( options.dump_cpp_output )
@@ -146,22 +148,20 @@ main( const int argc, char **argv )
 
 
 
-   std::set<std::string> &file_list( app.get_file_list() );
    auto &paths( app.get_include_paths() );
    for( std::pair< std::string, std::string> str : paths ){
       std::cout << str.first << " - " << str.second << std::endl; 
    }
 
-/*
-   std::istringstream parser_stream( output.str() );
+
+   std::istringstream parser_stream( cpp_output.str() );
  
    AP::AP_Driver driver( ap_data );
    std::cout << "Calling parse!!\n";
    driver.parse( parser_stream );
    std::cout << "Done with parse!!\n";
-*/   
-   /* just in case raise parse error stream to flush it if there are any */
    
+   /* just in case raise parse error stream to flush it if there are any */
    raise( PARSE_ERR_SIG );
    return( EXIT_SUCCESS );
 }
