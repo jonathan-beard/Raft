@@ -7,6 +7,7 @@
 
 /* pre-declare classes that are needed for the parser here */
 %code requires{
+
    namespace AP {
       class AP_Driver;
       class AP_Scanner;

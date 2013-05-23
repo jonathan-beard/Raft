@@ -6,10 +6,13 @@
 #ifndef _NODEABSTRACT_HPP_
 #define _NODEABSTRACT_HPP_  1
 
-#include <stdint>
+#include <cstdint>
 #include <vector>
+#include "Type.hpp"
 
-typedef std::vector<NodeAbstract* > Siblings;
+
+
+namespace Node{
 
 class NodeAbstract {
 public:
@@ -100,6 +103,8 @@ public:
     */
    static   void  invoke( DefaultVisitor &visitor, 
                           NodeAbstract *root );
+    
+   typedef std::vector<NodeAbstract* > Siblings;
 
 private:
    static int64_t              number_of_nodes;
@@ -110,5 +115,7 @@ private:
    Type                        type;
    std::string                 name;
 };
+
+} /* end namespace Node */
 
 #endif /* END _NODEABSTRACT_HPP_ */

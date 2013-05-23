@@ -5,6 +5,8 @@
  */
 #include "NodeAbstract.hpp"
 
+using namespace Node;
+
 /* private static variables */
 int64_t NodeAbstract::number_of_nodes = 0;
 

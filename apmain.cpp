@@ -55,6 +55,7 @@ term_error_handler( int signal )
       std::cerr << err_str << "\n";
    }
    ap_data.reset_ap_errorstream();
+   exit( EXIT_FAILURE );
 }
 
 int

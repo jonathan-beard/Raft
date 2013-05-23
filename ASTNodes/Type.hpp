@@ -6,6 +6,11 @@
 #ifndef _TYPE_HPP_
 #define _TYPE_HPP_  1
 
+#include <string>
+#include <ostream>
+
+namespace Node{
+
 class Type{
 public:
    /* constructor */
@@ -22,4 +27,5 @@ protected:
 
 };
 
+} /* end namespace Node */
 #endif /* END _TYPE_HPP_ */
