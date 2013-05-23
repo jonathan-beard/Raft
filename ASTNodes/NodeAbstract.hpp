@@ -8,6 +8,11 @@
 
 #include <cstdint>
 #include <vector>
+
+namespace Visitor{
+   class DefaultVisitor;
+}
+
 #include "Type.hpp"
 
 
@@ -73,12 +78,12 @@ public:
    std::vector<NodeAbstract* >&  get_siblings();
 
    NodeAbstract*        get_child();
-   const Type&          get_type();
-   void                 set_type( const Type *type );
+   const Type&          get_type() const;
+   void                 set_type( const Type &type );
 
    int64_t              get_number();
 
-   const std::string&   get_name();
+   const std::string&   get_name() const ;
    void                 set_name( std::string name );
    void                 set_name( const std::string &name ); 
    
@@ -89,7 +94,7 @@ public:
     * will be called.
     * @param   visitor - DefaultVisitor&
     */
-   void                 Accept( DefaultVisitor &visitor );
+   void                 Accept( Visitor::DefaultVisitor &visitor );
 
    /**
     * invoke - invokes the visitor v on the root node passed in 
@@ -101,7 +106,7 @@ public:
     * @param   visitor - DefaultVisitor&
     * @param   root    - NodeAbstract*
     */
-   static   void  invoke( DefaultVisitor &visitor, 
+   static   void  invoke( Visitor::DefaultVisitor &visitor, 
                           NodeAbstract *root );
     
 

@@ -2,10 +2,10 @@ CC   = clang
 CXX  = clang++
 
 DEBUG = -g
-CFLAGS = -Wall -O0  $(DEBUG)
-CXXFLAGS = -Wall -O0 $(DEBUG)
-CSTD = -std=c99
 CXXSTD = -std=c++11 #-stdlib=libc++
+CSTD = -std=c99
+CFLAGS = -Wall -O0 $(CSTD) $(DEBUG)
+CXXFLAGS = -Wall -O0 $(CXXSTD) $(DEBUG)
 
 
 TEST=test
@@ -24,8 +24,8 @@ test: $(FILES)
 	$(MAKE) $(OBJS)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(TEST) $(OBJS) \
 
-%.o: %.cpp
-	$(CXX) $(CXXSTD) -c $(CXXFLAGS) -o $@ $<
+#%.o: %.cpp
+#	$(CXX) $(CXXSTD) -c $(CXXFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:

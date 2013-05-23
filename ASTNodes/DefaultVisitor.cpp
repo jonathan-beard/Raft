@@ -9,6 +9,8 @@
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 
+using namespace Visitor;
+using namespace Node;
 
 DefaultVisitor::DefaultVisitor() : errstream( std::cerr )
 {

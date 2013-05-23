@@ -20,8 +20,18 @@ Type::~Type()
    /* nothing to destroy :( */
 }
 
-std::string Type::print( std::ostream &stream )
+void
+set_type( const Type &type )
+{
+   (this)->name = type.name;
+}
+
+std::ostream&
+Type::print( std::ostream &stream )
 {
    stream << name;
+   return( stream );
 }
+
+
 

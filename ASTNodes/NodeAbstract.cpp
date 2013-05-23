@@ -3,6 +3,10 @@
  * @author: Jonathan Beard
  * @version: Mon May 13 09:20:17 2013
  */
+#include <cassert>
+#include <algorithm>
+#include <cstdint>
+#include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 
 using namespace Node;
@@ -17,7 +21,7 @@ NodeAbstract::NodeAbstract() :
             child( nullptr ),
             name("NodeAbstract")
 {
-   type = new Type();
+   /* nothing realy to do here */
 }
 
 /* copy constructor */
@@ -26,8 +30,10 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
    node_number = node.node_number;
    parent = node.parent;
    child  = node.child;
-   siblings.insert( node.siblings.begin(), node.siblings.end() );
-   type.set( node.type );
+   siblings.insert( siblings.end(),
+                    node.siblings.begin(), 
+                    node.siblings.end() );
+   (this)->type.set_type( node.get_type() );
 }
 
 
@@ -39,7 +45,7 @@ NodeAbstract::~NodeAbstract()
       delete( child );
       child = nullptr;
    }
-   foreach( NodeAbstract *node : siblings )
+   for( NodeAbstract *node : siblings )
    {
       if( node != nullptr )
       {
@@ -63,15 +69,17 @@ void NodeAbstract::MakeSibling( NodeAbstract *sib )
    /* get all siblings nodes */
    for_each( sib_siblings.begin(),
              sib_siblings.end(),
-             [&]( NodeAbstract *sib ){ all.insert( sib ); } );
+             [&]( NodeAbstract *sib ){ all.push_back( sib ); } );
    /* get my nodes */
    for_each( my_siblings.begin(),
              my_siblings.end(),
-             [&]( NodeAbstract *sib ){ all.insert( sib ); } );
+             [&]( NodeAbstract *sib ){ all.push_back( sib ); } );
    /* get all nodes & update all siblings */
    for( NodeAbstract *node : all )
    {
-      node->siblings.insert( all.begin(), all.end() );
+      node->siblings.insert( node->siblings.end(),
+                             all.begin(), 
+                             all.end() );
    }
 }
 
@@ -85,7 +93,7 @@ void NodeAbstract::AdoptChildren( NodeAbstract *node )
    }
    else
    {
-      this->child->MakeSiblings( node ); 
+      this->child->MakeSibling( node ); 
    }
 }
 
@@ -127,21 +135,9 @@ const Type&    NodeAbstract::get_type()
    return( *(this->type) );
 }
 
-void           NodeAbstract::set_type( const Type *type )
+void           NodeAbstract::set_type( const Type &type )
 {
-   assert( type != nullptr );
-   /* trivial stupid case where two types
-    * are the same mem location
-    */
-   if( this->type == type ) return;
-   /* if we're changing the type then get rid of the 
-    * one that's here
-    */
-   if( this->type != nullptr ) delete( this->type );
-   /*
-    * set the type to new ptr 
-    */
-   this->type = type;
+   this->type.set_type( type );
 }  
 
 const std::string&      NodeAbstract::get_name()

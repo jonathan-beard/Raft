@@ -8,8 +8,11 @@
 
 #include <ostream>
 
-/* declarations */
-class NodeAbstract;
+namespace Node{
+   class NodeAbstract;
+}
+
+namespace Visitor{
 
 class DefaultVisitor {
 public:
@@ -19,13 +22,14 @@ public:
 
 protected:
    /* default visit, you must have at least this one */
-   virtual void Visit( NodeAbstract *node ) = 0;
+   virtual void Visit( Node::NodeAbstract *node ) = 0;
 
-   virtual void VisitChildren( NodeAbstract *node );
+   virtual void VisitChildren( Node::NodeAbstract *node );
 
    virtual void Error(std::string s);
 private:
    std::ostream &errstream;
 };
 
+} /* end namespace visitor */
 #endif /* END _DEFAULTVISITOR_HPP_ */
