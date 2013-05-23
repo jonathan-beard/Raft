@@ -6,11 +6,7 @@
 #ifndef _APOPTIONSVARS_HPP_
 #define _APOPTIONSVARS_HPP_  1
 
-#ifdef __APPLE__
-#include <tr1/cstdint>
-#else
 #include <cstdint>
-#endif
 #include <string>
 
 struct AP_Options_Vars{

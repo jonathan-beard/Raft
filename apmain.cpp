@@ -129,7 +129,7 @@ main( const int argc, char **argv )
    if( options.dump_include_file_list )
    {
       const std::string include_dump_file( 
-         "include_dump_" + options.input_filename );
+         "dump_include_" + options.input_filename );
       AP::AP_Common::Dump( (*dump_include_list).str(), 
                            include_dump_file );
       delete( dump_include_list );
@@ -140,18 +140,18 @@ main( const int argc, char **argv )
    if( options.dump_cpp_output )
    {
       const std::string cpp_dump_filename( 
-            "cpp_dump_" + options.input_filename );
+            "dump_cpp_" + options.input_filename );
       AP::AP_Common::Dump( cpp_output.str(), cpp_dump_filename ); 
    }
 
 
-/*  
+
    std::set<std::string> &file_list( app.get_file_list() );
    auto &paths( app.get_include_paths() );
    for( std::pair< std::string, std::string> str : paths ){
       std::cout << str.first << " - " << str.second << std::endl; 
    }
-*/
+
 /*
    std::istringstream parser_stream( output.str() );
  

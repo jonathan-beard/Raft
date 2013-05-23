@@ -23,35 +23,15 @@
 #ifndef __CMDARGS_H__
 #define __CMDARGS_H__
 
-#ifdef __cplusplus
-/* C++ includes */
 #include <cstdlib>
-
-#ifdef __APPLE__ /* apple doesn't have the most up to date c++ headers */
-#ifndef _GLIBCXX_USE_C99_STDINT_TR1
-#define _GLIBCXX_USE_C99_STDINT_TR1
-#endif
-#include <tr1/cstdint>
-#ifndef _GLIBCXX_USE_C99_INTTYPES_TR1
-#define _GLIBCXX_USE_C99_INTTYPES_TR1
-#endif
-#include <tr1/cinttypes>
-#else
 #include <cinttypes>
 #include <cstdint>
-#endif
 #include <functional>
 #include <typeinfo>
 #include <cstring>
 #include <sstream>
 #include <vector>
 #include <iostream>
-#else
-/* C includes */
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#endif
 
 
 

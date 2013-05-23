@@ -64,6 +64,9 @@ template <class T> class Option : public OptionBase {
             errno = 0;
             (*(double*)(&theRealValue)) = strtod( value, NULL );
             if( errno != EXIT_SUCCESS ) return( false );
+         }else{
+            /* invalid type conversion */
+            return( false );
          }
          item = theRealValue; 
          return( true );

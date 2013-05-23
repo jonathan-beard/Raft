@@ -10,14 +10,8 @@
 #include <sstream>
 #include <cassert>
 
-/* for std::int types */
-#ifdef __APPLE__
-/* Apple's c++ headers are a bit stale */
-#include <tr1/cstdint>
-#else
 /* for everybody else with C++11 */
 #include <cstdint>
-#endif
 
 struct AP_Options_Vars;
 
