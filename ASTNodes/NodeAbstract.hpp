@@ -70,7 +70,7 @@ public:
    void                 set_parent( NodeAbstract *parent );
    NodeAbstract*        get_parent();
 
-   Siblings&            get_siblings();
+   std::vector<NodeAbstract* >&  get_siblings();
 
    NodeAbstract*        get_child();
    const Type&          get_type();
@@ -104,14 +104,13 @@ public:
    static   void  invoke( DefaultVisitor &visitor, 
                           NodeAbstract *root );
     
-   typedef std::vector<NodeAbstract* > Siblings;
 
 private:
    static int64_t              number_of_nodes;
    int64_t                     node_number;
    NodeAbstract                *parent;
    NodeAbstract                *child;
-   Siblings                    siblings;
+   std::vector<NodeAbstract* > siblings;
    Type                        type;
    std::string                 name;
 };

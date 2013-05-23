@@ -55,11 +55,11 @@ void NodeAbstract::MakeSibling( NodeAbstract *sib )
 {
    assert( sib != nullptr );
    /* need to make siblings alike so we'll merge their sets */
-   Siblings all;
+   std::vector<NodeAbstract* >  all;
    /* this sibling should already have the same siblings as all its sibs */
-   const Siblings &sib_siblings( sib->siblings ); 
+   const auto &sib_siblings( sib->siblings ); 
    /* the same goes for this guy */
-   const Siblings &my_siblings( this->siblings );
+   const auto &my_siblings( this->siblings );
    /* get all siblings nodes */
    for_each( sib_siblings.begin(),
              sib_siblings.end(),
@@ -112,7 +112,7 @@ void           NodeAbstract::get_parent()
    return( this->parent );
 }
 
-Siblings&      NodeAbstract::get_siblings()
+std::vector<NodeAbstract* >&      NodeAbstract::get_siblings()
 {
    return( siblings );
 }
