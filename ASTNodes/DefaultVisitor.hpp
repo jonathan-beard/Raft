@@ -8,6 +8,10 @@
 
 #include <ostream>
 
+namespace AP{
+   class AP_Data;
+}
+
 namespace Node{
    class NodeAbstract;
 }
@@ -16,7 +20,7 @@ namespace Visitor{
 
 class DefaultVisitor {
 public:
-   DefaultVisitor();
+   DefaultVisitor( AP::AP_Data &d );
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
@@ -26,8 +30,8 @@ public:
    virtual void VisitChildren( Node::NodeAbstract *node );
 
    virtual void Error(std::string s);
-private:
-   std::ostream &errstream;
+protected:
+   AP::AP_Data  &data;
 };
 
 } /* end namespace visitor */

@@ -8,6 +8,10 @@
 
 #include "DefaultVisitor.hpp"
 
+namespace AP{
+   class AP_Data;
+}
+
 namespace Node{
    class NodeAbstract;
 }
@@ -16,7 +20,7 @@ namespace Visitor{
 
 class DebugVisitor : public DefaultVisitor {
 public:
-   DebugVisitor();
+   DebugVisitor( AP::AP_Data &d );
    virtual ~DebugVisitor();
 
    /**

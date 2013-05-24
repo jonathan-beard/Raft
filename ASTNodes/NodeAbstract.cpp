@@ -33,8 +33,7 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
    node_number = node.node_number;
    parent = node.parent;
    child  = node.child;
-   siblings.insert( siblings.end(),
-                    node.siblings.begin(), 
+   siblings.insert( node.siblings.begin(), 
                     node.siblings.end() );
    (this)->type.set_type( node.get_type() );
 }
@@ -59,44 +58,12 @@ void
 NodeAbstract::MakeSibling( NodeAbstract *sib )
 {
    assert( sib != nullptr );
-   /* TODO fix this, make the siblings sets
-    * so the siblings get added properly
-    * with no duplicates
-    */
+   siblings.insert( sib );
+   sib->siblings.insert( this );
 
-   if( sib == this )
-   {
-      /* check to see if there are any siblings yet */
-      if( siblings.size() == 0 )
-      {
-         siblings.push_back( this );
-         return;
-      }
-   }
-   /* need to make siblings alike so we'll merge their sets */
-   std::vector<NodeAbstract* >  all;
-   /** 
-    * this sibling should already have the same siblings 
-    * as all its sibs 
-    */
-   const auto &sib_siblings( sib->siblings ); 
-   /* the same goes for this guy */
-   const auto &my_siblings( this->siblings );
-   /* get all siblings nodes */
-   for_each( sib_siblings.begin(),
-             sib_siblings.end(),
-             [&]( NodeAbstract *sib ){ all.push_back( sib ); } );
-   /* get my nodes */
-   for_each( my_siblings.begin(),
-             my_siblings.end(),
-             [&]( NodeAbstract *sib ){ all.push_back( sib ); } );
-   /* get all nodes & update all siblings */
-   for( NodeAbstract *node : all )
-   {
-      node->siblings.insert( node->siblings.end(),
-                             all.begin(), 
-                             all.end() );
-   }
+   auto &sib_siblings( sib->siblings ); 
+   siblings.insert( sib_siblings.begin(), sib_siblings.end() );
+   sib_siblings.insert( siblings.begin(), siblings.end() ); 
 }
 
 
@@ -127,7 +94,7 @@ void NodeAbstract::Orphan()
 NodeAbstract*  NodeAbstract::get_first_sibling()
 {
    if( siblings.size() == 0 ) return( nullptr );
-   return( siblings.front() );
+   return( ( *siblings.begin() ) );
 }
 
 void           NodeAbstract::set_parent( NodeAbstract *parent )
@@ -141,7 +108,8 @@ NodeAbstract* NodeAbstract::get_parent()
    return( this->parent );
 }
 
-std::vector<NodeAbstract* >&      NodeAbstract::get_siblings()
+std::set<NodeAbstract* >&      
+NodeAbstract::get_siblings()
 {
    return( siblings );
 }

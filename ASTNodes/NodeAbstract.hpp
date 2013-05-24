@@ -7,7 +7,7 @@
 #define _NODEABSTRACT_HPP_  1
 
 #include <cstdint>
-#include <vector>
+#include <set>
 
 namespace Visitor{
    class DefaultVisitor;
@@ -75,7 +75,7 @@ public:
    void                 set_parent( NodeAbstract *parent );
    NodeAbstract*        get_parent();
 
-   std::vector<NodeAbstract* >&  get_siblings();
+   std::set<NodeAbstract* >&  get_siblings();
 
    NodeAbstract*        get_child();
    const Type&          get_type() const;
@@ -116,7 +116,7 @@ private:
    int64_t                     node_number;
    NodeAbstract                *parent;
    NodeAbstract                *child;
-   std::vector<NodeAbstract* > siblings;
+   std::set<NodeAbstract* >    siblings;
    Type                        type;
    std::string                 name;
 };

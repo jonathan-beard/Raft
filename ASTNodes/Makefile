@@ -17,7 +17,7 @@ CXXFLAGS = -Wall -O0 $(CXXSTD) $(DEBUG)
 TEST=test
 
 CPPOBJ=main NodeAbstract Type DefaultVisitor NodeDumpable \
-		 DebugVisitor
+		 DebugVisitor ap_data
 FILES=$(addsuffix .cpp, $(CPPOBJ))
 OBJS=$(addsuffix .o, $(CPPOBJ))
 

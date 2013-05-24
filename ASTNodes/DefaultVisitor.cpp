@@ -9,16 +9,20 @@
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 
+#include "ap_data.hpp"
+
 using namespace Visitor;
 using namespace Node;
 
-DefaultVisitor::DefaultVisitor() : errstream( std::cerr )
+
+DefaultVisitor::DefaultVisitor(AP::AP_Data &d) : 
+                               data( d )
 {
    /* nothing else to construct at the moment */
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
-                                       errstream( visitor.errstream )
+                                data( visitor.data )
 {
    /* not much to copy at the moment */
 }
@@ -28,7 +32,8 @@ DefaultVisitor::~DefaultVisitor()
    /* nothing to destroy :( */
 }
 
-void DefaultVisitor::VisitChildren( NodeAbstract *node )
+void 
+DefaultVisitor::VisitChildren( NodeAbstract *node )
 {
    assert( node != nullptr );
    NodeAbstract *child( node->get_child() );
@@ -44,7 +49,8 @@ void DefaultVisitor::VisitChildren( NodeAbstract *node )
    }
 }
 
-void DefaultVisitor::Error( std::string s )
+void 
+DefaultVisitor::Error( std::string s )
 {
-   errstream << s << std::endl;
+   data.get_ap_errorstream() << s << std::endl;
 }

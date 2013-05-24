@@ -6,9 +6,13 @@
 #include  <iostream>
 #include "DebugVisitor.hpp"
 #include "NodeAbstract.hpp"
+
+#include "ap_data.hpp"
+
 using namespace Visitor;
 
-DebugVisitor::DebugVisitor() : DefaultVisitor()
+DebugVisitor::DebugVisitor( AP::AP_Data &data ) : 
+                            DefaultVisitor( data )
 {
    /* nothing really to do here */
 }
