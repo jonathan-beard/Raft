@@ -20,7 +20,6 @@ public:
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
-protected:
    /* default visit, you must have at least this one */
    virtual void Visit( Node::NodeAbstract *node ) = 0;
 

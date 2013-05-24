@@ -18,7 +18,7 @@ DefaultVisitor::DefaultVisitor() : errstream( std::cerr )
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
-                                       errstream( visitor.errstream );
+                                       errstream( visitor.errstream )
 {
    /* not much to copy at the moment */
 }
@@ -35,7 +35,8 @@ void DefaultVisitor::VisitChildren( NodeAbstract *node )
    if( child == nullptr ) return;
    else /* by def child is in siblings list */
    {
-      for( NodeAbstract *sib : child->get_siblings )
+      std::vector<NodeAbstract* > &siblings( child->get_siblings() );
+      for( NodeAbstract *sib : siblings )
       {
          sib->Accept( (*this) );
       }

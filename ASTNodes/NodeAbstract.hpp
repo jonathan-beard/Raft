@@ -87,6 +87,9 @@ public:
    void                 set_name( std::string name );
    void                 set_name( const std::string &name ); 
    
+
+   std::ostream&        print( std::ostream &stream );
+
    /**
     * Accept - method calls the visit method of the visitor
     * from the calling node.  The visitor should have a 

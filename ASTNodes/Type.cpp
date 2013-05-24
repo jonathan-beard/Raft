@@ -5,6 +5,8 @@
  */
 #include "Type.hpp"
 
+using namespace Node;
+
 Type::Type() : name( "AbstractType" )
 {
    /* nothing to do */
@@ -21,7 +23,7 @@ Type::~Type()
 }
 
 void
-set_type( const Type &type )
+Type::set_type( const Type &type )
 {
    (this)->name = type.name;
 }

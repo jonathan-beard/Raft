@@ -115,7 +115,7 @@ void           NodeAbstract::set_parent( NodeAbstract *parent )
    this->parent = parent;
 }
 
-void           NodeAbstract::get_parent()
+NodeAbstract* NodeAbstract::get_parent()
 {
    return( this->parent );
 }
@@ -130,9 +130,9 @@ NodeAbstract*  NodeAbstract::get_child()
    return( this->child );
 }
 
-const Type&    NodeAbstract::get_type()
+const Type&    NodeAbstract::get_type() const
 {
-   return( *(this->type) );
+   return( this->type );
 }
 
 void           NodeAbstract::set_type( const Type &type )
@@ -140,7 +140,13 @@ void           NodeAbstract::set_type( const Type &type )
    this->type.set_type( type );
 }  
 
-const std::string&      NodeAbstract::get_name()
+int64_t
+NodeAbstract::get_number()
+{
+   return( node_number );
+}
+
+const std::string&      NodeAbstract::get_name() const
 {
    return( this->name );
 }
@@ -154,12 +160,20 @@ void                    NodeAbstract::set_name( const std::string &name )
    this->name = name;
 }
 
-void  NodeAbstract::Accept( DefaultVisitor &visitor )
+
+std::ostream&
+NodeAbstract::print( std::ostream &stream)
 {
-   visitor->visit( this );
+   stream << "Node: " << get_number() << " - " << get_name();
+   return( stream );
 }
 
-void  NodeAbstract::invoke( DefaultVisitor &visitor,
+void  NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
+{
+   visitor.Visit( this );
+}
+
+void  NodeAbstract::invoke( Visitor::DefaultVisitor &visitor,
                             NodeAbstract   *root )
 {  
    assert( root    != nullptr );

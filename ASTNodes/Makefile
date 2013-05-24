@@ -1,8 +1,14 @@
 CC   = clang
 CXX  = clang++
 
+ifeq ($(shell uname -s), Darwin)
+DARWIN = -stdlib=libc++
+else
+DARWIN = 
+endif
+
 DEBUG = -g
-CXXSTD = -std=c++11 #-stdlib=libc++
+CXXSTD = -std=c++11 $(DARWIN)
 CSTD = -std=c99
 CFLAGS = -Wall -O0 $(CSTD) $(DEBUG)
 CXXFLAGS = -Wall -O0 $(CXXSTD) $(DEBUG)

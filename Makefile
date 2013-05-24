@@ -1,11 +1,17 @@
 CC   = clang
 CXX  = clang++
 
+ifeq ($(shell uname -s),Darwin)
+DARWIN = -stdlib=libc++
+else
+DARWIN = 
+endif
+
 DEBUG = -g
 CFLAGS = -Wall -O0  $(DEBUG)
 CXXFLAGS = -Wall -O0 $(DEBUG)
 CSTD = -std=c99
-CXXSTD = -std=c++11 #-stdlib=libc++
+CXXSTD = -std=c++11 $(DARWIN)
 
 
 APCOMEXE = apcom
