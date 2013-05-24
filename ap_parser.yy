@@ -8,6 +8,10 @@
 /* pre-declare classes that are needed for the parser here */
 %code requires{
 
+   namespace Node{
+      class NodeAbstract;
+   }
+
    namespace AP {
       class AP_Driver;
       class AP_Scanner;
@@ -29,6 +33,8 @@
    #include <iostream>
    #include <cstdlib>
    #include <fstream>
+   #include "NodeAbstract.hpp"
+
 
    /* include for all driver functions */
    #include "ap_driver.hpp"
@@ -43,177 +49,125 @@
 
 /* token types */
 %union{
-   std::string *sval;
+   std::string        *sval;
+   long long int       lval;
+   long double         dval;
+   Node::NodeAbstract *node_val;
 }
 
-%token             END     0     "end of file"
-%token   <sval>    LEFTBRACE  
-%token   <sval>    RIGHTBRACE  
-%token   <sval>    LEFTBRACKET  
-%token   <sval>    RIGHTBRACKET  
-%token   <sval>    LPAREN  
-%token   <sval>    RPAREN  
-%token   <sval>    LCARROT  
-%token   <sval>    RCARROT  
-%token   <sval>    COLON  
-%token   <sval>    SEMI  
-%token   <sval>    AT  
-%token   <sval>    DEFINE  
-%token   <sval>    PORTS  
-%token   <sval>    CONFIGS  
-%token   <sval>    AUTOGEN  
-%token   <sval>    AUTO  
-%token   <sval>    FINAL  
-%token   <sval>    CLASS  
-%token   <sval>    SYSTEM 
-%token   <sval>    ABSTRACT  
-%token   <sval>    INTERFACE  
-%token   <sval>    OVERRIDES  
-%token   <sval>    IMPLEMENTS  
-%token   <sval>    EXTENDS  
-%token   <sval>    PUBLIC  
-%token   <sval>    PRIVATE  
-%token   <sval>    PROTECTED  
-%token   <sval>    RETURN  
-%token   <sval>    VOID  
-%token   <sval>    THIS  
-%token   <sval>    FOR  
-%token   <sval>    FOREACH  
-%token   <sval>    WHILE  
-%token   <sval>    IF  
-%token   <sval>    ELSE  
-%token   <sval>    NILL  
-%token   <sval>    NEW  
-%token   <sval>    INCREMENT  
-%token   <sval>    DECREMENT  
-%token   <sval>    QUESTION  
-%token   <sval>    FORWARDSLASH  
-%token   <sval>    MINUS  
-%token   <sval>    PLUS  
-%token   <sval>    OP_EQ  
-%token   <sval>    OP_NEQ  
-%token   <sval>    OP_LEQ  
-%token   <sval>    OP_GEQ  
-%token   <sval>    NOT  
-%token   <sval>    OP_LOR  
-%token   <sval>    OR  
-%token   <sval>    OP_LOAND  
-%token   <sval>    AND  
-%token   <sval>    ASS_MINUS  
-%token   <sval>    ASS_PLUS  
-%token   <sval>    EQUALS  
-%token   <sval>    OP_MUL  
-%token   <sval>    TILDE  
-%token   <sval>    PERIOD  
-%token   <sval>    HAT  
-%token   <sval>    COMMA  
-%token   <sval>    ALIGNOF  
-%token   <sval>    BOOLEAN  
-%token   <sval>    INT8T  
-%token   <sval>    INT16T  
-%token   <sval>    INT32T  
-%token   <sval>    INT64T  
-%token   <sval>    UINT8T  
-%token   <sval>    UINT16T  
-%token   <sval>    UINT32T  
-%token   <sval>    UINT64T  
-%token   <sval>    FLOAT32  
-%token   <sval>    FLOAT64  
-%token   <sval>    FLOAT96  
-%token   <sval>    VECTOR  
+%token       END     0     "end of file"
+%token       LBRACE  
+%token       RBRACE  
+%token       LBRACKET  
+%token       RBRACKET  
+%token       LPAREN  
+%token       RPAREN  
+%token       LCARROT  
+%token       RCARROT  
+%token       COLON  
+%token       SEMI  
+%token       AT  
+%token       DEFINE  
+%token       PORTS  
+%token       CONFIGS  
+%token       AUTOGEN  
+%token       AUTO  
+%token       FINAL  
+%token       CLASS  
+%token       SYSTEM 
+%token       ABSTRACT  
+%token       INTERFACE  
+%token       OVERRIDES  
+%token       IMPLEMENTS  
+%token       EXTENDS  
+%token       PUBLIC  
+%token       PRIVATE  
+%token       PROTECTED  
+%token       RETURN  
+%token       VOID  
+%token       THIS  
+%token       FOR  
+%token       FOREACH  
+%token       WHILE  
+%token       IF  
+%token       ELSE  
+%token       NILL  
+%token       NEW  
+%token       INCREMENT  
+%token       DECREMENT  
+%token       QUESTION  
+%token       FORWARDSLASH  
+%token       MINUS  
+%token       PLUS  
+%token       OP_EQ  
+%token       OP_NEQ  
+%token       OP_LEQ  
+%token       OP_GEQ  
+%token       NOT  
+%token       OP_LOR  
+%token       OR  
+%token       OP_LOAND  
+%token       AND  
+%token       ASS_MINUS  
+%token       ASS_PLUS  
+%token       EQUALS  
+%token       OP_MUL  
+%token       TILDE  
+%token       PERIOD  
+%token       HAT  
+%token       COMMA  
+%token       ALIGNOF  
+%token       BOOLEAN  
+%token       INT8T  
+%token       INT16T  
+%token       INT32T  
+%token       INT64T  
+%token       UINT8T  
+%token       UINT16T  
+%token       UINT32T  
+%token       UINT64T  
+%token       FLOAT32  
+%token       FLOAT64  
+%token       FLOAT96  
+%token       VECTOR  
 %token   <sval>    STRING  
-%token   <sval>    INT_TOKEN
-%token   <sval>    FLOAT_TOKEN
+%token   <lval>    INT_TOKEN
+%token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
 
+%type    <NodeAbstract> TypeDeclaration
+%type    <NodeAbstract> ClassDeclaration
+%type    <NodeAbstract> Body
 
 %%
 
-S        :     END
-         |     S T
-         |     T
-         ;
+CompilationUnit   :     END
+                  |     TypeDeclarations
+                  ;
 
-T        :    LEFTBRACE  
-         |    RIGHTBRACE  
-         |    LEFTBRACKET  
-         |    RIGHTBRACKET  
-         |    LPAREN  
-         |    RPAREN  
-         |    LCARROT  
-         |    RCARROT  
-         |    COLON  
-         |    SEMI  
-         |    AT  
-         |    DEFINE  
-         |    PORTS  
-         |    CONFIGS  
-         |    AUTOGEN  
-         |    AUTO  
-         |    FINAL  
-         |    CLASS  
-         |    SYSTEM 
-         |    ABSTRACT  
-         |    INTERFACE  
-         |    OVERRIDES  
-         |    IMPLEMENTS  
-         |    EXTENDS  
-         |    PUBLIC  
-         |    PRIVATE  
-         |    PROTECTED  
-         |    RETURN  
-         |    THIS  
-         |    FOR  
-         |    FOREACH  
-         |    WHILE  
-         |    IF  
-         |    ELSE  
-         |    NILL  
-         |    NEW  
-         |    VOID  
-         |    INCREMENT  
-         |    DECREMENT  
-         |    QUESTION  
-         |    FORWARDSLASH  
-         |    MINUS  
-         |    PLUS  
-         |    OP_EQ  
-         |    OP_NEQ  
-         |    OP_LEQ  
-         |    OP_GEQ  
-         |    NOT  
-         |    OP_LOR  
-         |    OR  
-         |    OP_LOAND  
-         |    AND  
-         |    ASS_MINUS  
-         |    ASS_PLUS  
-         |    EQUALS  
-         |    OP_MUL  
-         |    TILDE  
-         |    PERIOD  
-         |    HAT  
-         |    COMMA  
-         |    ALIGNOF  
-         |    BOOLEAN  
-         |    INT8T  
-         |    INT16T  
-         |    INT32T  
-         |    INT64T  
-         |    UINT8T  
-         |    UINT16T  
-         |    UINT32T  
-         |    UINT64T  
-         |    FLOAT32  
-         |    FLOAT64  
-         |    FLOAT96  
-         |    VECTOR  
-         |    STRING  
-         |    INT_TOKEN
-         |    FLOAT_TOKEN
-         |    IDENTIFIER
-         ;
+TypeDeclarations  :     TypeDeclaration
+                  |     TypeDeclarations TypeDeclaration
+                  ;
 
+TypeDeclaration   :     ClassDeclaration
+                  ;
+
+ClassDeclaration  :     DEFINE FINAL CLASS IDENTIFIER LBRACE Body RBRACE
+                        {
+                           std::cerr << *$4 << "\n";
+                        }
+                  |     DEFINE ABSTRACT CLASS IDENTIFIER LBRACE Body RBRACE
+                        {
+                           std::cerr << *$4 << "\n";
+                        }
+                  |     DEFINE CLASS IDENTIFIER LBRACE Body RBRACE
+                        {
+                           std::cerr << *$3 << "\n";
+                        }
+                  ;
+
+Body              :     { std::cerr << "hit the body!!\n"; }
+                  ;
 %%
 
 void 

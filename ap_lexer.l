@@ -6,8 +6,10 @@
  */
 %{
 
+#include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <cassert>
 
 #include "ap_scanner.hpp"
 #include "ap_data.hpp"
@@ -17,14 +19,15 @@ typedef AP::AP_Parser::token token;
 #define PUSHTOSTREAM( x ) data.get_ap_parsestream() << yytext; \
                           data.set_current_line( yylineno );
                    
-//yylval->sval = new std::string( yytext ); 
 
 #define TOKEN( x ) data.get_ap_parsestream() << yytext; \
                    data.set_current_line( yylineno ); \
-                   std::cerr << yytext << "\n"; \
                    return( token::x )
 
-#define STOKEN( x ) ( new std::string( x ) )
+#define STOKEN( x ) yylval->sval = new std::string( yytext ); \
+                    data.get_ap_parsestream() << yytext; \
+                    data.set_current_line( yylineno ); \
+                    return( token::x )
 
 /* define yyterminate as this instead of NULL */
 #define yyterminate() return( token::END )
@@ -67,10 +70,10 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 "//"+[^\n]*            ; //eat line 
 
-"{"                     { TOKEN( LEFTBRACE ); }
-"}"                     { TOKEN( RIGHTBRACE ); }
-"["                     { TOKEN( LEFTBRACKET ); }
-"]"                     { TOKEN( RIGHTBRACKET ); }
+"{"                     { TOKEN( LBRACE ); }
+"}"                     { TOKEN( RBRACE ); }
+"["                     { TOKEN( LBRACKET ); }
+"]"                     { TOKEN( RBRACKET ); }
 "("                     { TOKEN( LPAREN ); }
 ")"                     { TOKEN( RPAREN ); }
 "<"                     { TOKEN( LCARROT ); }
@@ -141,20 +144,23 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
 "vector"                { TOKEN( VECTOR ); }
-{STRING}                { TOKEN( STRING ); }
+{STRING}                { STOKEN( STRING ); }
 "-"?{D}+		            { 
-                           //yylval->lli_val = strtoll(yytext, nullptr, 10);
-			                  TOKEN(INT_TOKEN);		
+                           errno = EXIT_SUCCESS;
+                           yylval->lval = strtoll(yytext, nullptr, 10);
+			                  assert( errno == 0 );
+                           TOKEN(INT_TOKEN);		
                         }
-
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
-                                    //yylval->ld_val = strtold(yytext, 0);
+                                    errno = EXIT_SUCCESS;
+                                    yylval->dval = strtold(yytext, 0);
+                                    assert( errno == 0 );
 			                           TOKEN(FLOAT_TOKEN);		
                                }
 
 {IDENT}			                { 
-			                           TOKEN( IDENTIFIER ); 		
+			                          STOKEN( IDENTIFIER ); 		
                                }
 
-.                              { PUSHTOSTREAM( yytext ); } /* everything else I forgot */
+.                              { PUSHTOSTREAM( yytext ); } 
 %%
