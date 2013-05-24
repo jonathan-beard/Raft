@@ -84,9 +84,7 @@ public:
    int64_t              get_number();
 
    const std::string&   get_name() const ;
-   void                 set_name( std::string name );
-   void                 set_name( const std::string &name ); 
-   
+   void                 set_name( const std::string name );  
 
    std::ostream&        print( std::ostream &stream );
 

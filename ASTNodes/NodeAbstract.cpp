@@ -6,6 +6,9 @@
 #include <cassert>
 #include <algorithm>
 #include <cstdint>
+#include <typeinfo>
+#include <iostream>
+#include <sstream>
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 
@@ -40,11 +43,6 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
 /* destructors */
 NodeAbstract::~NodeAbstract()
 {
-   if( child != nullptr )
-   {
-      delete( child );
-      child = nullptr;
-   }
    for( NodeAbstract *node : siblings )
    {
       if( node != nullptr )
@@ -53,16 +51,34 @@ NodeAbstract::~NodeAbstract()
           node = nullptr;
       }
    }
-   node_number = -1;
+   node_number -= 1;
    parent = nullptr;
 }
 
-void NodeAbstract::MakeSibling( NodeAbstract *sib )
+void 
+NodeAbstract::MakeSibling( NodeAbstract *sib )
 {
    assert( sib != nullptr );
+   /* TODO fix this, make the siblings sets
+    * so the siblings get added properly
+    * with no duplicates
+    */
+
+   if( sib == this )
+   {
+      /* check to see if there are any siblings yet */
+      if( siblings.size() == 0 )
+      {
+         siblings.push_back( this );
+         return;
+      }
+   }
    /* need to make siblings alike so we'll merge their sets */
    std::vector<NodeAbstract* >  all;
-   /* this sibling should already have the same siblings as all its sibs */
+   /** 
+    * this sibling should already have the same siblings 
+    * as all its sibs 
+    */
    const auto &sib_siblings( sib->siblings ); 
    /* the same goes for this guy */
    const auto &my_siblings( this->siblings );
@@ -89,10 +105,15 @@ void NodeAbstract::AdoptChildren( NodeAbstract *node )
    assert( node != nullptr );
    if( this->child == nullptr )
    {
+      
       this->child = node;
+      /* new child should list itself as a sibling */
+      this->child->set_parent( this );
+      this->child->MakeSibling( node );
    }
    else
    {
+      node->set_parent( this );
       this->child->MakeSibling( node ); 
    }
 }
@@ -151,11 +172,8 @@ const std::string&      NodeAbstract::get_name() const
    return( this->name );
 }
 
-void                    NodeAbstract::set_name( std::string name ) 
-{
-   this->name = name;
-}
-void                    NodeAbstract::set_name( const std::string &name )
+void                    
+NodeAbstract::set_name( const std::string name )
 {
    this->name = name;
 }
@@ -164,7 +182,19 @@ void                    NodeAbstract::set_name( const std::string &name )
 std::ostream&
 NodeAbstract::print( std::ostream &stream)
 {
+   NodeAbstract *the_parental_unit( get_parent() );
+   std::stringstream the_parent_name;
+   if( the_parental_unit == nullptr )
+   {
+      the_parent_name << "None";
+   }
+   else
+   {
+      the_parent_name << the_parental_unit->get_number();
+   }
+
    stream << "Node: " << get_number() << " - " << get_name();
+   stream << " Parent: " << the_parent_name.str() << "\n";
    return( stream );
 }
 

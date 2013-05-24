@@ -31,13 +31,14 @@ DefaultVisitor::~DefaultVisitor()
 void DefaultVisitor::VisitChildren( NodeAbstract *node )
 {
    assert( node != nullptr );
-   NodeAbstract *child = node->get_child();
+   NodeAbstract *child( node->get_child() );
    if( child == nullptr ) return;
    else /* by def child is in siblings list */
    {
-      std::vector<NodeAbstract* > &siblings( child->get_siblings() );
+      auto &siblings( child->get_siblings() );
       for( NodeAbstract *sib : siblings )
       {
+         assert( sib != nullptr );
          sib->Accept( (*this) );
       }
    }
