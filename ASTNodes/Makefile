@@ -11,13 +11,14 @@ DEBUG = -g
 CXXSTD = -std=c++11 $(DARWIN)
 CSTD = -std=c99
 CFLAGS = -Wall -O0 $(CSTD) $(DEBUG)
-CXXFLAGS = -Wall -O0 $(CXXSTD) $(DEBUG)
+CXXFLAGS = -Wall -O0 -I./../ $(CXXSTD) $(DEBUG)
+
 
 
 TEST=test
 
 CPPOBJ=main NodeAbstract Type DefaultVisitor NodeDumpable \
-		 DebugVisitor ap_data
+		 DebugVisitor ../ap_data
 FILES=$(addsuffix .cpp, $(CPPOBJ))
 OBJS=$(addsuffix .o, $(CPPOBJ))
 
