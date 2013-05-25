@@ -29,7 +29,8 @@ final - when used as a modifier to a class, prevents any sub-classing
 of the class, its invalid for use as a modifier to a template or an 
 abstract class that cannot be instantiated without sub-classing.  Methods
 may use final to indicate that sub-classes cannot override this particular
-function.
+function.  Final may also be used to prevent a method from being 
+overridden.
 
 system - you'll only see this in system function declaration stubs, these
 classes and functions are defined by the runtime in native code, they're

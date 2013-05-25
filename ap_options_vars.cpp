@@ -5,6 +5,8 @@
  */
 #include <cassert>
 #include <unistd.h>
+#include <errno.h>
+#include <cstdlib>
 #include <cstring>
 
 #include "ap_options_vars.hpp"

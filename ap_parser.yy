@@ -138,7 +138,7 @@
 %type    <NodeAbstract> TypeDeclaration
 %type    <NodeAbstract> ClassDeclaration
 %type    <NodeAbstract> Body
-
+%type    <NodeAbstract> InstantModifier
 %%
 
 CompilationUnit   :     END
@@ -167,6 +167,11 @@ ClassDeclaration  :     DEFINE FINAL CLASS IDENTIFIER LBRACE Body RBRACE
                   ;
 
 Body              :     { std::cerr << "hit the body!!\n"; }
+                  ;
+
+InstantModifier   :     FINAL SYSTEM
+                  |     FINAL
+                  |     ABSTRACT
                   ;
 %%
 
