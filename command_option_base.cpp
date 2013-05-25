@@ -12,7 +12,7 @@
 #include "command_option_base.hpp"
 
 #ifndef TERM_WIDTH
-#define TERM_WIDTH 70
+#define TERM_WIDTH 65
 #endif
 
 #ifndef FLAG_WIDTH

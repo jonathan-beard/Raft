@@ -53,6 +53,7 @@
    long long int       lval;
    long double         dval;
    Node::NodeAbstract *node_val;
+   Node::VectorType   *vector_val;
 }
 
 %token       END     0     "end of file"
@@ -135,10 +136,17 @@
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
 
-%type    <NodeAbstract> TypeDeclaration
-%type    <NodeAbstract> ClassDeclaration
-%type    <NodeAbstract> Body
-%type    <NodeAbstract> InstantModifier
+%type    <node_val>  TypeDeclaration
+%type    <node_val>  ClassDeclaration
+%type    <node_val>  InterfaceDeclaration
+%type    <node_val>  Body
+%type    <sval>      InstantModifier
+%type    <node_val>  TemplateDeclaration
+%type    <node_val>  Declaration
+%type    <sval>      ObjectType
+%type    <node_val>  Type
+%type    <vector_val>   TypeModifier
+
 %%
 
 CompilationUnit   :     END
@@ -150,28 +158,77 @@ TypeDeclarations  :     TypeDeclaration
                   ;
 
 TypeDeclaration   :     ClassDeclaration
+                  |     InterfaceDeclaration
                   ;
 
-ClassDeclaration  :     DEFINE FINAL CLASS IDENTIFIER LBRACE Body RBRACE
+ClassDeclaration  :     DEFINE InstantModifier CLASS IDENTIFIER LBRACE Body RBRACE SEMI
                         {
+                           std::cerr << "Modifier: " << *$2 << "\n";
                            std::cerr << *$4 << "\n";
-                        }
-                  |     DEFINE ABSTRACT CLASS IDENTIFIER LBRACE Body RBRACE
-                        {
-                           std::cerr << *$4 << "\n";
-                        }
-                  |     DEFINE CLASS IDENTIFIER LBRACE Body RBRACE
-                        {
-                           std::cerr << *$3 << "\n";
+                           delete( $2 );
+                           delete( $4 );
                         }
                   ;
+
+InterfaceDeclaration :  DEFINE INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
 
 Body              :     { std::cerr << "hit the body!!\n"; }
                   ;
 
 InstantModifier   :     FINAL SYSTEM
+                        {
+                           $$ = new std::string("finalsystem");
+                        }
                   |     FINAL
+                        {
+                           $$ = new std::string("final");
+                        }
                   |     ABSTRACT
+                        {
+                           $$ = new std::string("abstract");
+                        }
+                  |
+                        {
+                           $$ = new std::string("none");
+                        }
+                  ;
+
+TemplateDeclaration  :  LCARROT Declarations  RCARROT
+                        {
+
+                        }
+                     ;
+Declarations      :     Type TypeModifier IDENTIFIER Initializer SEMI
+                  ;
+
+
+Type              :     BOOLEAN
+                  |     INT8T
+                  |     INT16T
+                  |     INT32T
+                  |     INT64T
+                  |     UINT8T
+                  |     UINT16T
+                  |     UINT32T
+                  |     UINT64T
+                  |     FLOAT32
+                  |     FLOAT64
+                  |     FLOAT96
+                  |     STRING
+                  |     ObjectType
+                  ;
+
+TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
+                        {
+                           $$ = new VectorType( $3 );
+                        }
+                  |
+                  ;
+
+ObjectType        :     IDENTIFIER
+                        {
+                           $$ = $1;
+                        }
                   ;
 %%
 
