@@ -91,9 +91,6 @@ define class Sum : extends Kernel{
     * @param - int32_t or int64_t or float
     */
    Output< Generic( {int32_t, int64_t, float } ) > y0;
-
-@private:
-   typedef Generic( {int32_t, int64_t, float } )
 }
 
 define class Print : extends Kernel{
@@ -118,7 +115,7 @@ void main( String args )
    Sum sum;
    Print print;
    CPlusPlusProcess A;
-   A.AddKernel( Array( gen1, gen2, sum, print ) );
+   A.AddKernel( { gen1, gen2, sum, print } );
    AutoLink( gen1.y0, sum.x0 );
    AutoLink( gen2.y0, sum.x1 );
    AutoLink( sum.y0, print.x0 );

@@ -10,6 +10,9 @@
 
    namespace Node{
       class NodeAbstract;
+      class VectorType;
+      class Type;
+      class TypeModifier;
    }
 
    namespace AP {
@@ -199,30 +202,57 @@ TemplateDeclaration  :  LCARROT Declarations  RCARROT
                         }
                      ;
 Declarations      :     Type TypeModifier IDENTIFIER Initializer SEMI
+                        {
+                           Declaration *d( nullptr );
+                           d = new Declaration( $1 /* type */,
+                                                $3 /* name */,
+                                                $4 /* initializer */ );
+                           assert( d != nullptr );
+                           TypeModifier *m( $2 /* modifier */ );
+                           if( m != nullptr ) d->set_modifier( m );
+                           $$ = d;
+                        }
                   ;
 
 
 Type              :     BOOLEAN
+                        { $$ = new BooleanType();       }
                   |     INT8T
+                        { $$ = new Int8Type();          }
                   |     INT16T
+                        { $$ = new Int16Type();         }
                   |     INT32T
+                        { $$ = new Int32Type();         }
                   |     INT64T
+                        { $$ = new Int64Type();         }
                   |     UINT8T
+                        { $$ = new UnsignedInt8Type();  }
                   |     UINT16T
+                        { $$ = new UnsignedInt16Type(); }
                   |     UINT32T
+                        { $$ = new UnsignedInt32Type(); }
                   |     UINT64T
+                        { $$ = new UnsignedInt64Type(); }
                   |     FLOAT32
+                        { $$ = new FloatType32();       }
                   |     FLOAT64
+                        { $$ = new FloatType64();       }
                   |     FLOAT96
+                        { $$ = new FloatType96();       }
                   |     STRING
+                        { $$ = new StringType();        }
                   |     ObjectType
+                        {
+                           assert( $1 != nullptr );
+                           $$ = $1;
+                        }
                   ;
 
 TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
                         {
                            $$ = new VectorType( $3 );
                         }
-                  |
+                  |     {  $$ = nullptr ; }
                   ;
 
 ObjectType        :     IDENTIFIER
@@ -230,6 +260,8 @@ ObjectType        :     IDENTIFIER
                            $$ = $1;
                         }
                   ;
+
+Initializer       :     LPAREN   
 %%
 
 void 

@@ -144,6 +144,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
 "vector"                { TOKEN( VECTOR ); }
+"String"                { TOKEN( STRTOKEN ); }
 {STRING}                { STOKEN( STRING ); }
 "-"?{D}+		            { 
                            errno = EXIT_SUCCESS;

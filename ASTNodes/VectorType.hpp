@@ -10,7 +10,7 @@
 
 namespace Node{
 
-class VectorType : public NodeAbstract {
+class VectorType : public TypeModifier {
 public:
    VectorType( size_t size );
    virtual  ~VectorType();
