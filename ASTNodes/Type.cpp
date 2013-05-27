@@ -22,6 +22,24 @@ Type::~Type()
    /* nothing to destroy :( */
 }
 
+bool
+Type::IsType( int64_t value )
+{
+   return( false );
+}
+
+bool
+Type::IsType( long double value )
+{
+   return( false );
+}
+
+bool
+Type::IsType( std::string *value )
+{
+   return( false );
+}
+
 void
 Type::set_type( const Type &type )
 {

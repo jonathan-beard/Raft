@@ -19,6 +19,31 @@ public:
    Type( const Type &type );
    /* virtual destructor */
    virtual ~Type();
+   
+   /**
+    * IsType - There will be one virtual IsType method
+    * for each primitive type returned by the parser, 
+    * the default behavior for Type::IsType( xxx ) is to 
+    * return false. Override this behavior in sub-classes
+    * for the values that should return true.
+    * @param value - int64_t
+    * @return  bool
+    */
+   virtual bool IsType( int64_t value );
+   /**
+    * IsType - see above
+    * @param   value - long double
+    * @param   bool
+    */
+   virtual bool IsType( long double value );
+   /**
+    * IsType - see above
+    * @param   value - std::string*
+    * @return  bool
+    */
+   virtual bool IsType( std::string *value );
+   
+   
    /**
     * set_type - give this type some other Type object
     * and it'll take on those characteristics as long
@@ -28,6 +53,7 @@ public:
     */
    virtual void set_type( const Type &type );
    
+
    /**
     * print - does exactly what it says, give this guy
     * a stream and it'll add a representation of itself
