@@ -36,6 +36,8 @@
    #include <iostream>
    #include <cstdlib>
    #include <fstream>
+   #include <cstdint>
+   #include <cinttypes>
    #include "NodeAbstract.hpp"
 
 
@@ -53,7 +55,7 @@
 /* token types */
 %union{
    std::string        *sval;
-   long long int       lval;
+   uintmax_t          lval;
    long double         dval;
    Node::NodeAbstract *node_val;
    Node::VectorType   *vector_val;

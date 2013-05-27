@@ -148,7 +148,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 {STRING}                { STOKEN( STRING ); }
 "-"?{D}+		            { 
                            errno = EXIT_SUCCESS;
-                           yylval->lval = strtoll(yytext, nullptr, 10);
+                           yylval->lval = strtoumax(yytext, nullptr, 10);
 			                  assert( errno == 0 );
                            TOKEN(INT_TOKEN);		
                         }
