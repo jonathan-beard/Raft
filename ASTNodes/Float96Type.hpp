@@ -5,5 +5,14 @@
  */
 #ifndef _FLOAT96TYPE_HPP_
 #define _FLOAT96TYPE_HPP_  1
+#include "FloatType.hpp"
 
+namespace Node{
+
+class FLoat96Type : public FloatType {
+public:
+   Float96Type();
+};
+
+} /* end namespace Node */
 #endif /* END _FLOAT96TYPE_HPP_ */

@@ -13,6 +13,19 @@
       class VectorType;
       class Type;
       class TypeModifier;
+      class Int8Type;
+      class Int16Type;
+      class Int32Type;
+      class Int64Type;
+      class UInt8Type;
+      class UInt16Type;
+      class UInt32Type;
+      class UInt64Type;
+      class Float32Type;
+      class Float64Type;
+      class Float96Type;
+      class StringType;
+      class ObjectType;
    }
 
    namespace AP {
@@ -59,7 +72,20 @@
    intmax_t           int_val;
    long double         dval;
    Node::NodeAbstract *node_val;
-   Node::VectorType   *vector_val;
+   Node::VectorType   *vector_mod;
+   Node::Int8Type     *int8_type;
+   Node::Int16Type    *int16_type;
+   Node::Int32Type    *int32_type;
+   Node::Int64Type    *int64_type;
+   Node::UInt8Type    *uint8_type;
+   Node::UInt16Type   *uint16_type;
+   Node::UInt32Type   *uint32_type;
+   Node::UInt64Type   *uint64_type;
+   Node::Float32Type  *float32_type;
+   Node::Float64Type  *float64_type;
+   Node::Float96Type  *float96_type;
+   Node::StringType   *string_type;
+   Node::ObjectType   *object_type;
 }
 
 %token       END     0     "end of file"

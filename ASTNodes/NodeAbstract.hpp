@@ -7,6 +7,7 @@
 #define _NODEABSTRACT_HPP_  1
 
 #include <cstdint>
+#include <typeinfo>
 #include <set>
 
 namespace Visitor{
@@ -86,7 +87,19 @@ public:
    const std::string&   get_name() const ;
    void                 set_name( const std::string name );  
 
+   /**
+    * print - prints a representation fo this node as a 
+    * string to the param stream.
+    * @param   stream - std::ostream&
+    * @return  std::ostream& - same as param stream
+    */
    std::ostream&        print( std::ostream &stream );
+   
+   /**
+    * GetType - returns the type of this object as
+    * a type_info object.
+    */
+   const std::type_info&   GetType() const;
 
    /**
     * Accept - method calls the visit method of the visitor

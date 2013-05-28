@@ -166,13 +166,21 @@ NodeAbstract::print( std::ostream &stream)
    return( stream );
 }
 
-void  NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
+const std::type_info&
+NodeAbstract::GetType()
+{
+   return( typeid(*this) );
+}
+
+void  
+NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
    visitor.Visit( this );
 }
 
-void  NodeAbstract::invoke( Visitor::DefaultVisitor &visitor,
-                            NodeAbstract   *root )
+void  
+NodeAbstract::invoke( Visitor::DefaultVisitor &visitor,
+                      NodeAbstract   *root )
 {  
    assert( root    != nullptr );
    /**

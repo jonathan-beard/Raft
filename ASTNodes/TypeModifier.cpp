@@ -5,9 +5,21 @@
  */
 #include "TypeModifier.hpp"
 
-TypeModifier::TypeModifier() : NodeAbstract()
-{
+using namespace Node;
 
+TypeModifier::TypeModifier() : NodeAbstract(),
+                               name( "BaseModifier" )
+{
+   /* nothing to do here */
 }
 
-TypeModifier::~TypeModifier(){ }
+TypeModifier::~TypeModifier()
+{ 
+   /* nothing do destroy */
+}
+
+std::string
+TypeModifier::get_name()
+{
+   return( name );
+}

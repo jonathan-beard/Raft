@@ -14,8 +14,12 @@ class TypeModifier : public NodeAbstract {
 public:
    TypeModifier();
    virtual ~TypeModifier();
-   virtual  std::string 
-}
+   
+   virtual std::string get_name();
+
+protected:
+   std::string name;
+};
 
 } /* end namespace Node */
 

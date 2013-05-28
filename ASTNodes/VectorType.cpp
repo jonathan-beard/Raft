@@ -5,14 +5,19 @@
  */
 #include "VectorType.hpp"
 
+using namespace Node;
+
 VectorType::VectorType( size_t s )
    :  NodeAbstract(),
+      name( "VectorType" ),
       size( s )
 {
-   
+   /* nothing to do here */
 }
 
-VectorType::~VectorType(){};
+VectorType::~VectorType(){
+   /* nothing to destroy */  
+}
 
 size_t
 VectorType::get_size()
