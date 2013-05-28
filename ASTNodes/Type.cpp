@@ -23,7 +23,7 @@ Type::~Type()
 }
 
 bool
-Type::IsType( int64_t value )
+Type::IsType( uintmax_t value )
 {
    return( false );
 }

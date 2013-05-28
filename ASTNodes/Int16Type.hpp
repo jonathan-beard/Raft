@@ -14,9 +14,6 @@ namespace  Node{
 class Int16Type : public IntType {
 public:
    Int16Type();
-   virtual ~Int16Type();
-
-   virtual bool IsType( int64_t value );
 };
 
 } /* end namespace Node */

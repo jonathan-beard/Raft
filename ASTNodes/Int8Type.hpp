@@ -14,10 +14,6 @@ namespace Node{
 class Int8Type : public IntType {
 public:
    Int8Type();
-   virtual ~Int8Type();
-
-   virtual bool IsType( int64_t value );
-   
 };
 
 } /* end namespace Node */

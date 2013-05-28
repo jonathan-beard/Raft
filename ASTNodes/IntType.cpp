@@ -7,7 +7,9 @@
 
 using namespace Node;
 
-IntType::IntType() : Type()
+IntType::IntType() : Type(),
+                     max( 0 ),
+                     min( 0 )
 {
    /* nothing to do here */
 }
@@ -18,8 +20,9 @@ IntType::~IntType()
 }
 
 bool
-IntType::IntIsType( int64_t value, int64_t min, int64_t max )
+IntType::IsType( uintmax_t value )
 {
-   if( value <= max && value >=min ) return( true );
+   const intmax_t real_value( value );
+   if( real_value <= max && real_value >=min ) return( true );
    return( false );
 }

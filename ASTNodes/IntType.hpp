@@ -12,12 +12,14 @@
 namespace Node {
 
 class IntType : public Type {
+public:
    IntType();
    virtual ~IntType();   
+   virtual bool IsType( uintmax_t value );
+
 protected:
-   bool IntIsType( int64_t value, 
-                   const int64_t min, 
-                   const int64_t max );
+   uintmax_t max;
+   intmax_t  min;
 };
 
 } /* end namespace Node */

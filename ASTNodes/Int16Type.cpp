@@ -4,3 +4,12 @@
  * @version: Sat May 25 20:56:40 2013
  */
 #include "Int16Type.hpp"
+
+using namespace Node;
+
+Int16Type::Int16Type() : IntType(),
+                         max( INT16_MAX ),
+                         min( INT16_MIN )
+{
+   /* nothing to do */
+}

@@ -55,7 +55,8 @@
 /* token types */
 %union{
    std::string        *sval;
-   uintmax_t          lval;
+   uintmax_t          uint_val;
+   intmax_t           int_val;
    long double         dval;
    Node::NodeAbstract *node_val;
    Node::VectorType   *vector_val;

@@ -146,15 +146,29 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "vector"                { TOKEN( VECTOR ); }
 "String"                { TOKEN( STRTOKEN ); }
 {STRING}                { STOKEN( STRING ); }
-"-"?{D}+		            { 
+"-"?{D}+{EXP}?          { 
                            errno = EXIT_SUCCESS;
-                           yylval->lval = strtoumax(yytext, nullptr, 10);
+                           const int buffer_size( 20 );
+                           char buffer[ buffer_size ];
+                           memset( buffer, 
+                                   '\0', 
+                                   sizeof(char) * buffer_size );
+                           yylval->uint_val = 
+                              strtoumax(yytext, buffer, 10);
+                           assert( buffer[0] == '\0' );
 			                  assert( errno == 0 );
                            TOKEN(INT_TOKEN);		
                         }
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
                                     errno = EXIT_SUCCESS;
-                                    yylval->dval = strtold(yytext, 0);
+                                    const int buffer_size( 20 );
+                                    char buffer[ buffer_size ];
+                                    memset( buffer,
+                                            '\0',
+                                            sizeof(char) * buffer_size );
+                                    yylval->dval = strtold( yytext, 
+                                                            buffer );
+                                    assert( buffer[0] == '\0' );
                                     assert( errno == 0 );
 			                           TOKEN(FLOAT_TOKEN);		
                                }

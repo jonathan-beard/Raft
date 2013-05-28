@@ -6,6 +6,7 @@
 #ifndef _TYPE_HPP_
 #define _TYPE_HPP_  1
 
+#include <cstdint>
 #include <string>
 #include <ostream>
 
@@ -26,10 +27,10 @@ public:
     * the default behavior for Type::IsType( xxx ) is to 
     * return false. Override this behavior in sub-classes
     * for the values that should return true.
-    * @param value - int64_t
+    * @param value - uintmax_t
     * @return  bool
     */
-   virtual bool IsType( int64_t value );
+   virtual bool IsType( uintmax_t value );
    /**
     * IsType - see above
     * @param   value - long double
