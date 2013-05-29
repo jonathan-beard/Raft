@@ -290,7 +290,7 @@ ObjectType        :     IDENTIFIER
                         }
                   ;
 
-Initializer       :     LPAREN   
+Initializer       :     LPAREN 
 %%
 
 void 
