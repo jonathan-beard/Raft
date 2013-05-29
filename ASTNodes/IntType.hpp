@@ -6,10 +6,12 @@
 #ifndef _INTTYPE_HPP_
 #define _INTTYPE_HPP_  1
 
+#include <cinttypes>
 #include <cstdint>
 #include "Type.hpp"
 
 namespace Node {
+class Initializer;
 
 class IntType : public Type {
 public:
@@ -17,6 +19,7 @@ public:
    virtual ~IntType();   
    virtual bool IsType( uintmax_t value );
 
+   virtual Initializer* GetDefaultInitializer();
 protected:
    uintmax_t max;
    intmax_t  min;

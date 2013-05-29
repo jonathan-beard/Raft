@@ -8,6 +8,7 @@
 using namespace Node;
 
 UInt64Type::UInt64Type() : UIntType(),
+                           type_name( "UInt64Type" ),
                            max( UINT64_MAX )
 {
 

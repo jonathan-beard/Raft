@@ -4,6 +4,7 @@
  * @version: Mon May 27 14:03:20 2013
  */
 #include "UIntType.hpp"
+#include "Initializer.hpp"
 
 using namespace Node;
 
@@ -24,4 +25,10 @@ UIntMax::IsType( uintmax_t value )
 {
    if( value <= max && value >= min ) return( true );
    return( false );
+}
+
+Initializer*
+UIntType::GetDefaultInitializer()
+{
+   return( new Initializer( (uintmax_t) 0 ) );
 }

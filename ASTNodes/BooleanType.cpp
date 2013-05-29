@@ -6,7 +6,8 @@
 #include <cassert>
 #include "BooleanType.hpp"
 
-BooleanType::BooleanType() : Type()
+BooleanType::BooleanType() : Type(),
+                             type_name( "BooleanType" )
 {
    /* nothing to do here */
 }

@@ -7,9 +7,11 @@
 #define _UINTTYPE_HPP_  1
 
 #include <cstdint>
+#include <cinttypes>
 #include "Type.hpp"
 
 namespace Node{
+class Initializer;
 
 class UIntType : public Type {
 public:
@@ -17,6 +19,7 @@ public:
    virtual ~UIntType();
 
    virtual bool IsType( uintmax_t value );
+   virtual Initializer* GetDefaultInitializer();
 protected:
    uintmax_t max;
    uintmax_t min;

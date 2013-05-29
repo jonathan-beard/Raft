@@ -7,6 +7,7 @@
 #include "Int8Type.hpp"
 
 Int8Type::Int8Type() : IntType(),
+                       type_name( "Int8Type" ),
                        max( INT8_MAX ),
                        min( INT8_MIN )
 {

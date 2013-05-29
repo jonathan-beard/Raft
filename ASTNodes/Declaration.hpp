@@ -6,16 +6,37 @@
 #ifndef _DECLARATION_HPP_
 #define _DECLARATION_HPP_  1
 
+
+#include <string>
+#include <ostream>
 #include "NodeAbstract.hpp"
 
+
+
 namespace Node{
+
+class Type;
+class Initializer;
+class TypeModifier;
 
 class Declaration : public NodeAbstract {
 public:
    Declaration( Type *t, std::string *name, Initializer *init );
    virtual ~Declaration();
+   /* override default print method */
+   virtual std::ostream& std::ostream( std::ostream &stream );
 
-   /* TODO add more as we figure out what to add */
+   /* getter / setter methods */
+   virtual Type&        get_decl_type;
+   virtual std::string  get_decl_name;
+   virtual Initializer& get_decl_initializer;
+
+   virtual set_modifier( TypeModifier *m );
+protected:
+   Type        *decl_type;
+   std::string decl_name;
+   Initializer *init;
+   TypeModifier *modifier;
 };
 
 } /* end namespace Node */

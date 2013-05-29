@@ -8,6 +8,7 @@
 using namespace Node;
 
 Float64Type::Float64Type() : FloatType(),
+                             type_name( "Float64Type" ),
                              min( DBL_MIN ),
                              max( DBL_MAX )
 {

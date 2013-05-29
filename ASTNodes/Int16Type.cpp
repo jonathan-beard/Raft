@@ -8,6 +8,7 @@
 using namespace Node;
 
 Int16Type::Int16Type() : IntType(),
+                         type_name( "Int16Type" ),
                          max( INT16_MAX ),
                          min( INT16_MIN )
 {

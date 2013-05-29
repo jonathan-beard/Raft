@@ -8,6 +8,7 @@
 using namespace Node;
 
 UInt16Type::UInt16Type() : UIntType(),
+                           type_name( "UInt16Type" ),
                            max( UINT16_MAX )
 {
    /* nothing else to do here */

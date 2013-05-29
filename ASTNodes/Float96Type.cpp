@@ -8,6 +8,7 @@
 using namespace Node;
 
 Float96Type::Float96Type() : FloatType(),
+                             type_name( "Float96Type" ),
                              min( LDBL_MIN ),
                              max( LDBL_MAX )
 {

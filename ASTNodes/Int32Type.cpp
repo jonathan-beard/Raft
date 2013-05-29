@@ -8,6 +8,7 @@
 using namespace Node;
 
 Int32Type::Int32Type() : IntType(),
+                         type_name( "Int32Type" ),
                          max( INT32_MAX ),
                          min( INT32_MIN )
 {

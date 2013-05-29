@@ -3,11 +3,14 @@
  * @author: Jonathan Beard
  * @version: Sat May 25 20:56:40 2013
  */
+#include <cassert>
+#include "Initializer.hpp"
 #include "ObjectType.hpp"
 
 using namespace Node;
 
-ObjectType::ObjectType()
+ObjectType::ObjectType() : Type(),
+                           type_name( "ObjectType" )
 {
    /* nothing to do here */
 }
@@ -20,6 +23,17 @@ ObjectType::~ObjectType()
 bool
 ObjectType::IsType( std::string *value )
 {
-   if( value != nullptr ) return( true );
+   
+   if( value != nullptr ){
+      type_name = *value;
+      return( true );
+   }
    return( false );
+}
+
+Initializer*
+ObjectType::GetDefaultInitializer()
+{
+   assert( false );
+   return( new Initializer() );
 }

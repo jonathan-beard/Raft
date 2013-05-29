@@ -150,7 +150,8 @@ NodeAbstract::set_name( const std::string name )
 std::ostream&
 NodeAbstract::print( std::ostream &stream)
 {
-   NodeAbstract *the_parental_unit( get_parent() );
+   NodeAbstract *the_parental_unit( nullptr );
+   the_parental_unit = get_parent();
    std::stringstream the_parent_name;
    if( the_parental_unit == nullptr )
    {
@@ -162,7 +163,7 @@ NodeAbstract::print( std::ostream &stream)
    }
 
    stream << "Node: " << get_number() << " - " << get_name();
-   stream << " Parent: " << the_parent_name.str() << "\n";
+   stream << " Parent: " << the_parent_name.str();
    return( stream );
 }
 

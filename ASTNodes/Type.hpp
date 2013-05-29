@@ -12,6 +12,8 @@
 
 namespace Node{
 
+class Initializer;
+
 class Type{
 public:
    /* constructor */
@@ -64,8 +66,11 @@ public:
     */
    virtual std::ostream& print( std::ostream &stream );
 
+   virtual std::string ToString();
+
+   virtual Initializer* GetDefaultInitializer() = 0;
 protected:
-   std::string name;
+   std::string type_name;
 
 };
 

@@ -9,6 +9,7 @@
 #include "Type.hpp"
 
 namespace Node{
+class Initializer;
 
 class ObjectType : public Type {
 public:
@@ -24,6 +25,8 @@ public:
     * @return  bool - if value != nullptr
     */
    virtual bool IsType( std::string *value );
+   
+   virtual Initializer* GetDefaultInitializer();
 };
 
 } /* end namespace Node */

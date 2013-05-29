@@ -8,6 +8,7 @@
 using namespace Node;
 
 Int64Type::Int64Type() : IntType(),
+                         type_name( "Int64Type" ),
                          max( INT64_MAX ),
                          min( INT64_MIN )
 {

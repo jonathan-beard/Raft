@@ -93,7 +93,7 @@ public:
     * @param   stream - std::ostream&
     * @return  std::ostream& - same as param stream
     */
-   std::ostream&        print( std::ostream &stream );
+   virtual std::ostream&   print( std::ostream &stream );
    
    /**
     * GetType - returns the type of this object as
@@ -123,6 +123,8 @@ public:
    static   void  invoke( Visitor::DefaultVisitor &visitor, 
                           NodeAbstract *root );
     
+protected:
+   std::string name;
 
 private:
    static int64_t              number_of_nodes;
@@ -131,7 +133,6 @@ private:
    NodeAbstract                *child;
    std::set<NodeAbstract* >    siblings;
    Type                        type;
-   std::string                 name;
 };
 
 } /* end namespace Node */

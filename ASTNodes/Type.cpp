@@ -3,6 +3,7 @@
  * @author: Jonathan Beard
  * @version: Mon May 13 10:43:53 2013
  */
+#include "Initializer.hpp"
 #include "Type.hpp"
 
 using namespace Node;
@@ -49,9 +50,12 @@ Type::set_type( const Type &type )
 std::ostream&
 Type::print( std::ostream &stream )
 {
-   stream << name;
+   stream << type_name;
    return( stream );
 }
 
-
-
+std::string
+Type::ToString()
+{
+   return( type_name );
+}  

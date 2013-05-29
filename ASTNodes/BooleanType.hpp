@@ -10,6 +10,7 @@
 #include "Type.hpp"
 
 namespace Node{
+class Initializer;
 
 class BooleanType : public Type {
 public:
@@ -22,6 +23,8 @@ public:
     */
    virtual  bool IsType( int64_t value );
    virtual  bool IsType( std::string *value );
+   
+   virtual Initializer* GetDefaultInitializer();
 };
 
 } /* end namespace Node */
