@@ -5,7 +5,7 @@
  */
 #include "Initializer.hpp"
 #include "Type.hpp"
-
+#include <cassert>
 using namespace Node;
 
 Type::Type() : name( "AbstractType" )
@@ -59,3 +59,10 @@ Type::ToString()
 {
    return( type_name );
 }  
+   
+Initializer* 
+Type::GetDefaultInitializer()
+{
+   assert( false );
+   return( nullptr );
+}

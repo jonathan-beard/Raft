@@ -17,10 +17,13 @@ CXXSTD = -std=c++11 $(DARWIN)
 APCOMEXE = apcom
 APHEXE = aph
 
+include ./ASTNodes/Makefile
+
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
 				  command_arguments ap_set_options ap_driver \
-				  ap_common command_option_base ASTNodes/NodeAbstract \
-				  ASTNodes/Type 
+				  ap_common command_option_base \
+              $(ASTNODES)
+
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 

@@ -132,7 +132,7 @@ private:
    NodeAbstract                *parent;
    NodeAbstract                *child;
    std::set<NodeAbstract* >    siblings;
-   Type                        type;
+   Node::Type                  type;
 };
 
 } /* end namespace Node */

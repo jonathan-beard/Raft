@@ -68,7 +68,7 @@ public:
 
    virtual std::string ToString();
 
-   virtual Initializer* GetDefaultInitializer() = 0;
+   virtual Initializer* GetDefaultInitializer();
 protected:
    std::string type_name;
 
