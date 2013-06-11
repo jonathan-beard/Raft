@@ -91,7 +91,7 @@ define class MultiCoreThread : extends Thread {
    }
    void CombineThreads( Thread other )
    {
-
+      /* TODO code this */
    }
 
    int32_t   GetAssignedCore()
