@@ -73,7 +73,7 @@ define abstract class Thread {
    Array<Kernel> kernels;
 };
 
-define class CThread : extends Thread {
+define class MultiCoreThread : extends Thread {
 @public:
    implements bool IsValidKernel( Kernel kernel ){
       
@@ -93,7 +93,21 @@ define class CThread : extends Thread {
    {
 
    }
+
+   int32_t   GetAssignedCore()
+   {
+      return( assigned_core );
+   }
+
+   void   SetAssignedCore( int32_t core );
+   {
+      assigned_core = core;
+   }
 @private:
    Array<Kernel> kernels;
+   int32_t       assigned_core;
 };
 
+define class x86Thread : extends MultiCoreThread {
+
+};
