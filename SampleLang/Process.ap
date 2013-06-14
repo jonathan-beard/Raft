@@ -24,26 +24,6 @@
  */
 define interface ProcessInterface {
 @public:
-   /**
-    * set_impl - set the implementation for the 
-    * C++ skeleton file that is the scheduler
-    * implementation.
-    * @param   implementation - String
-    * @return void
-    */
-   void set_impl( String implementation );
-   /**
-    * get_impl - returns the String object with the implementation
-    * of this process
-    * @return  String
-    */
-   String get_impl( );
-   /**
-    * IsProcessCombinable - checks to see if the process in the
-    * parameter is compatible to be combined with this object
-    * @param   other    - ProcessInterface 
-    * @return  bool - true if the are combinable
-    */
    bool IsProcessCombinable( ProcessInterface other );
    /**
     * CombineProcess - combines the param process with this one,
@@ -68,6 +48,27 @@ define interface ProcessInterface {
     * @return  Array<Kernel>
     */
    Array<Kernel> GetKernels( )
+@protected:   
+   /**
+    * set_impl - set the implementation for the 
+    * C++ skeleton file that is the scheduler
+    * implementation.
+    * @param   implementation - String
+    * @return void
+    */
+   void set_impl( String implementation );
+   /**
+    * get_impl - returns the String object with the implementation
+    * of this process
+    * @return  String
+    */
+   String get_impl( );
+   /**
+    * IsProcessCombinable - checks to see if the process in the
+    * parameter is compatible to be combined with this object
+    * @param   other    - ProcessInterface 
+    * @return  bool - true if the are combinable
+    */
 };
 
 /**
