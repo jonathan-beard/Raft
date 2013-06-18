@@ -41,7 +41,7 @@ define final system class Generic< Type T[...] > : extends Type {
  * Input - simple class that defines an in-edge
  * AutoPipe port for each compute Kernel.  The
  * class constructor modifiers <> force the user
- * to specify a type, generic or a typedef, and
+ * to specify a Type, Generic or a typedef, and
  * allow the user to select data-flow semantics
  * either ASDF or SDF.  If the user selects SDF
  * then the user can further select Consume( XX )
