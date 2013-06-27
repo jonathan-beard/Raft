@@ -37,7 +37,7 @@ JavaHiLink javaError2 javaError
 
 " keyword definitions
 syn keyword javaExternal	native package
-syn match javaExternal		"\<#include\>\(\s\+static\>\)\?"
+syn match javaExternal		"#include"
 syn keyword javaError		goto const
 syn keyword javaConditional	if else switch
 syn keyword javaRepeat		while for do
@@ -45,7 +45,7 @@ syn keyword javaBoolean		true false
 syn keyword javaConstant	null
 syn keyword javaTypedef		this super
 syn keyword javaOperator	new instanceof
-syn keyword javaType		boolean char byte short int long float double
+syn keyword javaType		bool int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t float32_t float64_t float96_t String
 syn keyword javaType		void
 syn keyword javaStatement	return
 syn keyword javaStorageClass	static synchronized transient volatile final strictfp serializable
@@ -154,8 +154,8 @@ syn cluster javaTop add=javaComment,javaLineComment
 if !exists("java_ignore_javadoc") && main_syntax != 'jsp'
   syntax case ignore
   " syntax coloring for javadoc comments (HTML)
-  syntax include @javaHtml <sfile>:p:h/html.vim
-  unlet b:current_syntax
+  " syntax include @javaHtml <sfile>:p:h/html.vim
+  " unlet b:current_syntax
   " HTML enables spell checking for all text that is not in a syntax item. This
   " is wrong for Java (all identifiers would be spell-checked), so it's undone
   " here.

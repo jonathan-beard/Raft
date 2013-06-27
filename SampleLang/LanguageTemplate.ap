@@ -18,6 +18,7 @@
  * String
  */
 
+
 #include "Kernel.ap"
 #include "Thread.ap"
 #include "Process.ap"
@@ -33,6 +34,7 @@
  * if the run-time can't figure it out then an error is 
  * thrown.
  */
+
 define class GenInt : extends Kernel{
 @public:
    GenInt( int64_t seed ) : seed( seed )
