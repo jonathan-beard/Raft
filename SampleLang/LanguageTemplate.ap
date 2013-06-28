@@ -1,8 +1,7 @@
 /**
- * LanaguageTemplate.x - this is the prototype language file that'll
+ * LanaguageTemplate.ap - this is the prototype language file that'll
  * define all the basic structures that we'll need for AutoPipe
- * version 3.  This isn't a compiled language, rather an interpreted
- * one.  
+ * version 3.
  * Basic Types: 
  * int8_t   8-bits
  * int16_t  etc...
@@ -35,7 +34,7 @@
  * thrown.
  */
 
-define class GenInt : extends Kernel{
+class GenInt : extends Kernel{
 @public:
    GenInt( int64_t seed ) : seed( seed )
    {
@@ -52,14 +51,14 @@ define class GenInt : extends Kernel{
    }
 
 @ports:
-   Output< Generic( { int32_t, int64_t } ) > y0;
+   Output< Generic( int32_t, int64_t ) > y0;
 
 @configs:
    /* single type, no need to specify variables */
    Config< int64_t > seed;
 }
 
-define class Sum : extends Kernel{
+class Sum : extends Kernel{
    /**
     * no @public or constructor needed if there's 
     * nothing to do in the constructor, AP will 
@@ -72,7 +71,7 @@ define class Sum : extends Kernel{
     * brackets are the valid generic types that
     * we want to declare for each port, i.e. the
     * underlying block itself can accept int32
-    * through floats.  The underlying run-time
+    * through float32_t.  The underlying run-time
     * system infers the port type as long as some 
     * information is available to do so, errors 
     * are generated otherwise
@@ -80,22 +79,22 @@ define class Sum : extends Kernel{
 
    /**
     * x0 - Input port with generic input port
-    * @param - int32_t or int64_t or float
+    * @param - int32_t or int64_t or float32_t
     */
-   Input< Generic( { int32_t, int64_t, float } ) > x0;
+   Input< Generic( int32_t, int64_t, float32_t ) > x0;
    /**
     * x1 - Input port with generic input port
-    * @param - int32_t or int64_t or float
+    * @param - int32_t or int64_t or float32_t
     */
-   Input< Generic( { int32_t, int64_t, float } ) > x1;
+   Input< Generic( int32_t, int64_t, float32_t ) > x1;
    /**
     * y0 - Output port with generic input port
-    * @param - int32_t or int64_t or float
+    * @param - int32_t or int64_t or float32_t
     */
-   Output< Generic( {int32_t, int64_t, float } ) > y0;
+   Output< Generic( int32_t, int64_t, float32_t ) > y0;
 }
 
-define class Print : extends Kernel{
+class Print : extends Kernel{
 @public
 /** 
  * no constructor needed, default constructor
@@ -103,9 +102,11 @@ define class Print : extends Kernel{
  * called on shutdown.
  */
 @ports:
-   Input< Generic( { int32_t, int64_t, float } ) > x0;
+   Input< Generic( int32_t, int64_t, float32_t ) > x0;
 }
 
+class SumApp{
+@public
 void main( String args )
 {
    /**
@@ -117,8 +118,9 @@ void main( String args )
    Sum sum;
    Print print;
    CPlusPlusProcess A;
-   A.AddKernel( { gen1, gen2, sum, print } );
+   A.AddKernel( gen1, gen2, sum, print );
    AutoLink( gen1.y0, sum.x0 );
    AutoLink( gen2.y0, sum.x1 );
    AutoLink( sum.y0, print.x0 );
+}
 }
