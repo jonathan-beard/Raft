@@ -70,7 +70,8 @@ public:
 
    virtual Initializer* GetDefaultInitializer();
 protected:
-   std::string type_name;
+   Type( const std::string n );
+   std::string name;
 
 };
 

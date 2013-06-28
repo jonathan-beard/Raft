@@ -6,35 +6,40 @@ DARWIN = -stdlib=libc++
 else
 DARWIN = 
 endif
+ASTDIR   = ./ASTNodes/
+DEBUG    = -g
+CXXSTD   = -std=c++11 $(DARWIN)
+CSTD     = -std=c99
+CFLAGS   = -Wall -O0 $(CSTD) $(DEBUG)
+CXXFLAGS = -Wall -O0 -I. -I$(ASTDIR) $(CXXSTD) $(DEBUG)
 
-DEBUG = -g
-CXXSTD = -std=c++11 $(DARWIN)
-CSTD = -std=c99
-CFLAGS = -Wall -O0 $(CSTD) $(DEBUG)
-CXXFLAGS = -Wall -O0 -I./../ $(CXXSTD) $(DEBUG)
+NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
+				Float32Type Float64Type Float96Type FloatType Initializer \
+				Int16Type Int32Type Int64Type Int8Type IntType ObjectType \
+				StringType TemplateDeclaration TypeModifier UInt16Type \
+				UInt32Type UInt64Type UInt8Type UIntType VectorType
 
+VISITORS = DefaultVisitor DebugVisitor
+				
+ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
+ASTVISITORS = $(addprefix $(ASTDIR), $(VISITORS))
 
+ASTCPPFILES = $(addsuffix .cpp, $(ASTNODES))
+VISITORCPPFILES = $(addsuffix .cpp, $(ASTVISITORS))
 
-TEST=test
+ASTNODEOBJS = $(addsuffix .o,   $(ASTNODES))
+ASTVISITOROBJS = $(addsuffix .o, $(ASTVISITORS))
 
-CPPOBJ=main NodeAbstract Type DefaultVisitor NodeDumpable \
-		 DebugVisitor ../ap_data
-FILES=$(addsuffix .cpp, $(CPPOBJ))
-OBJS=$(addsuffix .o, $(CPPOBJ))
+ASTOBJS = $(ASTNODEOBJS) $(ASTVISITOROBJS) 
 
+ASTCLEAN =  $(ASTOBJS)
 
-CLEANLIST =  $(OBJS) $(TEST)
+nodes: $(ASTCPPFILES)
+	$(MAKE) $(ASTNODEOBJS)
 
-.PHONY: all
-all:  test
+visitors: $(VISITORCPPFILES)
+	$(MAKE) $(ASTVISITOROBJS)
 
-test: $(FILES)
-	$(MAKE) $(OBJS)
-	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(TEST) $(OBJS) \
-
-#%.o: %.cpp
-#	$(CXX) $(CXXSTD) -c $(CXXFLAGS) -o $@ $<
-
-.PHONY: clean
-clean:
-	rm -rf $(CLEANLIST)
+#testast: $(ASTCPPFILES)
+#	$(MAKE) $(ASTOBJS)
+#	$(CXX) $(CXXFLAGS) $(CXXSTD) -o TESTAST $(OBJS)

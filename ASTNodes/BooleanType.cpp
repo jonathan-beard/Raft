@@ -6,8 +6,9 @@
 #include <cassert>
 #include "BooleanType.hpp"
 
-BooleanType::BooleanType() : Type(),
-                             type_name( "BooleanType" )
+using namespace Node;
+
+BooleanType::BooleanType() : Type("BooleanType")
 {
    /* nothing to do here */
 }
@@ -18,7 +19,7 @@ BooleanType::~BooleanType()
 }
 
 bool
-BooleanType::IsType( int64_t value )
+BooleanType::IsType( uintmax_t value )
 {
    if( value == 0 || value == 1 ) return true;
    return( false );

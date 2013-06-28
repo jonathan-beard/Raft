@@ -3,6 +3,8 @@
  * @author: Jonathan Beard
  * @version: Wed May 29 08:59:18 2013
  */
+#include <cassert>
+
 #include "Declaration.hpp"
 #include "Type.hpp"
 #include "Initializer.hpp"
@@ -13,8 +15,7 @@ using namespace Node;
 Declaration::Declaration( Type *t, 
                           std::string *n,
                           Initializer *i )
-                          : NodeAbstract(),
-                            name( "Declaration" ),
+                          : NodeAbstract( "Declaration" ),
                             decl_type( nullptr ),
                             init( nullptr )
 {
@@ -28,7 +29,7 @@ Declaration::Declaration( Type *t,
    if( i == nullptr )
    {
       /* get default initializer */
-      init = type->GetDefaultInitializer();
+      init = get_type().GetDefaultInitializer();
    }
    else
    {
@@ -50,7 +51,7 @@ Declaration::print( std::ostream &stream )
    std::ostream &ret( NodeAbstract::print( stream ) );
    ret << decl_type << get_type().ToString() 
       << " " << get_name() << 
-      " " << get_initializer().ToString();
+      " " << get_decl_initializer().ToString();
    return( stream );
 }
 
@@ -58,4 +59,32 @@ Type&
 Declaration::get_decl_type()
 {
    return( *decl_type );
+}
+
+std::string
+Declaration::get_decl_name()
+{
+   return( decl_name );
+}
+
+Initializer&
+Declaration::get_decl_initializer()
+{
+   /* make sure this puppy isn't null before returning a ptr */
+   assert( init != nullptr );
+   return( *init );
+}
+
+void
+Declaration::set_modifier( TypeModifier *m )
+{
+   assert( m != nullptr );
+   modifier = m;
+}
+
+TypeModifier&
+Declaration::get_modifier()
+{
+   assert( modifier != nullptr );
+   return( *modifier );
 }

@@ -79,12 +79,12 @@ public:
    std::set<NodeAbstract* >&  get_siblings();
 
    NodeAbstract*        get_child();
-   const Type&          get_type() const;
-   void                 set_type( const Type &type );
+   Type&                get_type();
+   void                 set_type( Type &type );
 
    int64_t              get_number();
 
-   const std::string&   get_name() const ;
+   std::string&         get_name();
    void                 set_name( const std::string name );  
 
    /**
@@ -96,11 +96,17 @@ public:
    virtual std::ostream&   print( std::ostream &stream );
    
    /**
+    * ToString - returns a string representation of this node
+    * @return std::string
+    */
+   virtual std::string ToString();
+   
+   /**
     * GetType - returns the type of this object as
     * a type_info object.
     */
    const std::type_info&   GetType() const;
-
+   
    /**
     * Accept - method calls the visit method of the visitor
     * from the calling node.  The visitor should have a 
@@ -124,6 +130,8 @@ public:
                           NodeAbstract *root );
     
 protected:
+   /* convenience constructor for sub-classes */
+   NodeAbstract( const std::string name );
    std::string name;
 
 private:

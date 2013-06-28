@@ -19,13 +19,23 @@ int64_t NodeAbstract::number_of_nodes = 0;
 
 /* constructors */
 NodeAbstract::NodeAbstract() : 
+            name("NodeAbstract"),
             node_number( NodeAbstract::number_of_nodes++ ),
             parent( nullptr ),
-            child( nullptr ),
-            name("NodeAbstract")
+            child( nullptr )
 {
-   /* nothing realy to do here */
+   /* nothing really to do here */
 }
+
+NodeAbstract::NodeAbstract( const std::string n ):
+                           name( n ),
+                           node_number( NodeAbstract::number_of_nodes++ ),
+                           parent( nullptr ),
+                           child( nullptr )
+{
+   /* nothing really to do here */
+}
+                           
 
 /* copy constructor */
 NodeAbstract::NodeAbstract( const NodeAbstract &node )
@@ -35,7 +45,7 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
    child  = node.child;
    siblings.insert( node.siblings.begin(), 
                     node.siblings.end() );
-   (this)->type.set_type( node.get_type() );
+   (this)->type.set_type( node.type );
 }
 
 
@@ -119,12 +129,12 @@ NodeAbstract*  NodeAbstract::get_child()
    return( this->child );
 }
 
-const Type&    NodeAbstract::get_type() const
+Type&    NodeAbstract::get_type()
 {
    return( this->type );
 }
 
-void           NodeAbstract::set_type( const Type &type )
+void           NodeAbstract::set_type( Type &type )
 {
    this->type.set_type( type );
 }  
@@ -135,7 +145,7 @@ NodeAbstract::get_number()
    return( node_number );
 }
 
-const std::string&      NodeAbstract::get_name() const
+std::string&      NodeAbstract::get_name()
 {
    return( this->name );
 }
@@ -167,8 +177,16 @@ NodeAbstract::print( std::ostream &stream)
    return( stream );
 }
 
+std::string
+NodeAbstract::ToString()
+{
+   std::stringstream ss;
+   print(ss);
+   return( ss.str() );
+}
+
 const std::type_info&
-NodeAbstract::GetType()
+NodeAbstract::GetType() const
 {
    return( typeid(*this) );
 }

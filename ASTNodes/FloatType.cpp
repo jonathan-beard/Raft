@@ -8,9 +8,17 @@
 
 using namespace Node;
 
-FloatType::FloatType() : Type(),
+FloatType::FloatType() : Type( "GenericFloat" ),
                          min( LDBL_MIN ),
                          max( LDBL_MAX )
+{
+   /* nothing really to do here */
+}
+
+FloatType::FloatType( const std::string n ) :
+                        Type( n ),
+                        min( LDBL_MIN ),
+                        max( LDBL_MAX )
 {
    /* nothing really to do here */
 }

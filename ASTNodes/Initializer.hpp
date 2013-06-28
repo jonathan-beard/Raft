@@ -29,10 +29,10 @@ public:
    bool        IsUInt();
    bool        IsBool();
 
-   std::string GetValue();
-   intmax_t    GetValue();
-   uintmax_t   GetValue();
-   bool        GetValue();
+   std::string GetValueString();
+   intmax_t    GetValueInt();
+   uintmax_t   GetValueUInt();
+   bool        GetValueBool();
 
 private:
    std::string string_value;

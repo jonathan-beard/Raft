@@ -90,14 +90,14 @@ Initializer::GetValue()
 }
 
 intmax_t
-Initializer::GetValue()
+Initializer::GetValueInt()
 {
    assert( set_type == INT );
    return( int_value );
 }
 
 uintmax_t
-Initializer::GetValue()
+Initializer::GetValueUInt()
 {
    assert( set_type == UINT );
    return( uint_value );
@@ -105,7 +105,7 @@ Initializer::GetValue()
 
 
 bool
-Initializer::GetValue()
+Initializer::GetValueBool()
 {  
    assert( set_type == BOOL );
    return( bool_value );

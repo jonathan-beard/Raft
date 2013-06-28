@@ -13,6 +13,11 @@ Type::Type() : name( "AbstractType" )
    /* nothing to do */
 }
 
+Type::Type( const std::string n ) : name( n )
+{
+   /* nothing really to do */
+}
+
 Type::Type( const Type &type )
 {
    this->name = type.name;
@@ -50,19 +55,20 @@ Type::set_type( const Type &type )
 std::ostream&
 Type::print( std::ostream &stream )
 {
-   stream << type_name;
+   stream << (this)->ToString();
    return( stream );
 }
 
 std::string
 Type::ToString()
 {
-   return( type_name );
+   return( name );
 }  
    
 Initializer* 
 Type::GetDefaultInitializer()
 {
+   /* die if this is the one beign called... */
    assert( false );
    return( nullptr );
 }

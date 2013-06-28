@@ -22,7 +22,7 @@ include ./ASTNodes/Makefile
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
 				  command_arguments ap_set_options ap_driver \
 				  ap_common command_option_base \
-              $(ASTNODES)
+#              $(ASTNODES)
 
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
@@ -82,4 +82,4 @@ aph_lexer: aph_lexer.l
 
 .PHONY: clean
 clean:
-	rm -rf $(CLEANLIST)
+	rm -rf $(CLEANLIST) $(ASTCLEAN)

@@ -24,14 +24,15 @@ public:
    Declaration( Type *t, std::string *name, Initializer *init );
    virtual ~Declaration();
    /* override default print method */
-   virtual std::ostream& std::ostream( std::ostream &stream );
+   virtual std::ostream& print( std::ostream &stream );
 
    /* getter / setter methods */
-   virtual Type&        get_decl_type;
-   virtual std::string  get_decl_name;
-   virtual Initializer& get_decl_initializer;
+   virtual Type&           get_decl_type();
+   virtual std::string     get_decl_name();
+   virtual Initializer&    get_decl_initializer();
+   virtual TypeModifier&   get_modifier();
 
-   virtual set_modifier( TypeModifier *m );
+   virtual void set_modifier( TypeModifier *m );
 protected:
    Type        *decl_type;
    std::string decl_name;

@@ -21,7 +21,7 @@ public:
     * IsType - overrides default bahavior
     * for IsType
     */
-   virtual  bool IsType( int64_t value );
+   virtual  bool IsType( uintmax_t value );
    virtual  bool IsType( std::string *value );
    
    virtual Initializer* GetDefaultInitializer();
