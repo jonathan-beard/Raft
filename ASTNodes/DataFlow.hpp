@@ -6,12 +6,14 @@
 #include <cstdlib> 
 #include <sstream>
 
-#ifndef _XDATAFLOW_HPP_
-#define _XDATAFLOW_HPP_  1
+#include "NodeAbstract.hpp"
 
-namespace X{
+#ifndef _DATAFLOW_HPP_
+#define _DATAFLOW_HPP_  1
 
-class DataFlow {
+namespace Node{
+
+class DataFlow : public Type {
 public:
    static DataFlow* GetDataFlow( size_t count );
    static DataFlow* GetDataFlow( size_t min,

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 
-#include "XPort.hpp"
+#include "Port.hpp"
 
 
 using namespace Node;
@@ -22,8 +22,17 @@ Port::Port() : Type( "PortType" ),
 }
 
 Port::Port( const std::string n,
+            Direction d,
             Type  *p_type,
-            DataFlow *f_type ) : 
+            DataFlow *f_type ) : Type( n ),
+                                 direction( d ),
+                                 p_type( port_type ),
+                                 f_type( flow_type )
+{
+   assert( port_type != nullptr );
+   assert( f_type != nullptr );
+   assert( direction == IN !! direction == OUT );
+}
 
 Port::~Port()
 {
@@ -37,15 +46,6 @@ Port::~Port()
       delete( flow_type );
       flow_type = nullptr;
    }
-   direction = PortDirection::NOTSET;
-   name.clear();
-}
-
-void Port::set_direction( PortDirection d )
-{
-   assert( d != PortDirection::NOTSET );
-   assert( this->direction == PortDirection::NOTSET );
-   this->direction = d;
 }
 
 PortDirection Port::get_direction()
@@ -53,34 +53,9 @@ PortDirection Port::get_direction()
    return( direction );
 }
 
-void Port::set_port_type( Type *t )
-{
-   assert( t != nullptr );
-   assert( this->port_type == nullptr );
-   this->port_type = t;
-}
-
 Type* Port::get_port_type()
 {
    return( port_type );
-}
-
-void Port::set_name( std::string name )
-{
-   assert( name.length() > 0 );
-   this->name = name;
-}
-
-std::string Port::get_name()
-{
-   return( name );
-}
-
-void Port::set_flow_type( DataFlow *flow_type )
-{
-   assert( flow_type != nullptr );
-   assert( this->flow_type == nullptr );
-   this->flow_type = flow_type;
 }
 
 DataFlow* Port::get_flow_type()
@@ -96,7 +71,7 @@ std::ostream&  Port::print( std::ostream &stream )
    return( stream );
 }
 
-std::string Port::toString(){
+std::string Port::ToString(){
    std::stringstream ss;
    this->print( ss );
    return( ss.str() );

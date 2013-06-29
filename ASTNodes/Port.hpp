@@ -17,32 +17,25 @@ class Port : public Type{
 public:
    Port();
 
-
    virtual ~Port();
-
-   void  set_direction( PortDirection d );
-
+   
    /**
     * get_direction - returns the direction of the port
     * @return PortDirection enum type
     */
    PortDirection  get_direction();
 
-   /* various get & set methods */
-   void  set_port_type( Type *t );
+   /* various get methods */
    Type* get_port_type();
 
-   void  set_name( std::string name );
-   std::string get_name();
-
-   void  set_flow_type( DataFlow *flow_type );
    DataFlow*   get_flow_type( );
 
    std::ostream& print( std::ostream &stream );
-   std::string   toString();
+   std::string   ToString();
 
 protected:
    Port( const std::string n,
+         PortDirection d,
          Type *p_type,
          DataFlow *f_type );
 
