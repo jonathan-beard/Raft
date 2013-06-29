@@ -9,7 +9,7 @@
 
 namespace Node{
 
-class FLoat96Type : public FloatType {
+class Float96Type : public FloatType {
 public:
    Float96Type();
 };

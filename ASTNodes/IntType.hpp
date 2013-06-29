@@ -21,6 +21,11 @@ public:
 
    virtual Initializer* GetDefaultInitializer();
 protected:
+
+   IntType( const std::string name,
+            uintmax_t max,
+            intmax_t  min );
+
    uintmax_t max;
    intmax_t  min;
 };

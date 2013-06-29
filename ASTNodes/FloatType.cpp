@@ -3,7 +3,7 @@
  * @author: Jonathan Beard
  * @version: Tue May 28 08:22:55 2013
  */
-#include <float.h>
+
 #include "FloatType.hpp"
 
 using namespace Node;
@@ -15,10 +15,12 @@ FloatType::FloatType() : Type( "GenericFloat" ),
    /* nothing really to do here */
 }
 
-FloatType::FloatType( const std::string n ) :
+FloatType::FloatType( const std::string n,
+                      long double minimum,
+                      long double maximum ) :
                         Type( n ),
-                        min( LDBL_MIN ),
-                        max( LDBL_MAX )
+                        min( minimum ),
+                        max( maximum )
 {
    /* nothing really to do here */
 }

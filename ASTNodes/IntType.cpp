@@ -16,6 +16,10 @@ IntType::IntType() : Type(),
    /* nothing to do here */
 }
 
+IntType::IntType(const std:;string n,
+                 uintmax_t minimum,
+
+
 IntType::~IntType()
 {
    /* nothing to do here either */

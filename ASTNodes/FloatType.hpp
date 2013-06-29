@@ -6,6 +6,7 @@
 #ifndef _FLOATTYPE_HPP_
 #define _FLOATTYPE_HPP_  1
 
+#include <cfloat>
 #include "Type.hpp"
 
 namespace Node{

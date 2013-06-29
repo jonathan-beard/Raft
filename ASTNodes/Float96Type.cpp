@@ -7,10 +7,10 @@
 
 using namespace Node;
 
-Float96Type::Float96Type() : FloatType(),
-                             type_name( "Float96Type" ),
-                             min( LDBL_MIN ),
-                             max( LDBL_MAX )
+Float96Type::Float96Type() : FloatType(
+                             "Float96Type",
+                             LDBL_MIN,
+                             LDBL_MAX )
 {
    /* nothing to do here */
 }

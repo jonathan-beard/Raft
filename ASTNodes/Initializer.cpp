@@ -6,6 +6,8 @@
 #include <cassert>
 #include "Initializer.hpp"
 
+using namespace Node;
+
 Initializer::Initializer()
 {
    /* shouldn't be here, this is just here to fool you */
@@ -83,7 +85,7 @@ Initializer::IsBool()
 }
 
 std::string
-Initializer::GetValue()
+Initializer::GetValueString()
 {
    assert( set_type == STRING );
    return( string_value );
