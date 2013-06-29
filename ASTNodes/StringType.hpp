@@ -13,7 +13,7 @@ namespace Node{
 
 class Initializer;
 
-class StringType{
+class StringType : public Type{
 public:
    StringType();
    virtual ~StringType();

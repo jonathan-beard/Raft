@@ -7,10 +7,10 @@
 
 using namespace Node;
 
-Int64Type::Int64Type() : IntType(),
-                         type_name( "Int64Type" ),
-                         max( INT64_MAX ),
-                         min( INT64_MIN )
+Int64Type::Int64Type() : IntType(
+                         "Int64Type",
+                         INT64_MAX,
+                         INT64_MIN )
 {
    /* nothing to do here */
 }

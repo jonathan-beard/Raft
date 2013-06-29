@@ -9,8 +9,7 @@
 
 using namespace Node;
 
-ObjectType::ObjectType() : Type(),
-                           type_name( "ObjectType" )
+ObjectType::ObjectType() : Type( "ObjectType" )
 {
    /* nothing to do here */
 }
@@ -25,7 +24,7 @@ ObjectType::IsType( std::string *value )
 {
    
    if( value != nullptr ){
-      type_name = *value;
+      name = *value;
       return( true );
    }
    return( false );

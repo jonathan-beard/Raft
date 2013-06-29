@@ -8,12 +8,22 @@
 
 using namespace Node;
 
-UIntType::UIntType() : Type(),
+
+UIntType::UIntType() : Type( "UIntType" ),
                        max( 0 ),
                        min( 0 )
 {
    /* nothing to do here */
 }
+
+UIntType::UIntType( const std::string n, 
+                    uintmax_t maximum ) : Type( n ),
+                                          max( maximum ),
+                                          min( 0 )
+{
+   /* nothing to do here */
+}
+
 
 UIntType::~UIntType()
 {
@@ -21,7 +31,7 @@ UIntType::~UIntType()
 }
 
 bool
-UIntMax::IsType( uintmax_t value )
+UIntType::IsType( uintmax_t value )
 {
    if( value <= max && value >= min ) return( true );
    return( false );

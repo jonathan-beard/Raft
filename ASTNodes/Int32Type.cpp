@@ -7,10 +7,10 @@
 
 using namespace Node;
 
-Int32Type::Int32Type() : IntType(),
-                         type_name( "Int32Type" ),
-                         max( INT32_MAX ),
-                         min( INT32_MIN )
+Int32Type::Int32Type() : IntType(
+                         "Int32Type",
+                          INT32_MAX,
+                          INT32_MIN )
 {
    /* nothing to do here */
 }

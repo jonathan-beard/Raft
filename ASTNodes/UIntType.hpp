@@ -21,6 +21,10 @@ public:
    virtual bool IsType( uintmax_t value );
    virtual Initializer* GetDefaultInitializer();
 protected:
+
+   UIntType( const std::string n,
+             uintmax_t maximum );
+
    uintmax_t max;
    uintmax_t min;
 };

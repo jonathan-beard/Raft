@@ -18,7 +18,7 @@ public:
    virtual std::string get_name();
 
 protected:
-   std::string name;
+   TypeModifier( const std::string n );
 };
 
 } /* end namespace Node */

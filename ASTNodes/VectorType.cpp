@@ -8,9 +8,15 @@
 using namespace Node;
 
 VectorType::VectorType( size_t s )
-   :  NodeAbstract(),
-      name( "VectorType" ),
+   :  TypeModifier( "VectorType" ),
       size( s )
+{
+   /* nothing to do here */
+}
+
+VectorType::VectorType( const std::string n,
+                        size_t s ) : TypeModifier( n ),
+                                     size( s )
 {
    /* nothing to do here */
 }

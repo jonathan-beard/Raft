@@ -3,21 +3,25 @@
  * @author: Jonathan Beard
  * @version: Sun May 26 14:20:07 2013
  */
+
 #include "IntType.hpp"
 #include "Initializer.hpp"
 
 using namespace Node;
 
-IntType::IntType() : Type(),
-                     type_name( "IntType" ),
+IntType::IntType() : Type( "IntType" ),
                      max( 0 ),
                      min( 0 )
 {
    /* nothing to do here */
 }
 
-IntType::IntType(const std:;string n,
+IntType::IntType(const std::string n,
                  uintmax_t minimum,
+                 intmax_t  maximum )
+{
+   /* nothing to do here */
+}
 
 
 IntType::~IntType()

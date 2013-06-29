@@ -7,8 +7,13 @@
 
 using namespace Node;
 
-TypeModifier::TypeModifier() : NodeAbstract(),
-                               name( "BaseModifier" )
+TypeModifier::TypeModifier() : NodeAbstract( "TypeModifier" )
+{
+   /* nothing to do here */
+}
+
+TypeModifier::TypeModifier( const std::string n ) :
+                               NodeAbstract( n )
 {
    /* nothing to do here */
 }

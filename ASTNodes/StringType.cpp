@@ -8,8 +8,7 @@
 
 using namespace Node;
 
-StringType::StringType() : Type(),
-                           type_name( "StringType" )
+StringType::StringType() : Type( "StringType" )
 {
 
 }

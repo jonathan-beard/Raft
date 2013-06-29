@@ -6,10 +6,12 @@
 #include <cstdint>
 #include "Int8Type.hpp"
 
-Int8Type::Int8Type() : IntType(),
-                       type_name( "Int8Type" ),
-                       max( INT8_MAX ),
-                       min( INT8_MIN )
+using namespace Node;
+
+Int8Type::Int8Type() : IntType( 
+                        "Int8Type",
+                         INT8_MAX ,
+                         INT8_MIN )
 {
    /* nothing to do */
 }

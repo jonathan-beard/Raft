@@ -11,7 +11,19 @@
 #include "XPort.hpp"
 
 
-using namespace X;
+using namespace Node;
+
+Port::Port() : Type( "PortType" ),
+               direction( PortDirection::NOTSET ),
+               port_type( nullptr ),
+               flow_type( nullptr )
+{
+   /* nothing to do here */
+}
+
+Port::Port( const std::string n,
+            Type  *p_type,
+            DataFlow *f_type ) : 
 
 Port::~Port()
 {

@@ -7,10 +7,10 @@
 
 using namespace Node;
 
-Int16Type::Int16Type() : IntType(),
-                         type_name( "Int16Type" ),
-                         max( INT16_MAX ),
-                         min( INT16_MIN )
+Int16Type::Int16Type() : IntType(
+                         "Int16Type",
+                         INT16_MAX,
+                         INT16_MIN )
 {
    /* nothing to do */
 }

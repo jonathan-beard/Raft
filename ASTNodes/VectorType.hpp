@@ -7,6 +7,7 @@
 #define _VECTORTYPE_HPP_  1
 
 #include "NodeAbstract.hpp"
+#include "TypeModifier.hpp"
 
 namespace Node{
 
@@ -17,6 +18,10 @@ public:
 
 
    size_t   get_size();
+
+protected:
+   VectorType( const std::string n /* name */,
+               size_t s            /* vector size */ );
 
 private:
    size_t   size;

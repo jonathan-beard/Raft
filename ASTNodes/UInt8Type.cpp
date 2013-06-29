@@ -7,9 +7,9 @@
 
 using namespace Node;
 
-UInt8Type::UInt8Type() : UIntType(),
-                         type_name( "UInt8Type"),
-                         max( UINT8_MAX )
+UInt8Type::UInt8Type() : UIntType(
+                         "UInt8Type",
+                         UINT8_MAX )
 {
    /* nothing to do */
 }

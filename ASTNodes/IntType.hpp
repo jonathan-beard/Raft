@@ -8,6 +8,8 @@
 
 #include <cinttypes>
 #include <cstdint>
+#include <string>
+
 #include "Type.hpp"
 
 namespace Node {
@@ -23,8 +25,8 @@ public:
 protected:
 
    IntType( const std::string name,
-            uintmax_t max,
-            intmax_t  min );
+            uintmax_t maximum,
+            intmax_t  minimum );
 
    uintmax_t max;
    intmax_t  min;

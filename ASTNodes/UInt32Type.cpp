@@ -7,9 +7,9 @@
 
 using namespace Node;
 
-UInt32Type::UInt32Type() : UIntType(),
-                           type_name( "UInt32Type" ),
-                           max( UINT32_MAX )
+UInt32Type::UInt32Type() : UIntType(
+                           "UInt32Type",
+                           UINT32_MAX )
 {
    /* nothing to do here */
 }

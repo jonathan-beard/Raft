@@ -6,19 +6,20 @@
 #ifndef _XPORT_HPP_
 #define _XPORT_HPP_  1
 
-#include "XTypes.hpp"
-#include "XDataFlow.hpp"
+#include "Type.hpp"
+#include "DataFlow.hpp"
 
-namespace X{
+namespace Node{
 
 enum PortDirection : int { NOTSET = 0, IN, OUT };
 
-class Port{
+class Port : public Type{
 public:
-   Port() : direction( PortDirection::NOTSET ),
+   Port() : Type( "PortType" ),
+            direction( PortDirection::NOTSET ),
             port_type( nullptr ),
-            name( "NotSet" ),
             flow_type( nullptr ){};
+
    virtual ~Port();
 
    void  set_direction( PortDirection d );
