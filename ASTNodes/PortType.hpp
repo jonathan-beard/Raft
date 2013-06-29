@@ -1,10 +1,10 @@
 /**
- * XPort.hpp - 
+ * PortType.hpp - 
  * @author: Jonathan Beard
  * @version: Wed Mar 27 10:19:58 2013
  */
-#ifndef _XPORT_HPP_
-#define _XPORT_HPP_  1
+#ifndef _PORTTYPE_HPP_
+#define _PORTTYPE_HPP_  1
 
 #include "Type.hpp"
 #include "DataFlow.hpp"
@@ -15,16 +15,20 @@ enum PortDirection : int { NOTSET = 0, IN, OUT };
 
 class Port : public Type{
 public:
-   Port() : Type( "PortType" ),
-            direction( PortDirection::NOTSET ),
-            port_type( nullptr ),
-            flow_type( nullptr ){};
+   Port();
+
 
    virtual ~Port();
 
    void  set_direction( PortDirection d );
+
+   /**
+    * get_direction - returns the direction of the port
+    * @return PortDirection enum type
+    */
    PortDirection  get_direction();
 
+   /* various get & set methods */
    void  set_port_type( Type *t );
    Type* get_port_type();
 
@@ -37,11 +41,13 @@ public:
    std::ostream& print( std::ostream &stream );
    std::string   toString();
 
-private:
+protected:
+   Port( const std::string n,
+         Type *p_type,
+         DataFlow *f_type );
 
    PortDirection direction;
    Type          *port_type;
-   std::string   name;
    DataFlow      *flow_type;
 
    std::string name_map[3] = {
@@ -53,4 +59,4 @@ private:
 
 } /* end namespace X */
 
-#endif /* END _XPORT_HPP_ */
+#endif /* END _PORTTYPE_HPP_ */

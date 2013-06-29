@@ -24,7 +24,7 @@
  * valid types for the language as specified within
  * the XML types specification file.
  */
-define system class Generic< Type T[...] > : extends Type {
+define system class Generic< Type T [...] > : extends Type {
 @public:
    /**
     * Generic - Constructor, parameters are 
@@ -48,7 +48,7 @@ define system class Generic< Type T[...] > : extends Type {
  * where XX is some number greater than zero, this
  * field has no effect for ASDF
  */
-define system class Input< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
+system class Input< Type T, enum DataFlow( ASDF ), int64_t Count( 1 ) > {
 @public:
    /** 
     * Input constructor for a single type, the 
@@ -73,7 +73,7 @@ define system class Input< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) 
  * constructors provided allow for the user to specify
  * either a Generic port type or a single port type
  */
-define system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
+system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
 @public:
    /**
     * Output constructor for a single data type, the
@@ -96,7 +96,7 @@ define system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 )
  * to specify compile time configuration parameters
  * for specific AutoPipe kernels.
  */
-define final system class Config< BasicType type >
+final system class Config< BasicType type >
 {
 @public:
    /**
@@ -115,7 +115,7 @@ define final system class Config< BasicType type >
  * make a sub-class in order to define new kernels or more
  * abstract Kernel types
  */
-define abstract class Kernel {
+abstract class Kernel {
 
 /* if you were to define ports in this abstract kernel
  * you'd do so like this
