@@ -51,6 +51,8 @@ CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
 all:  apcom
 
 apcom: $(APCOMFILES)
+	$(MAKE) nodes
+	$(MAKE) visitors
 	$(MAKE) $(APCOMSOBJ)
 	$(MAKE) $(APCOMOBJS)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APCOMEXE) $(APCOMOBJS) \

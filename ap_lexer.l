@@ -81,7 +81,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
 "@"                     { TOKEN( AT ); }
-"define"                { TOKEN( DEFINE ); }
 "ports"                 { TOKEN( PORTS ); }
 "configs"               { TOKEN( CONFIGS ); }
 "autogen"               { TOKEN( AUTOGEN ); }
