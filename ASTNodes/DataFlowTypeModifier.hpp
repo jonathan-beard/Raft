@@ -29,10 +29,11 @@ public:
     * MAX, MEAN, STD.  If a particular value isn't 
     * valid or implemented for the calling class then 
     * a -1 should be returned.
-    * @param value - FlowValue
-    * @return  intmax_t
+    * @param key - FlowValue
+    * @param value - either intmax_t or long double
     */
-   virtual intmax_t GetFlowValue( FlowValue value ) = 0;
+   virtual void GetFlowValue( FlowValue key, intmax_t &value ) = 0;
+   virtual void GetFlowValue( FlowValue key, long double &value ) = 0;
 
    /**
     * FlowValue - to be used with GetFlowValue
