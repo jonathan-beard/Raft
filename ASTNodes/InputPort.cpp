@@ -4,3 +4,19 @@
  * @version: Sun Jun 30 15:00:07 2013
  */
 #include "InputPort.hpp"
+
+using namespace Node;
+
+InputPort::InputPort( Type *t, DataFlowTypeModifier *flow )
+                              : Port( "InputPort",
+                                       IN,
+                                       t,
+                                       flow )
+{
+   /* nothing to do here */
+}
+
+InputPort::~InputPort()
+{
+   /* nothing to do at the moment */
+}
