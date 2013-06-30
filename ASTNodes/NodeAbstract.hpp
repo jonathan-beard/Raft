@@ -9,17 +9,14 @@
 #include <cstdint>
 #include <typeinfo>
 #include <set>
+#include <string>
 
 namespace Visitor{
    class DefaultVisitor;
 }
 
-#include "Type.hpp"
-
-
-
 namespace Node{
-
+   
 class NodeAbstract {
 public:
    /**
@@ -79,8 +76,6 @@ public:
    std::set<NodeAbstract* >&  get_siblings();
 
    NodeAbstract*        get_child();
-   Type&                get_type();
-   void                 set_type( Type &type );
 
    int64_t              get_number();
 
@@ -140,7 +135,6 @@ private:
    NodeAbstract                *parent;
    NodeAbstract                *child;
    std::set<NodeAbstract* >    siblings;
-   Node::Type                  type;
 };
 
 } /* end namespace Node */

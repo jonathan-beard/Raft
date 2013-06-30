@@ -18,7 +18,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
 				Int16Type Int32Type Int64Type Int8Type IntType ObjectType \
 				StringType TemplateDeclaration TypeModifier UInt16Type \
 				UInt32Type UInt64Type UInt8Type UIntType VectorType \
-            Port
+            Port DataFlowTypeModifier ASDFTypeModifier BASDFTypeModifier \
+            SDFTypeModifier
 
 VISITORS = DefaultVisitor DebugVisitor
 				

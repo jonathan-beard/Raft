@@ -5,15 +5,17 @@
  */
 #include "Initializer.hpp"
 #include "Type.hpp"
+#include "NodeAbstract.hpp"
+
 #include <cassert>
 using namespace Node;
 
-Type::Type() : name( "AbstractType" )
+Type::Type() : NodeAbstract( "AbstractType" )
 {
    /* nothing to do */
 }
 
-Type::Type( const std::string n ) : name( n )
+Type::Type( const std::string n ) : NodeAbstract( n )
 {
    /* nothing really to do */
 }

@@ -29,7 +29,7 @@ Declaration::Declaration( Type *t,
    if( i == nullptr )
    {
       /* get default initializer */
-      init = get_type().GetDefaultInitializer();
+      init = t->GetDefaultInitializer();
    }
    else
    {
@@ -49,7 +49,7 @@ std::ostream&
 Declaration::print( std::ostream &stream )
 {
    std::ostream &ret( NodeAbstract::print( stream ) );
-   ret << decl_type << get_type().ToString() 
+   ret << decl_type << decl_type->ToString() 
       << " " << get_name() << 
       " " << get_decl_initializer().ToString();
    return( stream );

@@ -9,12 +9,13 @@
 #include <cstdint>
 #include <string>
 #include <ostream>
+#include "NodeAbstract.hpp"
 
 namespace Node{
 
 class Initializer;
 
-class Type{
+class Type : public NodeAbstract {
 public:
    /* constructor */
    Type();
@@ -71,8 +72,6 @@ public:
    virtual Initializer* GetDefaultInitializer();
 protected:
    Type( const std::string n );
-   std::string name;
-
 };
 
 } /* end namespace Node */

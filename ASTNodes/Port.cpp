@@ -22,16 +22,16 @@ Port::Port() : Type( "PortType" ),
 }
 
 Port::Port( const std::string n,
-            Direction d,
+            PortDirection d,
             Type  *p_type,
-            DataFlow *f_type ) : Type( n ),
-                                 direction( d ),
-                                 p_type( port_type ),
-                                 f_type( flow_type )
+            DataFlowTypeModifier *f_type ) : Type( n ),
+                                             direction( d ),
+                                             port_type( p_type ),
+                                             flow_type( f_type )
 {
    assert( port_type != nullptr );
    assert( f_type != nullptr );
-   assert( direction == IN !! direction == OUT );
+   assert( direction != NOTSET );
 }
 
 Port::~Port()
@@ -48,26 +48,30 @@ Port::~Port()
    }
 }
 
-PortDirection Port::get_direction()
+Port::PortDirection 
+Port::get_direction()
 {
    return( direction );
 }
 
-Type* Port::get_port_type()
+Type* 
+Port::get_port_type()
 {
    return( port_type );
 }
 
-DataFlow* Port::get_flow_type()
+DataFlowTypeModifier* 
+Port::get_flow_type()
 {
    return( flow_type );
 }
 
-std::ostream&  Port::print( std::ostream &stream )
+std::ostream&  
+Port::print( std::ostream &stream )
 {
    stream << name << " " << name_map[ direction ] << " ";
-   stream << port_type->get_type_string() << " ";
-   stream << flow_type->toString();
+   stream << port_type->get_name() << " ";
+   stream << flow_type->ToString();
    return( stream );
 }
 

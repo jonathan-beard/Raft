@@ -11,6 +11,7 @@
 #include <sstream>
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
+#include "Type.hpp"
 
 using namespace Node;
 
@@ -45,7 +46,6 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
    child  = node.child;
    siblings.insert( node.siblings.begin(), 
                     node.siblings.end() );
-   (this)->type.set_type( node.type );
 }
 
 
@@ -128,16 +128,6 @@ NodeAbstract*  NodeAbstract::get_child()
 {
    return( this->child );
 }
-
-Type&    NodeAbstract::get_type()
-{
-   return( this->type );
-}
-
-void           NodeAbstract::set_type( Type &type )
-{
-   this->type.set_type( type );
-}  
 
 int64_t
 NodeAbstract::get_number()

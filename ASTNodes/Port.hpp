@@ -7,14 +7,15 @@
 #define _PORTTYPE_HPP_  1
 
 #include "Type.hpp"
-#include "DataFlow.hpp"
+#include "DataFlowTypeModifier.hpp"
 
 namespace Node{
 
-enum PortDirection : int { NOTSET = 0, IN, OUT };
 
 class Port : public Type{
 public:
+   enum PortDirection : int { NOTSET = 0, IN, OUT };
+   
    Port();
 
    virtual ~Port();
@@ -28,7 +29,7 @@ public:
    /* various get methods */
    Type* get_port_type();
 
-   DataFlow*   get_flow_type( );
+   DataFlowTypeModifier*   get_flow_type( );
 
    std::ostream& print( std::ostream &stream );
    std::string   ToString();
@@ -37,11 +38,11 @@ protected:
    Port( const std::string n,
          PortDirection d,
          Type *p_type,
-         DataFlow *f_type );
+         DataFlowTypeModifier *f_type );
 
-   PortDirection direction;
-   Type          *port_type;
-   DataFlow      *flow_type;
+   PortDirection              direction;
+   Type                       *port_type;
+   DataFlowTypeModifier       *flow_type;
 
    std::string name_map[3] = {
         "NotSet" ,
