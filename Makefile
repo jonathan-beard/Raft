@@ -7,9 +7,12 @@ else
 DARWIN = 
 endif
 
+include ./Visitors/Makefile
+include ./ASTNodes/Makefile
+
 DEBUG = -g
 CFLAGS = -Wall -O0  $(DEBUG)
-CXXFLAGS = -Wall -O0 -I./ASTNodes/ $(DEBUG)
+CXXFLAGS = -Wall -O0 -I$(ASTDIR) -I$(VISITORDIR) -I. $(DEBUG)
 CSTD = -std=c99
 CXXSTD = -std=c++11 $(DARWIN)
 
@@ -17,12 +20,10 @@ CXXSTD = -std=c++11 $(DARWIN)
 APCOMEXE = apcom
 APHEXE = aph
 
-include ./ASTNodes/Makefile
 
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
 				  command_arguments ap_set_options ap_driver \
 				  ap_common command_option_base \
-#              $(ASTNODES)
 
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
@@ -82,4 +83,4 @@ aph_lexer: aph_lexer.l
 
 .PHONY: clean
 clean:
-	rm -rf $(CLEANLIST) $(ASTCLEAN)
+	rm -rf $(CLEANLIST) $(ASTCLEAN) $(VISITORCLEAN)
