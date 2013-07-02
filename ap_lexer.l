@@ -147,29 +147,32 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "String"                { TOKEN( STRTOKEN ); }
 {STRING}                { STOKEN( STRING ); }
 "-"?{D}+{EXP}?          { 
+                           const int buffer_size( 1 );
+                           char *buffer( nullptr );
+                           buffer = (char*) malloc( sizeof(char) * buffer_size );
+                           assert( buffer != nullptr );
+                           buffer[0] = '\0';
                            errno = EXIT_SUCCESS;
-                           const int buffer_size( 20 );
-                           char *
-                           memset( buffer, 
-                                   '\0', 
-                                   sizeof(char) * buffer_size );
                            yylval->uint_val = 
-                              strtoumax(yytext, buffer, 10);
+                              strtoumax(yytext, &buffer, 10);
                            assert( buffer[0] == '\0' );
 			                  assert( errno == 0 );
+                           free( buffer );
                            TOKEN(INT_TOKEN);		
                         }
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
+                                    const int buffer_size( 1 );
+                                    char *buffer( nullptr );
+                                    buffer = (char*)malloc( 
+                                                   sizeof(char) * buffer_size);
+                                    assert( buffer != nullptr );
+                                    buffer[0] = '\0';
                                     errno = EXIT_SUCCESS;
-                                    const int buffer_size( 20 );
-                                    char buffer[ buffer_size ];
-                                    memset( buffer,
-                                            '\0',
-                                            sizeof(char) * buffer_size );
                                     yylval->dval = strtold( yytext, 
-                                                            buffer );
+                                                            &buffer );
                                     assert( buffer[0] == '\0' );
                                     assert( errno == 0 );
+                                    free( buffer );
 			                           TOKEN(FLOAT_TOKEN);		
                                }
 
