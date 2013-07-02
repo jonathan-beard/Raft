@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <string>
 #include <cassert>
+#include <cinttypes>
 
 #include "ap_scanner.hpp"
 #include "ap_data.hpp"
@@ -148,7 +149,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "-"?{D}+{EXP}?          { 
                            errno = EXIT_SUCCESS;
                            const int buffer_size( 20 );
-                           char buffer[ buffer_size ];
+                           char *
                            memset( buffer, 
                                    '\0', 
                                    sizeof(char) * buffer_size );

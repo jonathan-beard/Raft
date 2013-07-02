@@ -7,27 +7,6 @@
 
 /* pre-declare classes that are needed for the parser here */
 %code requires{
-
-   namespace Node{
-      class NodeAbstract;
-      class VectorType;
-      class Type;
-      class TypeModifier;
-      class Int8Type;
-      class Int16Type;
-      class Int32Type;
-      class Int64Type;
-      class UInt8Type;
-      class UInt16Type;
-      class UInt32Type;
-      class UInt64Type;
-      class Float32Type;
-      class Float64Type;
-      class Float96Type;
-      class StringType;
-      class ObjectType;
-   }
-
    namespace AP {
       class AP_Driver;
       class AP_Scanner;
@@ -51,7 +30,6 @@
    #include <fstream>
    #include <cstdint>
    #include <cinttypes>
-   #include "NodeAbstract.hpp"
 
 
    /* include for all driver functions */
@@ -69,23 +47,7 @@
 %union{
    std::string        *sval;
    uintmax_t          uint_val;
-   intmax_t           int_val;
    long double         dval;
-   Node::NodeAbstract *node_val;
-   Node::VectorType   *vector_mod;
-   Node::Int8Type     *int8_type;
-   Node::Int16Type    *int16_type;
-   Node::Int32Type    *int32_type;
-   Node::Int64Type    *int64_type;
-   Node::UInt8Type    *uint8_type;
-   Node::UInt16Type   *uint16_type;
-   Node::UInt32Type   *uint32_type;
-   Node::UInt64Type   *uint64_type;
-   Node::Float32Type  *float32_type;
-   Node::Float64Type  *float64_type;
-   Node::Float96Type  *float96_type;
-   Node::StringType   *string_type;
-   Node::ObjectType   *object_type;
 }
 
 %token       END     0     "end of file"
@@ -162,22 +124,22 @@
 %token       FLOAT32  
 %token       FLOAT64  
 %token       FLOAT96  
-%token       VECTOR  
+%token       VECTOR
+%token       STRTOKEN 
 %token   <sval>    STRING  
 %token   <lval>    INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
 
-%type    <node_val>  TypeDeclaration
-%type    <node_val>  ClassDeclaration
-%type    <node_val>  InterfaceDeclaration
-%type    <node_val>  Body
-%type    <sval>      InstantModifier
-%type    <node_val>  TemplateDeclaration
-%type    <node_val>  Declaration
-%type    <sval>      ObjectType
-%type    <node_val>  Type
-%type    <vector_val>   TypeModifier
+%type    <sval>   TypeDeclaration
+%type    <sval>   ClassDeclaration
+%type    <sval>   InterfaceDeclaration
+%type    <sval>   Body
+%type    <sval>   InstantModifier
+%type    <sval>   TemplateDeclaration
+%type    <sval>   ObjectType
+%type    <sval>   Type
+%type    <sval>   TypeModifier
 
 %%
 
@@ -232,56 +194,75 @@ TemplateDeclaration  :  LCARROT Declarations  RCARROT
                      ;
 Declarations      :     Type TypeModifier IDENTIFIER Initializer SEMI
                         {
-                           Declaration *d( nullptr );
-                           d = new Declaration( $1 /* type */,
-                                                $3 /* name */,
-                                                $4 /* initializer */ );
-                           assert( d != nullptr );
-                           TypeModifier *m( $2 /* modifier */ );
-                           if( m != nullptr ) d->set_modifier( m );
-                           $$ = d;
                         }
                   ;
 
 
 Type              :     BOOLEAN
-                        { $$ = new BooleanType();       }
+                        { 
+                           $$ = new std::string( "Boolean" );       
+                        }
                   |     INT8T
-                        { $$ = new Int8Type();          }
+                        { 
+                           $$ = new std::string("INT8T");           
+                        }
                   |     INT16T
-                        { $$ = new Int16Type();         }
+                        { 
+                           $$ = new std::string("INT16T");          
+                        }
                   |     INT32T
-                        { $$ = new Int32Type();         }
+                        { 
+                           $$ = new std::string("INT32T");          
+                        }
                   |     INT64T
-                        { $$ = new Int64Type();         }
+                        { 
+                           $$ = new std::string("INT64T");          
+                        }
                   |     UINT8T
-                        { $$ = new UnsignedInt8Type();  }
+                        { 
+                           $$ = new std::string("UINT8T");          
+                        }
                   |     UINT16T
-                        { $$ = new UnsignedInt16Type(); }
+                        { 
+                           $$ = new std::string("UINT16T"); 
+                        }
                   |     UINT32T
-                        { $$ = new UnsignedInt32Type(); }
+                        { 
+                           $$ = new std::string("UInt32T"); 
+                        }
                   |     UINT64T
-                        { $$ = new UnsignedInt64Type(); }
+                        { 
+                           $$ = new std::string("UINT64T"); 
+                        }
                   |     FLOAT32
-                        { $$ = new FloatType32();       }
+                        { 
+                           $$ = new std::string("Float32");       
+                        }
                   |     FLOAT64
-                        { $$ = new FloatType64();       }
+                        { 
+                           $$ = new std::string("Float32");
+                        }
                   |     FLOAT96
-                        { $$ = new FloatType96();       }
+                        { 
+                           $$ = new std::string("Float96");       
+                        }
                   |     STRING
-                        { $$ = new StringType();        }
+                        { 
+                           $$ = new std::string("String");
+                        }
                   |     ObjectType
                         {
-                           assert( $1 != nullptr );
-                           $$ = $1;
+                           $$ = new std::string("ObjectType");
                         }
                   ;
 
 TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
                         {
-                           $$ = new VectorType( $3 );
+                           $$ = new std::string("VectorModifier");
                         }
-                  |     {  $$ = nullptr ; }
+                  |     {  
+                           $$ = nullptr ; 
+                        }
                   ;
 
 ObjectType        :     IDENTIFIER
