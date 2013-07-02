@@ -4,6 +4,8 @@
  * @version: Wed May 29 15:12:21 2013
  */
 #include <cassert>
+#include <string>
+
 #include "Initializer.hpp"
 
 using namespace Node;

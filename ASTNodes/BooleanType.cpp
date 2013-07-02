@@ -36,3 +36,11 @@ BooleanType::IsType( std::string *value )
    return( false );
 }
 
+Initializer*
+BooleanType::GetDefaultInitializer()
+{
+   Initializer *out( nullptr );
+   out = new Initializer( (bool)false );
+   assert( out != nullptr );
+   return( out );
+}

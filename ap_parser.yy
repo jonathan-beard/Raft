@@ -155,16 +155,18 @@ TypeDeclaration   :     ClassDeclaration
                   |     InterfaceDeclaration
                   ;
 
-ClassDeclaration  :     DEFINE InstantModifier CLASS IDENTIFIER LBRACE Body RBRACE SEMI
+ClassDeclaration  :     InstantModifier CLASS IDENTIFIER LBRACE Body RBRACE SEMI
                         {
+                           /*
                            std::cerr << "Modifier: " << *$2 << "\n";
                            std::cerr << *$4 << "\n";
                            delete( $2 );
                            delete( $4 );
+                           */
                         }
                   ;
 
-InterfaceDeclaration :  DEFINE INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
+InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
 
 Body              :     { std::cerr << "hit the body!!\n"; }
                   ;
