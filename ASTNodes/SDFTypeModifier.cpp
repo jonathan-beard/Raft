@@ -22,6 +22,11 @@ SDFTypeModifier::SDFTypeModifier( const std::string n,
    /* nothing to do here */
 }
 
+SDFTypeModifier::~SDFTypeModifier()
+{
+   /* nothing to do here */
+}
+
 void
 SDFTypeModifier::GetFlowValue( FlowValue key, intmax_t &value )
 {

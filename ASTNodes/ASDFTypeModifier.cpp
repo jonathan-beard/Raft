@@ -32,6 +32,11 @@ ASDFTypeModifier::ASDFTypeModifier(
    /* nothing to do here */
 }
 
+ASDFTypeModifier::~ASDFTypeModifier()
+{
+   /* nothing really to do */
+}
+
 void
 ASDFTypeModifier::set_minimum_flow( intmax_t minimum )
 {

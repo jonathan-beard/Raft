@@ -32,6 +32,11 @@ BASDFTypeModifier::BASDFTypeModifier(
    /* nothing to do here */
 }
 
+BASDFTypeModifier::~BASDFTypeModifier()
+{
+   /* nothing to do here either */
+}
+
 void
 BASDFTypeModifier::set_minimum_flow( intmax_t minimum )
 {

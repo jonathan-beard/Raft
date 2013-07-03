@@ -32,7 +32,6 @@ protected:
    intmax_t max;
    long double mean_flow;
    long double std_flow;
-private:
 }; /* END ASDFTypeModifier */
 
 } /* end namespace Node */
