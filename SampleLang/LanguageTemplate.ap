@@ -69,7 +69,7 @@ class Sum : extends Kernel{
     * Note on Ports:
     * these are declarations of ports, types in 
     * brackets are the valid generic types that
-    * we want to declare for each port, i.e. the
+    * we want to declare for each port, the
     * underlying block itself can accept int32
     * through float32_t.  The underlying run-time
     * system infers the port type as long as some 
@@ -95,13 +95,17 @@ class Sum : extends Kernel{
 }
 
 class Print : extends Kernel{
-@public
+@public:
 /** 
  * no constructor needed, default constructor
  * will call the Init function, the destructor will be
  * called on shutdown.
  */
 @ports:
+   /** 
+    * you should be able to use the array syntax
+    * to make an array of ports of any type
+    */
    Input< Generic( int32_t, int64_t, float32_t ) > x0;
 }
 
