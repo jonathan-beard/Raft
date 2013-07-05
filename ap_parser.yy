@@ -280,7 +280,10 @@ void
 AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
                       const std::string &err_message )
 {
-   std::cerr << "Error: " << err_message << "\n";
+   data.get_ap_errorstream() << "Parser error: Line( " 
+      << data.get_current_line() << " ) with input \"" 
+      << data.get_ap_parsestream().str() << "\"" << "\n";
+   data.reset_ap_parsestream();
 }
 
 /* include for access to scanner.yylex */
