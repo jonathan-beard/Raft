@@ -123,6 +123,12 @@ public:
     */
    uint64_t       get_current_line();
 
+   void           set_current_parse_file( const std::string file );
+   std::string    get_current_parse_file();
+
+   void           set_whole_current_line( char *line );
+   std::string    get_whole_current_line();
+
    /**
     * set method for options vars, set should be called
     * at least once immediately after the options are set from
@@ -150,7 +156,10 @@ private:
    ErrorStream       &errorstream;
    /* the current line number, for use with scanner */
    uint64_t current_line;
-
+   /* current parse file from parser, necessary for cpp */
+   std::string       current_parse_file;
+   /* current whole line, set from lexer */
+   std::string       whole_current_line;
    /* global options */
    AP_Options_Vars   *options;
 };

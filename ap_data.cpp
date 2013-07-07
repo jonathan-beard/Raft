@@ -121,6 +121,49 @@ uint64_t AP_Data::get_current_line()
    return( current_line );
 }  
 
+void
+AP_Data::set_current_parse_file( const std::string file )
+{
+   current_parse_file = file;
+}
+
+std::string
+AP_Data::get_current_parse_file()
+{
+   return( current_parse_file );
+}
+
+void
+AP_Data::set_whole_current_line( char *line )
+{
+   const int line_length( strlen( line ) );
+   char *line_buffer( nullptr );
+   line_buffer = (char*) alloca( sizeof(char) * line_length );
+   assert( line_buffer != nullptr );
+   memset( line_buffer, '\0', line_length );
+   const auto num_read( sscanf( line, "%[^\n]\n",line_buffer ) );
+   if( num_read == EOF )
+   {
+      whole_current_line = "";
+   }
+   else if( num_read == 0 )
+   {
+      whole_current_line = "";
+   }
+   else
+   {
+      std::stringstream ss;
+      ss << *line_buffer;
+      whole_current_line = ss.str();
+   }
+}
+
+std::string
+AP_Data::get_whole_current_line()
+{
+   return( whole_current_line );
+}
+
 void     AP_Data::set_options_vars( AP_Options_Vars *vars )
 {
    assert( vars != nullptr );

@@ -51,6 +51,14 @@ static std::string ExtractPathNoFileName( const std::string path );
 
 static std::string ExtractPathNoFileName( const char* Path, bool &status );
 
+/**
+ * RemoveStringQuotes - removes the quotes from strings like this: "boo boo boo"
+ * so that the bare characters are returned as a std::string object.
+ * @param   str - char *, must not be null
+ * @return  std::string
+ */
+static std::string RemoveStringQuotes( const char *str );
+
 private:
    AP_Common(){};
    ~AP_Common(){};

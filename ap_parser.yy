@@ -35,6 +35,7 @@
    /* include for all driver functions */
    #include "ap_driver.hpp"
    #include "ap_data.hpp"
+   #include "ap_common.hpp"
 
    /* define proper yylex */
    static int yylex(AP::AP_Parser::semantic_type *yylval,
@@ -145,14 +146,20 @@
 %%
 
 CompilationUnit   :     END
-                  |     TypeDeclarations
-                  |     CompilationUnit Filename
+                  |     Filenames
                   |     error
+                  ;
+
+Filenames         :     Filename
+                  |     Filenames Filename
                   ;
 
 Filename          :     POUND    INT_TOKEN   STRING
                         {
+                           /* reset line number for current file */
+                           data.set_current_line( 0 );
                            /* set filename here */
+                           data.set_current_parse_file( AP_Common::RemoveStringQuotes( $3->c_str() ) );
                            delete( $3 );
                         }
                   ;
@@ -290,9 +297,11 @@ void
 AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
                       const std::string &err_message )
 {
-   data.get_ap_errorstream() << "Parser error: Line( " 
+   data.get_ap_errorstream() << "Parser error: File: \"" <<
+      data.get_current_parse_file() << "\" at Line( " 
       << data.get_current_line() << " ) with input \"" 
-      << data.get_ap_parsestream().str() << "\"" << "\n";
+      << data.get_ap_parsestream().str() << "\" within the text \"" <<
+         data.get_whole_current_line() << "\"\n";
    data.reset_ap_parsestream();
 }
 

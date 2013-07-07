@@ -121,3 +121,27 @@ AP_Common::ExtractPathNoFileName(const char *Path, bool &status)
    status = true;
    return(dir_path);
 }
+
+std::string
+AP_Common::RemoveStringQuotes( const char *str )
+{
+   const auto length( strlen( str ) );
+   char *buffer( nullptr );
+   buffer = (char*) alloca( sizeof( char ) * length );
+   assert( buffer != nullptr );
+   memset( buffer, '\0', length );
+   const auto num( sscanf( str, "\"%[^\"]\"", buffer ) );
+   if( num == EOF )
+   {
+      return( "" );
+   }else if( num == 0 )
+   {
+      return( "" );
+   }
+   else
+   {
+      std::stringstream ss;
+      ss << buffer;
+      return( ss.str() );
+   }
+}

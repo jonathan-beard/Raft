@@ -18,18 +18,18 @@
 
 typedef AP::AP_Parser::token token;
 
-#define PUSHTOSTREAM( x ) data.get_ap_parsestream() << yytext; \
-                          data.set_current_line( yylineno );
+#define PUSHTOSTREAM( x )  data.set_whole_current_line( yytext ); \
+                           data.get_ap_parsestream() << yytext;
 
 
 #define TOKEN( x ) \
+                   data.set_whole_current_line( yytext ); \
                    data.get_ap_parsestream() << yytext; \
-                   data.set_current_line( yylineno ); \
                    return( token::x )
 
-#define STOKEN( x ) yylval->sval = new std::string( yytext ); \
+#define STOKEN( x ) data.set_whole_current_line( yytext ); \
+                    yylval->sval = new std::string( yytext ); \
                     data.get_ap_parsestream() << yytext; \
-                    data.set_current_line( yylineno ); \
                     return( token::x )
 
 /* define yyterminate as this instead of NULL */
@@ -62,8 +62,9 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
                         TOKEN( POUND ); }
 "\n"                { 
                     data.reset_ap_parsestream(); 
-                    yylineno++;
-                  }
+                    data.set_current_line( yylineno );
+                    //yylineno++;
+                    }
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
 
 <INITIAL>"/*"     BEGIN( ML_COMMENT );
