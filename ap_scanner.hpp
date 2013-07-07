@@ -43,6 +43,30 @@ public:
       yylval = lval;
       return( yylex() );
    }
+#if(0)
+   static std::string GetCurrentLine( char *text )
+   {
+      const size_t buffer_size( strlen( text ) );
+      char *buffer = (char*) malloc( sizeof( char ) * buffer_size );
+      memset( buffer, '\0', buffer_size );
+      const auto num( sscanf( text, "%[^\n]\n", buffer ) );
+      if( num == EOF )
+      {
+         free( buffer );
+         return( std::string("") );
+      }
+      else if( num == 0 )
+      {
+         free( buffer );
+         return( std::string("") );
+      }
+      /* else there is something there */
+      std::stringstream ss;
+      ss << buffer;
+      free(buffer);
+      return( ss.str() );
+   }
+#endif   
 private:
    int yylex();
    /* this is the ptr for returning from the scanner */

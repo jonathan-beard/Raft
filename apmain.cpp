@@ -23,6 +23,7 @@ AP::AP_Data ap_data;
 static void 
 parse_handler( int signal )
 {
+#if(0)
    std::stringstream parse_errstream;
    ap_data.PrintParseErrors( parse_errstream );
    const std::string parse_err_str( parse_errstream.str() );
@@ -32,6 +33,7 @@ parse_handler( int signal )
       std::cerr << parse_err_str << "\n";
    }
    ap_data.reset_ap_parsestream();
+#endif   
    std::stringstream errstream;
    ap_data.PrintErrors( errstream );
    const std::string err_str( errstream.str() );

@@ -125,7 +125,8 @@
 %token       FLOAT64  
 %token       FLOAT96  
 %token       VECTOR
-%token       STRTOKEN 
+%token   <sval>    STRTOKEN 
+%token       POUND
 %token   <sval>    STRING  
 %token   <lval>    INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
@@ -140,11 +141,20 @@
 %type    <sval>   ObjectType
 %type    <sval>   Type
 %type    <sval>   TypeModifier
-
+%type    <sval>   Filename
 %%
 
 CompilationUnit   :     END
                   |     TypeDeclarations
+                  |     CompilationUnit Filename
+                  |     error
+                  ;
+
+Filename          :     POUND    INT_TOKEN   STRING
+                        {
+                           /* set filename here */
+                           delete( $3 );
+                        }
                   ;
 
 TypeDeclarations  :     TypeDeclaration

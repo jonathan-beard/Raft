@@ -71,6 +71,7 @@ void AP_Data::reset_ap_parsestream()
       delete( ap_parsestream ); 
       ap_parsestream = nullptr;
    }
+   assert( ap_parsestream == nullptr );
 }
 
 APParseStream& AP_Data::get_ap_parsestream()

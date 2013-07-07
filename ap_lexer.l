@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
+#include <cstring>
 #include <cassert>
 #include <cinttypes>
 
@@ -19,9 +20,10 @@ typedef AP::AP_Parser::token token;
 
 #define PUSHTOSTREAM( x ) data.get_ap_parsestream() << yytext; \
                           data.set_current_line( yylineno );
-                   
 
-#define TOKEN( x ) data.get_ap_parsestream() << yytext; \
+
+#define TOKEN( x ) \
+                   data.get_ap_parsestream() << yytext; \
                    data.set_current_line( yylineno ); \
                    return( token::x )
 
@@ -49,18 +51,19 @@ EXP		            [e][+-]?{D}+
 IDENT		            [A-Za-z\@][A-Za-z0-9_\@]*
 WSCHAR		         [ \t\f\v\r]
 WHITESPACE	         {WSCHAR}+|({WSCHAR}*\\\n)+{WSCHAR}*
-STRING		         \"([^\\\n\"])*\"
+STRING		         \".*\"
 DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 /* DECLARE RULES */
 %x ML_COMMENT 
 
 %%
-\n                { 
+"#"                 {  
+                        TOKEN( POUND ); }
+"\n"                { 
                     data.reset_ap_parsestream(); 
                     yylineno++;
                   }
-^{DIRECTIVE}\n    { PUSHTOSTREAM( yytext ); }
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
 
 <INITIAL>"/*"     BEGIN( ML_COMMENT );
@@ -69,8 +72,10 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 .                 { PUSHTOSTREAM( yytext ); }
 }
 
-"//"+[^\n]*            ; //eat line 
-
+"//".+[^\n]*             {
+                           data.reset_ap_parsestream();
+                           yylineno++;
+                        }
 "{"                     { TOKEN( LBRACE ); }
 "}"                     { TOKEN( RBRACE ); }
 "["                     { TOKEN( LBRACKET ); }
@@ -147,9 +152,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "String"                { TOKEN( STRTOKEN ); }
 {STRING}                { STOKEN( STRING ); }
 "-"?{D}+{EXP}?          { 
-                           const int buffer_size( 1 );
-                           char *buffer( nullptr );
-                           buffer = (char*) malloc( sizeof(char) * buffer_size );
+                           char *buffer = (char*) alloca( sizeof(char) );
                            assert( buffer != nullptr );
                            buffer[0] = '\0';
                            errno = EXIT_SUCCESS;
@@ -157,7 +160,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
                               strtoumax(yytext, &buffer, 10);
                            assert( buffer[0] == '\0' );
 			                  assert( errno == 0 );
-                           free( buffer );
                            TOKEN(INT_TOKEN);		
                         }
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
