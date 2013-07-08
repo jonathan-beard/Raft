@@ -86,7 +86,7 @@ AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
     * name eq "<command-line>"
     */
    const int8_t equal(0);
-   const std::string builtin( "<built-in" );
+   const std::string builtin( "<built-in>" );
    const std::string commandline( "<command-line>" );
    if( name.compare( builtin ) == equal )
    {
@@ -179,7 +179,6 @@ void
 AP_CPP_OutputHandler::add_file_object( File *f )
 {
    assert( f != nullptr );
-   f->print( std::cerr ) << "\n";
    cpp_access_queue.push_back( f );
 }
 
