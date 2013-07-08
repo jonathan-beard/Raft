@@ -24,7 +24,7 @@
  * valid types for the language as specified within
  * the XML types specification file.
  */
-system class Generic< Type T [...] > : extends Type {
+class system Generic< Type T [...] > : extends Type {
 @public:
    /**
     * Generic - Constructor, parameters are 

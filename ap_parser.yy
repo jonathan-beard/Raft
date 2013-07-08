@@ -216,6 +216,7 @@ InstantModifier   :     FINAL SYSTEM
                         {
                            $$ = new std::string("none");
                         }
+                  |     {  }
                   ;
 
 TemplateDeclaration  :  LCARROT Declarations  RCARROT
@@ -311,7 +312,7 @@ AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
 {
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
-
+   std::cerr << "Location: " << l << "\n";
    data.get_ap_errorstream() << "Parser error, in file with " << 
    str << " with input \"" 
       << data.get_ap_parsestream().str() << "\"";
