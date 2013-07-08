@@ -1,5 +1,5 @@
 /**
- * Kernel.x - this file defines all the base types
+ * Kernel.x - this file s all the base types
  * for kernel implementations in AutoPipe v3.0
  * @author: Jonathan Beard
  * @version: AutoPipev3.0b, Last Modified 18 February 2013
@@ -24,7 +24,7 @@
  * valid types for the language as specified within
  * the XML types specification file.
  */
-define system class Generic< Type T [...] > : extends Type {
+system class Generic< Type T [...] > : extends Type {
 @public:
    /**
     * Generic - Constructor, parameters are 
@@ -35,10 +35,10 @@ define system class Generic< Type T [...] > : extends Type {
    Generic( );
    
    Array<Type> get_types();  
-};
+}
 
 /**
- * Input - simple class that defines an in-edge
+ * Input - simple class that s an in-edge
  * AutoPipe port for each compute Kernel.  The
  * class constructor modifiers <> force the user
  * to specify a Type, Generic or a typedef, and
@@ -65,10 +65,10 @@ system class Input< Type T, enum DataFlow( ASDF ), int64_t Count( 1 ) > {
     */
    bool HasType( Type type );
 
-};
+}
 
 /**
- * Output - simple class that defines an out-edge
+ * Output - simple class that s an out-edge
  * AutoPipe port for each compute Kernel.  The two
  * constructors provided allow for the user to specify
  * either a Generic port type or a single port type
@@ -89,7 +89,7 @@ system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
     * @return  bool - true if this port does have the type
     */
    bool HasType( Type type );
-};
+}
 
 /**
  * Config - system class that allows the user
@@ -108,16 +108,16 @@ final system class Config< BasicType type >
     * type for this configuration parameter 
     */
    BasicType get_type();
-};
+}
 
 /** 
  * Kernel - abstract implementation for a Kernel, user should
- * make a sub-class in order to define new kernels or more
+ * make a sub-class in order to  new kernels or more
  * abstract Kernel types
  */
 abstract class Kernel {
 
-/* if you were to define ports in this abstract kernel
+/* if you were to  ports in this abstract kernel
  * you'd do so like this
  */
 
@@ -127,7 +127,7 @@ abstract class Kernel {
    Input<int32_t, SDF, 100> x1;
 **/
 
-/* If you were to define configuration parametsers to a 
+/* If you were to  configuration parametsers to a 
  * kernel this is how you'd do it
  */
 /**
@@ -154,8 +154,8 @@ abstract class Kernel {
    Array<String>     impls;
    /**
     * stores enumerated impl types based
-    * on XML file that defines what each
+    * on XML file that s what each
     * implementation file extension maps to
     */
    Array<AP.ImplType>   impl_types; 
-};
+}

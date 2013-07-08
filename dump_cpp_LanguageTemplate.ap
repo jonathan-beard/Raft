@@ -1,61 +1,33 @@
 # 1 "./SampleLang/LanguageTemplate.ap"
-# 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "./SampleLang/LanguageTemplate.ap"
-
-# 19 "./SampleLang/LanguageTemplate.ap"
-
-
-
+# 21 "./SampleLang/LanguageTemplate.ap"
 # 1 "./SampleLang/Kernel.ap" 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # 27 "./SampleLang/Kernel.ap"
-define system class Generic< Type T [...] > : extends Type {
+system class Generic< Type T [...] > : extends Type {
 @public:
-   
+
 
 
 
 
 
    Generic( );
-   
-   Array<Type> get_types();  
-};
 
-
+   Array<Type> get_types();
+}
 # 51 "./SampleLang/Kernel.ap"
 system class Input< Type T, enum DataFlow( ASDF ), int64_t Count( 1 ) > {
 @public:
-   
+
 
 
 
    Input( );
-  
-   
-
-
-
-
-
-
+# 66 "./SampleLang/Kernel.ap"
    bool HasType( Type type );
 
-};
+}
 
 
 
@@ -65,21 +37,14 @@ system class Input< Type T, enum DataFlow( ASDF ), int64_t Count( 1 ) > {
 
 system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
 @public:
-   
+
 
 
 
    Output( );
-   
-   
-
-
-
-
-
-
+# 91 "./SampleLang/Kernel.ap"
    bool HasType( Type type );
-};
+}
 
 
 
@@ -89,16 +54,16 @@ system class Output< Type T, enum DataFlow( ASDF ), int64_t Consume( -1 ) > {
 final system class Config< BasicType type >
 {
 @public:
-   
+
 
 
    Config( );
-   
+
 
 
 
    BasicType get_type();
-};
+}
 
 
 
@@ -106,25 +71,7 @@ final system class Config< BasicType type >
 
 
 abstract class Kernel {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 138 "./SampleLang/Kernel.ap"
 @public:
 
    void SetImplementations( String implementations[ ... ] )
@@ -137,61 +84,38 @@ abstract class Kernel {
    }
 
 @private:
-   
-
-
-
-   Array<String>     impls;
-   
 
 
 
 
-   Array<AP.ImplType>   impl_types; 
-};
+   Array<String> impls;
+
+
+
+
+
+   Array<AP.ImplType> impl_types;
+}
 # 22 "./SampleLang/LanguageTemplate.ap" 2
-
 # 1 "./SampleLang/Thread.ap" 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 17 "./SampleLang/Thread.ap"
 define abstract class Thread {
 @public:
-   
-
-
-
-
-
-
-
+# 27 "./SampleLang/Thread.ap"
    bool AddKernel( Kernel kernel )
    {
       if( IsValidKernel( kernel ) ){
          kernels.add( kernel );
       }
    }
-   1
 
 
 
+      1
    Array<Kernel> GetKernels( ){
       return( kernels );
    }
-   
+
 
 
 
@@ -199,7 +123,7 @@ define abstract class Thread {
 
 
    abstract bool IsValidKernel( Kernel kernel );
-   
+
 
 
 
@@ -207,12 +131,11 @@ define abstract class Thread {
 
 
    abstract bool AreThreadsCombinable( Thread other );
-   
 # 66 "./SampleLang/Thread.ap"
    abstract void CombineThread( Thread other );
 
 @private:
-   
+
 
 
 
@@ -222,9 +145,9 @@ define abstract class Thread {
 define class MultiCoreThread : extends Thread {
 @public:
    implements bool IsValidKernel( Kernel kernel ){
-      
+
    }
-   
+
    bool AreThreadsCombinable( Thread other )
    {
       if( other.class == CThread.class ){
@@ -237,62 +160,50 @@ define class MultiCoreThread : extends Thread {
    }
    void CombineThreads( Thread other )
    {
-      
+
    }
 
-   int32_t   GetAssignedCore()
+   int32_t GetAssignedCore()
    {
       return( assigned_core );
    }
 
-   void   SetAssignedCore( int32_t core );
+   void SetAssignedCore( int32_t core );
    {
       assigned_core = core;
    }
 @private:
    Array<Kernel> kernels;
-   int32_t       assigned_core;
+   int32_t assigned_core;
 };
 
 define class x86Thread : extends MultiCoreThread {
 
 };
 # 23 "./SampleLang/LanguageTemplate.ap" 2
-
 # 1 "./SampleLang/Process.ap" 1
-
-# 12 "./SampleLang/Process.ap"
-
-
 # 25 "./SampleLang/Process.ap"
 define interface ProcessInterface {
 @public:
    bool IsProcessCombinable( ProcessInterface other );
-   
-
-
-
-
-
-
-
+# 36 "./SampleLang/Process.ap"
    void CombineProcess( ProcessInterface other );
 
-   
+
 
 
 
 
 
    bool AddKernel( Kernel kernel );
-   
+
 
 
 
 
    Array<Kernel> GetKernels( )
-@protected:   
-   
+@protected:
+
 
 
 
@@ -300,13 +211,13 @@ define interface ProcessInterface {
 
 
    void set_impl( String implementation );
-   
+
 
 
 
 
    String get_impl( );
-   
+
 
 
 
@@ -319,17 +230,10 @@ define interface ProcessInterface {
 
 
 define abstract class Process : implements ProcessInterface {
-@public: 
-   
+@public:
+
    autogen impl;
-   
-   
-
-
-
-
-
-
+# 90 "./SampleLang/Process.ap"
    implements bool AddKernel( Kernel kernel )
    {
       if( IsValidKernel( kernel ) ){
@@ -337,7 +241,7 @@ define abstract class Process : implements ProcessInterface {
       }
    }
 
-   
+
 
 
 
@@ -345,22 +249,15 @@ define abstract class Process : implements ProcessInterface {
    implements Array<Kernel> GetKernels( ){
       return( kernels );
    }
-
-   
-
-
-
-
-
-
+# 113 "./SampleLang/Process.ap"
    abstract bool IsValidKernel( Kernel kernel );
 @private:
-   
+
 
 
 
    String impl;
-   
+
 
 
    Array<Kernel> kernels;
@@ -373,7 +270,7 @@ define abstract class Process : implements ProcessInterface {
 
 define class VHDLProcess : extends Process {
 @public:
-   
+
 
 
 
@@ -383,7 +280,7 @@ define class VHDLProcess : extends Process {
    {
       foreach( AP.ImplType type : kernel.get_impl_types ){
          if( AP.GetImplTypeFor( (this).class ) == type )
-         {  
+         {
             return( true );
          }
       }
@@ -398,7 +295,7 @@ define class VHDLProcess : extends Process {
 
    implements void CombineProcess( ProcessInterface other )
    {
-      
+
       foreach( Kernel k : other.GetKernels() )
       {
          AddKernel( k );
@@ -412,7 +309,7 @@ define class VHDLProcess : extends Process {
 
 define class CProcess : extends Process {
 @public:
-   
+
 
 
 
@@ -424,7 +321,7 @@ define class CProcess : extends Process {
    {
       foreach( AP.ImplType type : kernel.get_impl_types ){
          if( AP.GetImplTypeFor( (this).class ) == type )
-         {  
+         {
             return( true );
          }
       }
@@ -439,7 +336,7 @@ define class CProcess : extends Process {
 
    implements void CombineProcess( ProcessInterface other )
    {
-      
+
       foreach( Kernel k : other.GetKernels() )
       {
          AddKernel( k );
@@ -451,9 +348,9 @@ define class CProcess : extends Process {
    autogen cpu_affinity;
 
 @private:
-   
+
    Array<Thread> threads;
-   
+
    Array<int64_t> cpu_affinity;
 };
 
@@ -465,23 +362,21 @@ define class CPlusPlusProcess : extends Process {
 @private:
    int64_t cpu_affinity;
 };
-
 # 24 "./SampleLang/LanguageTemplate.ap" 2
-
 # 1 "./SampleLang/Container.ap" 1
 define interface Container<T>{
 @public:
    void AddItem( T item );
-   T    DeleteItem( int64_t index );
-   T    GetItem( int64_t index );
+   T DeleteItem( int64_t index );
+   T GetItem( int64_t index );
 };
 
 define class Array<T> : implements Container<T> {
 @public:
-   Array( int64_t item_count = 10 ) : curr_size( 0 ), 
+   Array( int64_t item_count = 10 ) : curr_size( 0 ),
                                       allocated_size( item_count )
    {
-      
+
       the_array = new T[item_count];
    }
 
@@ -524,16 +419,11 @@ define class Array<T> : implements Container<T> {
    int64_t allocated_size;
 };
 # 25 "./SampleLang/LanguageTemplate.ap" 2
-
-
-
-# 36 "./SampleLang/LanguageTemplate.ap"
-
+# 37 "./SampleLang/LanguageTemplate.ap"
 class GenInt : extends Kernel{
 @public:
    GenInt( int64_t seed ) : seed( seed )
    {
-      
 # 50 "./SampleLang/LanguageTemplate.ap"
       SetImplementations( "gen.c", "gen.vhd", "gen.cu" );
    }
@@ -542,31 +432,25 @@ class GenInt : extends Kernel{
    Output< Generic( int32_t, int64_t ) > y0;
 
 @configs:
-   
+
    Config< int64_t > seed;
 }
 
 class Sum : extends Kernel{
-   
+
 
 
 
 
 @ports:
-   
-# 79 "./SampleLang/LanguageTemplate.ap"
-
-   
-
-
-
+# 84 "./SampleLang/LanguageTemplate.ap"
    Input< Generic( int32_t, int64_t, float32_t ) > x0;
-   
+
 
 
 
    Input< Generic( int32_t, int64_t, float32_t ) > x1;
-   
+
 
 
 
@@ -581,7 +465,7 @@ class Print : extends Kernel{
 
 
 @ports:
-   
+
 
 
 
@@ -592,7 +476,7 @@ class SumApp{
 @public
 void main( String[] args )
 {
-   
+
 
 
 

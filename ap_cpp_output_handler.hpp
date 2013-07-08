@@ -10,8 +10,11 @@
 #include <cinttypes>
 #include <string>
 #include <ostream>
+#include <fstream>
+#include <iostream>
 #include <sstream>
 
+#include "ap_common.hpp"
 
 namespace AP{
 
@@ -34,7 +37,7 @@ struct File{
    
    std::ostream&  print( std::ostream &stream )
    {
-      stream << "Filename \"" << filename << "\" @ line (" << lineno << ")";
+      stream << "filename \"" << filename << "\" @ line (" << lineno << ")";
       return( stream );
    }
 
@@ -42,6 +45,36 @@ struct File{
    {
       const int8_t equal( 0 );
       return( filename.compare( name ) == equal );
+   }
+
+   /**
+    * GetCurrentLine - returns the current line as a string, 
+    * takes in a valid data struct to check for the proper
+    * color coding, at the moment this is ignored but will
+    * be added in the future.
+    * @param   d  - Data&
+    * @return  std::string
+    */
+   std::string GetCurrentLine( AP_Data &d )
+   {
+      assert( filename.compare( "" ) != 0 );
+      std::ifstream input;
+      input.open( filename, std::ifstream::in );
+      int64_t curr_line( 0 );
+      std::string line;
+      while( ++curr_line <= lineno && input.good() )
+      {
+         std::getline( input, line );
+      }
+      input.close();
+
+      std::string onlyfilename( AP_Common::GetFileNameFromPath( filename ) );
+
+      std::stringstream output;
+      output << "\033[1;31m";
+      output << onlyfilename << " " <<  lineno << ": " 
+      << "\033[0m" << line;
+      return( output.str() );
    }
    
    int64_t     lineno;
@@ -126,6 +159,8 @@ public:
     * @return  std::string    - representation of the file at head
     */
    std::string PeekHead();
+
+   std::string GetHeadCurrentLine();
 protected:
    virtual void  add_file_object( File *f );
    virtual bool  has_head();

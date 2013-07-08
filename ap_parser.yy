@@ -310,10 +310,23 @@ AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
                       const std::string &err_message )
 {
    std::string str( data.get_cpp_handler().PeekHead() );
-   //const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
+   const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
 
-   data.get_ap_errorstream() << "Parser error, " << str << " with input \"" 
-      << data.get_ap_parsestream().str() << "\"\n";
+   data.get_ap_errorstream() << "Parser error, in file with " << 
+   str << " with input \"" 
+      << data.get_ap_parsestream().str() << "\"";
+   if( is_included_file )
+   {
+      std::string str_included( data.get_cpp_handler().PeekBelowHead() );
+      data.get_ap_errorstream() << ",\n" <<
+      "in included from file with " << str_included << ".\n";
+   }
+   else
+   {
+      data.get_ap_errorstream() << ".\n";
+   }
+   data.get_ap_errorstream() << "Error is somewhere in the line:\n" <<
+   data.get_cpp_handler().GetHeadCurrentLine() << "\n";
    data.reset_ap_parsestream();
 }
 

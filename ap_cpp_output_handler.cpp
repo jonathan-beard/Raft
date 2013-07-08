@@ -38,7 +38,7 @@ AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
     * flag == 3, this is a system header file
     * flag == 4, text should be wrapped in explicit extern "C" 
     */
-   enum flags { NEW, RETURN, SYSTEM, EXTERN };
+   enum flags { NEW = 1, RETURN, SYSTEM, EXTERN };
    switch( flag )
    {
       case( NEW ):
@@ -159,6 +159,16 @@ AP_CPP_OutputHandler::PeekHead()
    return( ss.str() );
 }
 
+std::string
+AP_CPP_OutputHandler::GetHeadCurrentLine()
+{
+   std::string output;
+   assert( has_head() == true );
+   File &f( get_head() );
+   output = f.GetCurrentLine( data );
+   return(output);
+}
+
 /**
  * below this line are accessor methods for the queue,
  * makes it a bit easier to swap data structures in the
@@ -169,6 +179,7 @@ void
 AP_CPP_OutputHandler::add_file_object( File *f )
 {
    assert( f != nullptr );
+   f->print( std::cerr ) << "\n";
    cpp_access_queue.push_back( f );
 }
 
@@ -195,7 +206,10 @@ File&
 AP_CPP_OutputHandler::get_below_head()
 {
    assert( has_below_head() == true );
-   return( *(*--cpp_access_queue.end()) );
+   File *below_head( nullptr );
+   below_head = *(cpp_access_queue.end() - 2);
+   assert( below_head != nullptr );
+   return( *below_head );
 }
 
 void
@@ -203,6 +217,7 @@ AP_CPP_OutputHandler::remove_head()
 {
    assert( has_head() == true );
    File *end( cpp_access_queue.back() );
+   end->print( std::cerr ) << "\n";
    delete( end );
    cpp_access_queue.erase( --cpp_access_queue.end() );
 }
