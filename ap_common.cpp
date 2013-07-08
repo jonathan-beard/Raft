@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -122,26 +123,36 @@ AP_Common::ExtractPathNoFileName(const char *Path, bool &status)
    return(dir_path);
 }
 
-std::string
-AP_Common::RemoveStringQuotes( const char *str )
+void
+AP_Common::RemoveStringQuotes( std::string &str )
 {
+   if( str.length() < 2 ) return;
+   str = str.substr( 1, str.length() - 2 );
+   
+#if(0)
    const auto length( strlen( str ) );
    char *buffer( nullptr );
-   buffer = (char*) alloca( sizeof( char ) * length );
+   buffer = (char*) malloc( sizeof( char ) * length );
    assert( buffer != nullptr );
    memset( buffer, '\0', length );
    const auto num( sscanf( str, "\"%[^\"]\"", buffer ) );
    if( num == EOF )
    {
+      free( buffer );
       return( "" );
    }else if( num == 0 )
    {
+      free( buffer );
       return( "" );
    }
    else
    {
       std::stringstream ss;
       ss << buffer;
+      free( buffer );
+      std::string output( ss.str() );
+      std::cerr << "FD: " << output << "\n";
       return( ss.str() );
    }
+#endif   
 }

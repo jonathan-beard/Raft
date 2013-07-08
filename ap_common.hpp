@@ -57,7 +57,7 @@ static std::string ExtractPathNoFileName( const char* Path, bool &status );
  * @param   str - char *, must not be null
  * @return  std::string
  */
-static std::string RemoveStringQuotes( const char *str );
+static void RemoveStringQuotes( std::string &str );
 
 private:
    AP_Common(){};

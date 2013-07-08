@@ -15,20 +15,18 @@
 
 #include "ap_scanner.hpp"
 #include "ap_data.hpp"
+#include "ap_cpp_output_handler.hpp"
 
 typedef AP::AP_Parser::token token;
 
-#define PUSHTOSTREAM( x )  data.set_whole_current_line( yytext ); \
-                           data.get_ap_parsestream() << yytext;
+#define PUSHTOSTREAM( x )  data.get_ap_parsestream() << yytext;
 
 
 #define TOKEN( x ) \
-                   data.set_whole_current_line( yytext ); \
                    data.get_ap_parsestream() << yytext; \
                    return( token::x )
 
-#define STOKEN( x ) data.set_whole_current_line( yytext ); \
-                    yylval->sval = new std::string( yytext ); \
+#define STOKEN( x ) yylval->sval = new std::string( yytext ); \
                     data.get_ap_parsestream() << yytext; \
                     return( token::x )
 
@@ -61,9 +59,8 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "#"                 {  
                         TOKEN( POUND ); }
 "\n"                { 
-                    data.reset_ap_parsestream(); 
-                    data.set_current_line( yylineno );
-                    //yylineno++;
+                        data.reset_ap_parsestream(); 
+                        data.get_cpp_handler().IncrementHead();
                     }
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
 
@@ -75,8 +72,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 
 "//".+[^\n]*             {
                            data.reset_ap_parsestream();
-                           yylineno++;
-                        }
+                         }
 "{"                     { TOKEN( LBRACE ); }
 "}"                     { TOKEN( RBRACE ); }
 "["                     { TOKEN( LBRACKET ); }

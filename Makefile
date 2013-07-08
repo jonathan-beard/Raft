@@ -24,6 +24,7 @@ APHEXE = aph
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
 				  command_arguments ap_set_options ap_driver \
 				  ap_common command_option_base \
+              ap_cpp_output_handler
 
 APCOMSOBJ =  ap_parser ap_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )

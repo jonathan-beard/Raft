@@ -28,6 +28,8 @@ typedef std::ostream      UserStream;
 
 namespace AP{
 
+class AP_CPP_OutputHandler;
+
 /** 
  * AP_Data - class for various data elements that are used
  * throughput the AutoPipev3 compiler infrastructure
@@ -111,25 +113,6 @@ public:
    ErrorStream&  get_errorstream();
 
    /**
-    * set_current_line - sets the current line number stored to the param
-    * line number, this method is intended for synchronizing with the 
-    * scanner.
-    * @param   line_number - uint64_t
-    */
-   void           set_current_line( uint64_t line_number );
-   /**
-    * get_current_line - returns the current line number.
-    * @return uint64_t
-    */
-   uint64_t       get_current_line();
-
-   void           set_current_parse_file( const std::string file );
-   std::string    get_current_parse_file();
-
-   void           set_whole_current_line( char *line );
-   std::string    get_whole_current_line();
-
-   /**
     * set method for options vars, set should be called
     * at least once immediately after the options are set from
     * the command line or to defaults 
@@ -145,6 +128,13 @@ public:
     */
    AP_Options_Vars&  get_options_vars();
 
+   /**
+    * get_cpp_handler - returns a reference to the cpp handler
+    * object for this parser
+    * @return AP_CPP_OutputHandler&
+    */
+   AP_CPP_OutputHandler&   get_cpp_handler();
+
 private:
    /* auto pipe parse stream, initially nullptr */
    APParseStream    *ap_parsestream;
@@ -154,14 +144,14 @@ private:
    UserStream        &userstream;
    /* user (system) error stream, typically std::cerr */
    ErrorStream       &errorstream;
-   /* the current line number, for use with scanner */
-   uint64_t current_line;
    /* current parse file from parser, necessary for cpp */
    std::string       current_parse_file;
    /* current whole line, set from lexer */
    std::string       whole_current_line;
    /* global options */
    AP_Options_Vars   *options;
+   /* cpp output handler */
+   AP_CPP_OutputHandler *cpp_handler;
 };
 
 } /* end namespace AP */

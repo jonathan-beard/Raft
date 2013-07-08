@@ -3,8 +3,10 @@
  * @author: Jonathan Beard
  * @version: Mon Feb 18 17:39:01 2013
  */
-#include <cstdlib> /* for exit defines */
+#include <cstdlib> 
+#include <cstring> 
 #include "ap_data.hpp"
+#include "ap_cpp_output_handler.hpp"
 #include "ap_options_vars.hpp"
 
 /* default namespace for AutoPipe */
@@ -15,10 +17,11 @@ AP_Data::AP_Data()
   ap_errorstream( nullptr ),
   userstream( std::cout ),
   errorstream( std::cerr ),
-  current_line( 0 )
+  cpp_handler( nullptr )
 {
    ap_parsestream = new APParseStream();
    ap_errorstream = new APErrorStream();
+   cpp_handler    = new AP_CPP_OutputHandler( (*this) );
 }
 
 AP_Data::~AP_Data()
@@ -32,6 +35,11 @@ AP_Data::~AP_Data()
    {
       delete( ap_parsestream );
       ap_parsestream = nullptr;
+   }
+   if( cpp_handler != nullptr )
+   {
+      delete( cpp_handler );
+      cpp_handler = nullptr;
    }
 }
 
@@ -110,7 +118,7 @@ ErrorStream&   AP_Data::get_errorstream()
 {
    return( errorstream );
 }
-
+#if(0)
 void  AP_Data::set_current_line( uint64_t line_number )
 {
    current_line = line_number;
@@ -164,6 +172,14 @@ AP_Data::get_whole_current_line()
    return( whole_current_line );
 }
 
+
+#endif
+
+AP_CPP_OutputHandler&
+AP_Data::get_cpp_handler()
+{
+   return( *cpp_handler );
+}
 void     AP_Data::set_options_vars( AP_Options_Vars *vars )
 {
    assert( vars != nullptr );
