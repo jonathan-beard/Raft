@@ -94,6 +94,8 @@ private:
 
    static bool check_file( const std::string filename );
 
+
+
    std::set< std::string >                      files;
    std::map< std::string, std::string >         verified_paths; 
    std::stringstream                            buffer;
