@@ -78,6 +78,7 @@
 %token       IMPLEMENTS  
 %token       EXTENDS  
 %token       PUBLIC  
+%token       ATPUBLIC
 %token       PRIVATE  
 %token       PROTECTED  
 %token       RETURN  
@@ -146,13 +147,16 @@
 %type    <sval>   Filename
 %%
 
+
 CompilationUnit   :     END
-                  |     Filenames
-                  |     error
+                  |     T
                   ;
 
-Filenames         :     Filename
-                  |     Filenames Filename
+T                 :     Filename
+                  |     TypeDeclaration
+                  |     T  Filename
+                  |     T  TypeDeclaration
+                  |     error
                   ;
 
 Filename          :     POUND    INT_TOKEN   STRING
@@ -174,17 +178,11 @@ Filename          :     POUND    INT_TOKEN   STRING
                         }
                   ;
 
-
-
-TypeDeclarations  :     TypeDeclaration
-                  |     TypeDeclarations TypeDeclaration
-                  ;
-
 TypeDeclaration   :     ClassDeclaration
                   |     InterfaceDeclaration
                   ;
 
-ClassDeclaration  :     InstantModifier CLASS IDENTIFIER LBRACE Body RBRACE SEMI
+ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Inherit LBRACE Body RBRACE
                         {
                            /*
                            std::cerr << "Modifier: " << *$2 << "\n";
@@ -195,9 +193,36 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER LBRACE Body RBRACE SEMI
                         }
                   ;
 
+Inherit           :     COLON EXTENDS IDENTIFIER
+                        {
+                        }
+                  |     COLON IMPLEMENTS IDENTIFIER 
+                        {
+
+                        }
+                  |
+                        {
+
+                        }
+                  ;
+
 InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
 
-Body              :     { std::cerr << "hit the body!!\n"; }
+Body              :     Visibility
+                  |     Code
+                  |     Body Visibility
+                  |     Code Visibility
+                  ;
+
+Visibility        :     ATPUBLIC
+                  |     AT PROTECTED COLON
+                  |     AT PRIVATE   COLON
+                  |     AT PORTS     COLON
+                  |     AT CONFIGS   COLON
+                  |
+                  ;
+
+Code              :     { }
                   ;
 
 InstantModifier   :     FINAL SYSTEM
@@ -216,7 +241,6 @@ InstantModifier   :     FINAL SYSTEM
                         {
                            $$ = new std::string("none");
                         }
-                  |     {  }
                   ;
 
 TemplateDeclaration  :  LCARROT Declarations  RCARROT
@@ -226,6 +250,7 @@ TemplateDeclaration  :  LCARROT Declarations  RCARROT
                      ;
 Declarations      :     Type TypeModifier IDENTIFIER Initializer SEMI
                         {
+
                         }
                   ;
 
@@ -284,7 +309,7 @@ Type              :     BOOLEAN
                         }
                   |     ObjectType
                         {
-                           $$ = new std::string("ObjectType");
+                           $$ = $1;
                         }
                   ;
 
@@ -327,7 +352,7 @@ AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
       data.get_ap_errorstream() << ".\n";
    }
    data.get_ap_errorstream() << "Error is somewhere in the line:\n" <<
-   data.get_cpp_handler().GetHeadCurrentLine() << "\n";
+   data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
    data.reset_ap_parsestream();
 }
 

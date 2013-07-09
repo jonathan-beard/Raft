@@ -1,8 +1,7 @@
 # 1 "Simple.ap"
-# 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "Simple.ap"
-define final class Foo{
-
+class Foo{
+@public:
 }
 

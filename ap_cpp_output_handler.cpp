@@ -152,21 +152,33 @@ AP_CPP_OutputHandler::PeekBelowHead()
 std::string
 AP_CPP_OutputHandler::PeekHead()
 {
-   assert( has_head() == true );
-   std::stringstream ss;
-   File &f( get_head() );
-   f.print( ss );
-   return( ss.str() );
+   if( has_head() == true )
+   {
+      std::stringstream ss;
+      File &f( get_head() );
+      f.print( ss );
+      return( ss.str() );
+   }
+   else
+   {
+      return( "" );
+   }
 }
 
 std::string
 AP_CPP_OutputHandler::GetHeadCurrentLine()
 {
-   std::string output;
-   assert( has_head() == true );
-   File &f( get_head() );
-   output = f.GetCurrentLine( data );
-   return(output);
+   if( has_head() == true )
+   {
+      std::string output;
+      File &f( get_head() );
+      output = f.GetCurrentLine( data );
+      return(output);
+   }
+   else
+   {
+      return( "Error, no current file!!" );
+   }
 }
 
 /**

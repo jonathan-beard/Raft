@@ -96,6 +96,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "overrides"             { TOKEN( OVERRIDES ); }
 "implements"            { TOKEN( IMPLEMENTS ); }
 "extends"               { TOKEN( EXTENDS ); }
+"@public:"               { TOKEN( ATPUBLIC ); }
 "public"                { TOKEN( PUBLIC ); }
 "private"               { TOKEN( PRIVATE ); }
 "protected"             { TOKEN( PROTECTED ); }
