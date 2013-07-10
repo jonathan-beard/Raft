@@ -65,7 +65,6 @@
 %token       SEMI  
 %token       AT  
 %token       DEFINE  
-%token       PORTS  
 %token       CONFIGS  
 %token       AUTOGEN  
 %token       AUTO  
@@ -77,9 +76,9 @@
 %token       OVERRIDES  
 %token       IMPLEMENTS  
 %token       EXTENDS  
-%token       PUBLIC  
 %token       ATPUBLIC
-%token       PRIVATE  
+%token       ATPORTS  
+%token       ATPRIVATE  
 %token       PROTECTED  
 %token       RETURN  
 %token       VOID  
