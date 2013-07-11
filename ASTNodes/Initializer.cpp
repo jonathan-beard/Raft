@@ -86,6 +86,27 @@ Initializer::IsBool()
    return( set_type == BOOL );
 }
 
+void
+Initializer::Convert( std::string *str )
+{
+   if( IsString() )
+   {
+      string_value = *str;
+   }
+   else if( IsInt() )
+   {
+      int_value = strtoimax( str->c_str(), NULL,
+   }
+   else if( IsUInt() )
+   {
+
+   }
+   else if( IsBool() )
+   {
+
+   }
+}
+
 std::string
 Initializer::GetValueString()
 {

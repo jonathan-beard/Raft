@@ -9,10 +9,29 @@
 #include <cstdint>
 #include <cinttypes>
 #include <cfloat>
-
+#include <exception>
 #include "NodeAbstract.hpp"
 
 namespace Node{
+
+class ConversionException : public exception
+{
+public:
+   ConversionException( std::string type, 
+                        std::string value ) : T( type ),
+                                              V( value )
+   {}
+
+   std::ostream& print( std::ostream &stream )
+   {
+      stream << "Error converting \"" << V << "\" to " <<
+         "\"" << T << "\"";
+   }
+private:
+   std::string T;
+   std::string V;
+
+} ConvException;
 
 class Initializer : public NodeAbstract{
 public:
@@ -28,6 +47,18 @@ public:
    bool        IsInt();
    bool        IsUInt();
    bool        IsBool();
+
+   /**
+    * Convert - used to convert the value at 
+    * str to the type of value that this
+    * initializer accepts.  Throw an exception
+    * if it cannot be converted.  Once the 
+    * value is converted it will be assigned
+    * as the current value of this initializer.
+    * @param   str - std::string*
+    * @throws  ConversionException
+    */
+   void        Convert( std::string *str ) throws(ConversionException);
 
    std::string GetValueString();
    intmax_t    GetValueInt();
