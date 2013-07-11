@@ -231,6 +231,10 @@ FieldDeclaration  :     FieldVariableDeclaration SEMI
                   |     StaticInitializer
                   ;
 
+FieldVariableDeclaration : TypeSpecifier IDENTIFIER
+                         ;
+
+
 InstantModifier   :     FINAL SYSTEM
                         {
                            $$ = new std::string("finalsystem");
