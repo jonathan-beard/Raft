@@ -79,7 +79,7 @@
 %token       ATPUBLIC
 %token       ATPORTS  
 %token       ATPRIVATE  
-%token       PROTECTED  
+%token       ATPROTECTED  
 %token       RETURN  
 %token       VOID  
 %token       THIS  
@@ -208,20 +208,27 @@ Inherit           :     COLON EXTENDS IDENTIFIER
 InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
 
 Body              :     Visibility
-                  |     Code
+                  |     FieldDeclarations
                   |     Body Visibility
-                  |     Code Visibility
+                  |     VisibilityDeclaration Visibility
                   ;
 
 Visibility        :     ATPUBLIC
-                  |     AT PROTECTED COLON
-                  |     AT PRIVATE   COLON
-                  |     AT PORTS     COLON
-                  |     AT CONFIGS   COLON
+                  |     ATPROTECTED
+                  |     ATPRIVATE
+                  |     ATPORTS
                   |
                   ;
 
-Code              :     { }
+FieldDeclarations :     FieldDeclaration                  
+                  |     FieldDeclarations FieldDeclaration
+                  ;
+
+FieldDeclaration  :     FieldVariableDeclaration SEMI
+                  |     MethodDeclaration
+                  |     ConstructorDeclaration
+                  |     DestructorDeclaration
+                  |     StaticInitializer
                   ;
 
 InstantModifier   :     FINAL SYSTEM
