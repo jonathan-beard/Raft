@@ -1,9 +1,11 @@
 class Foo{
 @public:
-   Foo( int64_t x )
+   int32_t a( 100 );
+/*   Foo( int64_t x )
    {
 
    }
+*/   
 @private:
 @protected:
 @ports:

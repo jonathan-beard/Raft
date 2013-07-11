@@ -133,7 +133,8 @@
 %token   <uint_val>  INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
-
+%token   <sval>   INTINITIALIZER;
+%token   <sval>   STRINGINITIALIZER;
 %type    <sval>   TypeDeclaration
 %type    <sval>   ClassDeclaration
 %type    <sval>   InterfaceDeclaration
@@ -206,32 +207,25 @@ Inherit           :     COLON EXTENDS IDENTIFIER
                   ;
 
 InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
+                     ;
 
 Body              :     Visibility
-                  |     FieldDeclarations
+                  |     FieldDeclaration
                   |     Body Visibility
-                  |     VisibilityDeclaration Visibility
+                  |     Body FieldDeclaration
                   ;
 
 Visibility        :     ATPUBLIC
                   |     ATPROTECTED
                   |     ATPRIVATE
                   |     ATPORTS
-                  |
                   ;
 
-FieldDeclarations :     FieldDeclaration                  
-                  |     FieldDeclarations FieldDeclaration
+FieldDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
                   ;
 
-FieldDeclaration  :     FieldVariableDeclaration SEMI
-                  |     MethodDeclaration
-                  |     ConstructorDeclaration
-                  |     DestructorDeclaration
-                  |     StaticInitializer
-                  ;
-
-FieldVariableDeclaration : TypeSpecifier IDENTIFIER
+FieldVariableDeclaration : INTINITIALIZER
+                         | STRINGINITIALIZER
                          ;
 
 
@@ -253,16 +247,11 @@ InstantModifier   :     FINAL SYSTEM
                         }
                   ;
 
-TemplateDeclaration  :  LCARROT Declarations  RCARROT
+TemplateDeclaration  :  LCARROT STRING  RCARROT
                         {
 
                         }
                      ;
-Declarations      :     Type TypeModifier IDENTIFIER Initializer SEMI
-                        {
-
-                        }
-                  ;
 
 
 Type              :     BOOLEAN
@@ -278,7 +267,8 @@ Type              :     BOOLEAN
                            $$ = new std::string("INT16T");          
                         }
                   |     INT32T
-                        { 
+                        {
+                           std::cerr << "Here\n";
                            $$ = new std::string("INT32T");          
                         }
                   |     INT64T
