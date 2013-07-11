@@ -225,6 +225,9 @@ FieldDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
                   ;
 
 FieldVariableDeclaration : INTINITIALIZER
+                           {
+                              std::cerr << "Intinitializer" << "\n";
+                           }
                          | STRINGINITIALIZER
                          ;
 
