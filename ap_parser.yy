@@ -127,25 +127,17 @@
 %token       FLOAT64  
 %token       FLOAT96  
 %token       VECTOR
-%token   <sval>    STRTOKEN 
+%token   <sval>    STR_TOKEN 
 %token       POUND
-%token   <sval>    STRING  
+%token       STRING  
 %token   <uint_val>  INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
-%token   <sval>   INTINITIALIZER;
-%token   <sval>   STRINITIALIZER;
-%token   <sval>   FLTINITIALIZER;
-%type    <sval>   TypeDeclaration
-%type    <sval>   ClassDeclaration
-%type    <sval>   InterfaceDeclaration
-%type    <sval>   Body
 %type    <sval>   InstantModifier
 %type    <sval>   TemplateDeclaration
 %type    <sval>   ObjectType
 %type    <sval>   Type
 %type    <sval>   TypeModifier
-%type    <sval>   Filename
 %%
 
 
@@ -160,7 +152,7 @@ T                 :     Filename
                   |     error
                   ;
 
-Filename          :     POUND    INT_TOKEN   STRING
+Filename          :     POUND    INT_TOKEN   STR_TOKEN
                         {
                            AP_Common::RemoveStringQuotes( *$3 );
                            data.get_cpp_handler().AddUpdate( 
@@ -168,7 +160,7 @@ Filename          :     POUND    INT_TOKEN   STRING
                                        *$3 /* name   */  );
                            delete( $3 );
                         }
-                  |     POUND   INT_TOKEN    STRING   INT_TOKEN
+                  |     POUND   INT_TOKEN    STR_TOKEN   INT_TOKEN
                         {
                            AP_Common::RemoveStringQuotes( *$3 );
                            data.get_cpp_handler().AddUpdate(
@@ -225,13 +217,31 @@ Visibility        :     ATPUBLIC
 FieldDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
                   ;
 
-FieldVariableDeclaration : INTINITIALIZER
-                           {
-                              std::cerr << "Intinitializer" << "\n";
-                           }
-                         | STRINGINITIALIZER
+FieldVariableDeclaration : MultiIntInit
+                         | MultiStringInit
+                         | MultiFloatInit
                          ;
 
+MultiIntInit             : MultiIntInit COMMA IntInitializer
+                         | IntInitializer
+                         ;
+
+IntInitializer           : IDENTIFIER LPAREN INT_TOKEN RPAREN
+                         ;
+
+MultiStringInit          : MultiStringInit COMMA StrInitializer
+                         | StrInitializer
+                         ;
+
+StrInitializer           : IDENTIFIER  LPAREN   STR_TOKEN RPAREN
+                         ;
+
+MultiFloatInit          : MultiFloatInit COMMA FltInitializer
+                        | FltInitializer
+                        ;
+
+FltInitializer          :  IDENTIFIER  LPAREN   FLOAT_TOKEN RPAREN                 
+                        ;
 
 InstantModifier   :     FINAL SYSTEM
                         {
@@ -308,7 +318,7 @@ Type              :     BOOLEAN
                            $$ = new std::string("Float96");       
                         }
                   |     STRING
-                        { 
+                        {
                            $$ = new std::string("String");
                         }
                   |     ObjectType

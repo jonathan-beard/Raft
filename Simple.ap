@@ -1,7 +1,11 @@
 class Foo{
 @public:
-   int32_t a( 100 );
-/*   Foo( int64_t x )
+   String a("b\"o\"o");
+   int8 a(100), c(0x40);
+   int64 b(3);
+   float32 c(3.0);
+/*
+   Foo( int64 x )
    {
 
    }

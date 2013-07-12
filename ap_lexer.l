@@ -133,25 +133,23 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ","                     { TOKEN( COMMA ); }
 "alignof"               { TOKEN( ALIGNOF ); }
 "bool"                  { TOKEN( BOOLEAN ); }
-"int8_t"                { TOKEN( INT8T ); }
-"int16_t"               { TOKEN( INT16T ); }
-"int32_t"               { TOKEN( INT32T ); }
-"int64_t"               { TOKEN( INT64T ); }
-"uint8_t"               { TOKEN( UINT8T ); }
-"uint16_t"              { TOKEN( UINT16T ); }
-"uint32_t"              { TOKEN( UINT32T ); }
-"uint64_t"              { TOKEN( UINT64T ); }
+"int8"                { TOKEN( INT8T ); }
+"int16"               { TOKEN( INT16T ); }
+"int32"               { TOKEN( INT32T ); }
+"int64"               { TOKEN( INT64T ); }
+"uint8"               { TOKEN( UINT8T ); }
+"uint16"              { TOKEN( UINT16T ); }
+"uint32"              { TOKEN( UINT32T ); }
+"uint64"              { TOKEN( UINT64T ); }
 "float32"               { TOKEN( FLOAT32 ); }
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
 "vector"                { TOKEN( VECTOR ); }
-"String"                { TOKEN( STRTOKEN ); }
-[A-Za-z0-9_]+"("{WHITESPACE}?"-"?{D}+{EXP}?{WHITESPACE}?")"             { STOKEN( INTINITIALIZER ); }
-[A-Za-z0-9_]+"("{WHITESPACE}?"-"?[0-9]+"."[0-9]*{EXP}?{WHITESPACE}?")"  { STOKEN( FLTINITIALIZER ); }
-[A-Za-z0-9_]+"("{WHITESPACE}?{STRING}{WHITESPACE}?")"                   { STOKEN( STRINITIALIZER ); }    
-{STRING}                { STOKEN( STRING ); }
+"String"                { TOKEN( STRING ); }
+{STRING}                { STOKEN( STR_TOKEN ); }
 "-"?{D}+{EXP}?          { 
-                           char *buffer = (char*) alloca( sizeof(char) );
+                           char *buffer(nullptr);
+                           buffer = (char*) alloca( sizeof(char) );
                            assert( buffer != nullptr );
                            buffer[0] = '\0';
                            errno = EXIT_SUCCESS;
@@ -161,11 +159,34 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 			                  assert( errno == 0 );
                            TOKEN(INT_TOKEN);		
                         }
+0[xX][0-9a-fA-F]+          {
+                           char *buffer(nullptr);
+                           buffer = (char*) alloca( sizeof(char) );
+                           assert( buffer != nullptr );
+                           buffer[0] = '\0';
+                           errno = EXIT_SUCCESS;
+                           yylval->uint_val = 
+                              strtoumax(yytext, &buffer, 16);
+                           assert( buffer[0] == '\0' );
+			                  assert( errno == 0 );
+                           TOKEN(INT_TOKEN);		
+                        }
+O[0-7]+          {
+                           char *buffer(nullptr);
+                           buffer = (char*) alloca( sizeof(char) );
+                           assert( buffer != nullptr );
+                           buffer[0] = '\0';
+                           errno = EXIT_SUCCESS;
+                           yylval->uint_val = 
+                              strtoumax(yytext, &buffer, 8);
+                           assert( buffer[0] == '\0' );
+			                  assert( errno == 0 );
+                           TOKEN(INT_TOKEN);		
+                  }
 "-"?[0-9]+"."[0-9]*{EXP}?	    { 
-                                    const int buffer_size( 1 );
                                     char *buffer( nullptr );
-                                    buffer = (char*)malloc( 
-                                                   sizeof(char) * buffer_size);
+                                    buffer = (char*) alloca( 
+                                                   sizeof(char) );
                                     assert( buffer != nullptr );
                                     buffer[0] = '\0';
                                     errno = EXIT_SUCCESS;
@@ -173,7 +194,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
                                                             &buffer );
                                     assert( buffer[0] == '\0' );
                                     assert( errno == 0 );
-                                    free( buffer );
 			                           TOKEN(FLOAT_TOKEN);		
                                }
 

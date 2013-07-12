@@ -45,7 +45,7 @@ syn keyword javaBoolean		true false
 syn keyword javaConstant	null
 syn keyword javaTypedef		this super
 syn keyword javaOperator	new instanceof
-syn keyword javaType		bool int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t float32_t float64_t float96_t String
+syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String
 syn keyword javaType		void
 syn keyword javaStatement	return
 syn keyword javaStorageClass	static synchronized transient volatile final strictfp serializable
