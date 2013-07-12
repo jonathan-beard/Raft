@@ -146,8 +146,9 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float96"               { TOKEN( FLOAT96 ); }
 "vector"                { TOKEN( VECTOR ); }
 "String"                { TOKEN( STRTOKEN ); }
-[A-Za-z0-9_]+"("{WHITESPACE}{D}+" )"            { STOKEN( INTINITIALIZER ); }
-"foobar"   { STOKEN( STRINGINITIALIZER ); }
+[A-Za-z0-9_]+"("{WHITESPACE}?"-"?{D}+{EXP}?{WHITESPACE}?")"             { STOKEN( INTINITIALIZER ); }
+[A-Za-z0-9_]+"("{WHITESPACE}?"-"?[0-9]+"."[0-9]*{EXP}?{WHITESPACE}?")"  { STOKEN( FLTINITIALIZER ); }
+[A-Za-z0-9_]+"("{WHITESPACE}?{STRING}{WHITESPACE}?")"                   { STOKEN( STRINITIALIZER ); }    
 {STRING}                { STOKEN( STRING ); }
 "-"?{D}+{EXP}?          { 
                            char *buffer = (char*) alloca( sizeof(char) );

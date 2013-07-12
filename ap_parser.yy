@@ -134,7 +134,8 @@
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
 %token   <sval>   INTINITIALIZER;
-%token   <sval>   STRINGINITIALIZER;
+%token   <sval>   STRINITIALIZER;
+%token   <sval>   FLTINITIALIZER;
 %type    <sval>   TypeDeclaration
 %type    <sval>   ClassDeclaration
 %type    <sval>   InterfaceDeclaration
