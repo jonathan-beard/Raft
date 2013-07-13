@@ -215,7 +215,56 @@ Visibility        :     ATPUBLIC
                   ;
 
 FieldDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
+                  |     ConstructorDeclaration
                   ;
+
+ConstructorDeclaration   : MethodDeclarator Block
+                         ;
+
+MethodDeclarator         : MethodDeclaratorName LPAREN ParameterList RPAREN
+                         ;
+
+MethodDeclaratorName     : IDENTIFIER
+                         ;
+
+ParameterList            : Parameter
+                         | ParameterList Parameter
+                         ;
+
+Parameter                : Type TypeModifier DeclaratorName
+                         ;
+
+DeclaratorName           : IDENTIFIER
+                         ;
+
+Block                    : LBRACE   LocalVariableDeclarationsAndStatements RBRACE
+                         | LBRACE   RBRACE
+                         ;
+
+LocalVariableDeclarationsAndStatements :  LocalVariableDeclarationsOrStatement
+                   |  LocalVariableDeclarationsAndStatements LocalVariableDeclarationsOrStatement
+                   ;
+
+LocalVariableDeclarationOrStatement    :  LocalVariableDeclarationStatement
+                                       |  Statement
+                                       ;
+
+LocalVariableDeclarationStatement      :  LocalDeclarationStatement SEMI
+                                     |  LocalDeclaration AssignmentOperator AssignmentExpression SEMI
+                                     |  ClassDeclaration
+                                     ;
+
+LocalDeclaration        :     Type  LocalVariableDeclarator
+                        ;
+
+LocalVariableDeclarators   :  LocalVariableDeclaratorName
+                           |  LocalVariableDeclarators COMMA LocalVariableDeclaratorName
+                           ;
+
+
+
+MethodDeclaratorName     : IDENTIFIER
+                         ;
 
 FieldVariableDeclaration : MultiIntInit
                          | MultiStringInit
