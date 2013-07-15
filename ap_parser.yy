@@ -83,6 +83,7 @@
 %token       RETURN  
 %token       VOID  
 %token       THIS  
+%token       SUPER
 %token       FOR  
 %token       FOREACH  
 %token       WHILE  
@@ -97,23 +98,25 @@
 %token       MINUS  
 %token       PLUS  
 %token       OP_EQ  
-%token       OP_NEQ  
-%token       OP_LEQ  
-%token       OP_GEQ  
-%token       NOT  
+%token       OP_NE  
+%token       OP_LE  
+%token       OP_GE  
+%token       BANG
+%token       PERCENT
 %token       OP_LOR  
 %token       OR  
-%token       OP_LOAND  
+%token       OP_LAND  
 %token       AND  
 %token       ASS_MINUS  
 %token       ASS_PLUS  
 %token       EQUALS  
-%token       OP_MUL  
+%token       ASTERICK  
 %token       TILDE  
 %token       PERIOD  
 %token       HAT  
 %token       COMMA  
 %token       ALIGNOF  
+%token       INSTANCEOF
 %token       BOOLEAN  
 %token       INT8T  
 %token       INT16T  
@@ -241,25 +244,80 @@ Block                    : LBRACE   LocalVariableDeclarationsAndStatements RBRAC
                          | LBRACE   RBRACE
                          ;
 
-LocalVariableDeclarationsAndStatements :  LocalVariableDeclarationsOrStatement
-                   |  LocalVariableDeclarationsAndStatements LocalVariableDeclarationsOrStatement
-                   ;
+LocalVariableDeclarationsAndStatements 
+   : LocalVariableDeclarationOrStatement
+   | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
+   ;
 
 LocalVariableDeclarationOrStatement    :  LocalVariableDeclarationStatement
                                        |  Statement
                                        ;
 
-LocalVariableDeclarationStatement      :  LocalDeclarationStatement SEMI
-                                     |  LocalDeclaration AssignmentOperator AssignmentExpression SEMI
-                                     |  ClassDeclaration
+LocalVariableDeclarationStatement      :  LocalDeclaration SEMI
+                   |  LocalDeclaration AssignmentOperator AssignmentExpression SEMI
+                   |  ClassDeclaration
                                      ;
 
-LocalDeclaration        :     Type  LocalVariableDeclarator
+LocalDeclaration        :     TypeName  LocalVariableDeclarators
                         ;
 
 LocalVariableDeclarators   :  LocalVariableDeclaratorName
-                           |  LocalVariableDeclarators COMMA LocalVariableDeclaratorName
+                      |  LocalVariableDeclarators COMMA LocalVariableDeclaratorName
                            ;
+
+LocalVariableDeclaratorName   : Identifier
+                              ;
+
+Statement   :  EmptyStatement
+            |  ExpressionStatement
+            |  SelectionStatementInit
+            |  IterationStatement
+            |  ReturnStatement
+            |  Block
+            ;
+
+EmptyStatement :  SEMI
+               ;
+
+ExpressionStatement  :  Expression
+                     ;
+
+Expression  :  AssignmentExpression
+            ;
+
+
+Identifier  :  IDENTIFIER
+            ;
+
+SelectionStatementInit  :  
+                   IF LPAREN Expression RPAREN Statement SelectionStatementContinue
+                   ;
+
+SelectionStatementContinue :  ELSE Statement
+                           |
+                           ;
+
+IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
+                     |  ForIterationStatement
+                     ;
+
+ForIterationStatement : BasicFor
+                      ;
+
+BasicFor :  FOR LPAREN InitFor RelationalExpression SEMI AssignmentExpression RPAREN ForStatement
+         ;
+
+ForStatement   :  LBRACE Statement RBRACE
+               |  SEMI
+               |  LBRACE RBRACE
+               ;
+
+InitFor  :  LocalVariableDeclarationStatement
+         ;
+
+ReturnStatement   :  RETURN Expression SEMI
+                  |  RETURN SEMI
+                  ;
 
 
 
@@ -316,6 +374,9 @@ TemplateDeclaration  :  LCARROT STRING  RCARROT
                         }
                      ;
 
+TypeName :  Type
+         |  IDENTIFIER
+         ;
 
 Type              :     BOOLEAN
                         { 
@@ -391,7 +452,152 @@ ObjectType        :     IDENTIFIER
                         }
                   ;
 
-Initializer       :     LPAREN 
+AssignmentExpression :  ConditionalExpression
+                     |  UnaryExpression AssignmentOperator
+                     |  UnaryExpression INCREMENT
+                     |  UnaryExpression DECREMENT
+                     ;
+
+AssignmentOperator   :  EQUALS
+                     |  ASS_PLUS
+                     |  ASS_MINUS
+                     ;
+
+ConditionalExpression   :  ConditionalOrExpression
+       |  ConditionalOrExpression QUESTION Expression COLON ConditionalExpression
+       ;
+
+ConditionalOrExpression :  ConditionalAndExpression
+                        |  ConditionalOrExpression OP_LOR ConditionalAndExpression
+                        ;
+
+ConditionalAndExpression   :  InclusiveOrExpression
+                          |  ConditionalAndExpression OP_LAND InclusiveOrExpression
+                          ;
+
+InclusiveOrExpression   :  ExclusiveOrExpression
+                        |  InclusiveOrExpression OR ExclusiveOrExpression
+                        ;
+
+ExclusiveOrExpression   :  AndExpression
+                        |  ExclusiveOrExpression HAT AndExpression
+                        ;
+
+AndExpression           :  EqualityExpression
+                        |  AndExpression  AND   EqualityExpression
+                        ;
+
+EqualityExpression      :  RelationalExpression
+                        |  EqualityExpression   OP_EQ RelationalExpression
+                        |  EqualityExpression   OP_NE RelationalExpression
+                        ;
+
+RelationalExpression    :  ShiftExpression
+                        |  RelationalExpression RCARROT ShiftExpression
+                        |  RelationalExpression LCARROT ShiftExpression
+                        |  RelationalExpression OP_LE ShiftExpression
+                        |  RelationalExpression OP_GE ShiftExpression
+                        |  RelationalExpression INSTANCEOF  Type
+                        ;
+
+ShiftExpression         :  AdditiveExpression
+                        ;
+
+AdditiveExpression      :  MultiplicativeExpression
+                        |  AdditiveExpression   PLUS MultiplicativeExpression
+                        |  AdditiveExpression   MINUS MultiplicativeExpression
+                        ;
+
+MultiplicativeExpression   :  CastExpression
+                       |  MultiplicativeExpression   ASTERICK CastExpression
+                       |  MultiplicativeExpression   FORWARDSLASH   CastExpression
+                       |  MultiplicativeExpression   PERCENT   CastExpression
+                       ;
+
+CastExpression :  UnaryExpression
+               |  LPAREN   Type  RPAREN   CastExpression
+               |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
+               ;
+
+UnaryExpression   :  LogicalUnaryExpression
+                  |  ArithmeticUnaryOperator CastExpression
+                  ;
+
+PostfixExpression :  PrimaryExpression
+                  ;
+
+PrimaryExpression :  QualifiedName
+                  |  NotJustName
+                  ;
+
+
+
+AllocationExpression : NEW TypeName LPAREN   ArgumentList   RPAREN
+                     ;
+
+QualifiedName  :  Identifier
+               | QualifiedName PERIOD Identifier
+               ;
+
+NotJustName :  SpecialName
+            |  AllocationExpression
+            |  ComplexPrimary
+            ;
+
+ComplexPrimary :  LPAREN Expression RPAREN
+               |  ComplexPrimaryNoParenthesis
+               ;
+
+ComplexPrimaryNoParenthesis : Literal
+                            | Number
+                            | FieldAccess
+                            | MethodCall
+                            ;
+
+FieldAccess :  NotJustName PERIOD Identifier
+            ;
+
+MethodCall : MethodReference LPAREN ArgumentList RPAREN
+           ;
+
+MethodReference : ComplexPrimaryNoParenthesis
+                | QualifiedName
+                | SpecialName
+                ;
+
+ArgumentList   :  Expression
+               | ArgumentList COMMA Expression
+               |
+               ;
+
+SpecialName : NILL
+            | THIS
+            | SUPER
+            ;
+
+
+
+ArithmeticUnaryOperator :  PLUS
+                        |  MINUS
+                        ;
+
+LogicalUnaryExpression  :  PostfixExpression
+                        |  LogicalUnaryOperator UnaryExpression
+                        ;
+
+LogicalUnaryOperator :  BANG
+                     |  TILDE
+                     ;
+
+Literal  :  STRING
+         ;
+
+Number   :  INT_TOKEN
+         |  FLOAT_TOKEN
+         ;
+
+
+
 %%
 
 void 
