@@ -217,17 +217,29 @@ Visibility        :     ATPUBLIC
                   |     ATPORTS
                   ;
 
-FieldDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
+FieldDeclaration  :     FieldVariableDeclaration
+                        { std::cerr << "FieldVariableDeclaration\n"; }
+                  |     MethodDeclaration
+                        { std::cerr << "MethodDeclaration\n"; }
                   |     ConstructorDeclaration
+                        { std::cerr << "ConstructorDeclaration\n"; }
                   ;
+
+FieldVariableDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
+                          ;
 
 ConstructorDeclaration   : MethodDeclarator Block
                          ;
 
-MethodDeclarator         : MethodDeclaratorName LPAREN ParameterList RPAREN
+MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
+                         { std::cerr << "Here: \n"; }
                          ;
 
-MethodDeclaratorName     : IDENTIFIER
+MethodBody  :  Block
+            ;
+
+MethodDeclarator         : Identifier LPAREN ParameterList RPAREN
+                         | Identifier LPAREN RPAREN
                          ;
 
 ParameterList            : Parameter
@@ -319,11 +331,6 @@ ReturnStatement   :  RETURN Expression SEMI
                   |  RETURN SEMI
                   ;
 
-
-
-MethodDeclaratorName     : IDENTIFIER
-                         ;
-
 FieldVariableDeclaration : MultiIntInit
                          | MultiStringInit
                          | MultiFloatInit
@@ -375,7 +382,7 @@ TemplateDeclaration  :  LCARROT STRING  RCARROT
                      ;
 
 TypeName :  Type
-         |  IDENTIFIER
+         |  Identifier
          ;
 
 Type              :     BOOLEAN
@@ -392,7 +399,6 @@ Type              :     BOOLEAN
                         }
                   |     INT32T
                         {
-                           std::cerr << "Here\n";
                            $$ = new std::string("INT32T");          
                         }
                   |     INT64T
@@ -446,9 +452,8 @@ TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
                         }
                   ;
 
-ObjectType        :     IDENTIFIER
+ObjectType        :     Identifier
                         {
-                           $$ = $1;
                         }
                   ;
 
@@ -533,9 +538,10 @@ PrimaryExpression :  QualifiedName
 
 
 AllocationExpression : NEW TypeName LPAREN   ArgumentList   RPAREN
+                     | NEW TypeName LPAREN RPAREN
                      ;
 
-QualifiedName  :  Identifier
+QualifiedName  : Identifier
                | QualifiedName PERIOD Identifier
                ;
 
@@ -551,7 +557,7 @@ ComplexPrimary :  LPAREN Expression RPAREN
 ComplexPrimaryNoParenthesis : Literal
                             | Number
                             | FieldAccess
-                            | MethodCall
+/*                            | MethodCall*/
                             ;
 
 FieldAccess :  NotJustName PERIOD Identifier
@@ -567,7 +573,6 @@ MethodReference : ComplexPrimaryNoParenthesis
 
 ArgumentList   :  Expression
                | ArgumentList COMMA Expression
-               |
                ;
 
 SpecialName : NILL
