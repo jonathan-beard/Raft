@@ -4,14 +4,15 @@ class Foo{
    int8 a(100), c(0x40);
    int64 b(3);
    float32 c(3.0);
-/*
+
    Foo( int64 x )
    {
 
    }
-*/
+   
    int32 ToString( int64 x)
    {
+   
    }
 @private:
    int8 bar(0);

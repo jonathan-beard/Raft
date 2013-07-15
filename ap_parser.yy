@@ -226,6 +226,9 @@ FieldDeclaration  :     FieldVariableDeclaration
                   ;
 
 FieldVariableDeclaration  :     Type TypeModifier FieldVariableDeclaration SEMI
+                        {
+                           std::cerr << "Hit field variable declaration\n";
+                        }
                           ;
 
 ConstructorDeclaration   : MethodDeclarator Block
