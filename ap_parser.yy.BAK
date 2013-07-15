@@ -139,7 +139,6 @@
 %type    <sval>   InstantModifier
 %type    <sval>   TemplateDeclaration
 %type    <sval>   ObjectType
-%type    <sval>   Identifier
 %type    <sval>   Type
 %type    <sval>   TypeModifier
 %%
@@ -177,7 +176,6 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
 
 TypeDeclaration   :     ClassDeclaration
                   |     InterfaceDeclaration
-                  |     TemplateDeclaration
                   ;
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Inherit LBRACE Body RBRACE
@@ -259,10 +257,81 @@ DeclaratorName           : Identifier
 
 Block : LBRACE   RBRACE
       ;
+//LBRACE   LocalVariableDeclarationsAndStatements RBRACE*/
+LocalVariableDeclarationsAndStatements 
+   : LocalVariableDeclarationOrStatement
+   | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
+   ;
+
+LocalVariableDeclarationOrStatement    :  LocalVariableDeclarationStatement
+                                       |  Statement
+                                       ;
+
+LocalVariableDeclarationStatement      :  LocalDeclaration SEMI
+                   |  LocalDeclaration AssignmentOperator AssignmentExpression SEMI
+                   |  ClassDeclaration
+                                     ;
+
+LocalDeclaration        :     TypeName  LocalVariableDeclarators
+                        ;
+
+LocalVariableDeclarators   :  LocalVariableDeclaratorName
+                      |  LocalVariableDeclarators COMMA LocalVariableDeclaratorName
+                           ;
+
+LocalVariableDeclaratorName   : Identifier
+                              ;
+
+Statement   :  EmptyStatement
+            |  ExpressionStatement
+            |  SelectionStatementInit
+            |  IterationStatement
+            |  ReturnStatement
+            |  Block
+            ;
+
+EmptyStatement :  SEMI
+               ;
+
+ExpressionStatement  :  Expression
+                     ;
+
+Expression  :  AssignmentExpression
+            ;
+
 
 Identifier  :  IDENTIFIER
             ;
 
+SelectionStatementInit  :  
+                   IF LPAREN Expression RPAREN Statement SelectionStatementContinue
+                   ;
+
+SelectionStatementContinue :  ELSE Statement
+                           |
+                           ;
+
+IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
+                     |  ForIterationStatement
+                     ;
+
+ForIterationStatement : BasicFor
+                      ;
+
+BasicFor :  FOR LPAREN InitFor RelationalExpression SEMI AssignmentExpression RPAREN ForStatement
+         ;
+
+ForStatement   :  LBRACE Statement RBRACE
+               |  SEMI
+               |  LBRACE RBRACE
+               ;
+
+InitFor  :  LocalVariableDeclarationStatement
+         ;
+
+ReturnStatement   :  RETURN Expression SEMI
+                  |  RETURN SEMI
+                  ;
 
 FieldVariableDeclaration : MultiIntInit
                          | MultiStringInit
@@ -385,16 +454,155 @@ TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
                         }
                   ;
 
-ObjectType        :     IDENTIFIER
+ObjectType        :     Identifier
                         {
-                           $$ = $1;
                         }
+                        ;
+                         
+AssignmentExpression :  ConditionalExpression
+                     |  UnaryExpression AssignmentOperator
+                     |  UnaryExpression INCREMENT
+                     |  UnaryExpression DECREMENT
+                     ;
+
+AssignmentOperator   :  EQUALS
+                     |  ASS_PLUS
+                     |  ASS_MINUS
+                     ;
+
+ConditionalExpression   :  ConditionalOrExpression
+       |  ConditionalOrExpression QUESTION Expression COLON ConditionalExpression
+       ;
+
+ConditionalOrExpression :  ConditionalAndExpression
+                        |  ConditionalOrExpression OP_LOR ConditionalAndExpression
+                        ;
+
+ConditionalAndExpression   :  InclusiveOrExpression
+                          |  ConditionalAndExpression OP_LAND InclusiveOrExpression
+                          ;
+
+InclusiveOrExpression   :  ExclusiveOrExpression
+                        |  InclusiveOrExpression OR ExclusiveOrExpression
+                        ;
+
+ExclusiveOrExpression   :  AndExpression
+                        |  ExclusiveOrExpression HAT AndExpression
+                        ;
+
+AndExpression           :  EqualityExpression
+                        |  AndExpression  AND   EqualityExpression
+                        ;
+
+EqualityExpression      :  RelationalExpression
+                        |  EqualityExpression   OP_EQ RelationalExpression
+                        |  EqualityExpression   OP_NE RelationalExpression
+                        ;
+
+RelationalExpression    :  ShiftExpression
+                        |  RelationalExpression RCARROT ShiftExpression
+                        |  RelationalExpression LCARROT ShiftExpression
+                        |  RelationalExpression OP_LE ShiftExpression
+                        |  RelationalExpression OP_GE ShiftExpression
+                        |  RelationalExpression INSTANCEOF  Type
+                        ;
+
+ShiftExpression         :  AdditiveExpression
+                        ;
+
+AdditiveExpression      :  MultiplicativeExpression
+                        |  AdditiveExpression   PLUS MultiplicativeExpression
+                        |  AdditiveExpression   MINUS MultiplicativeExpression
+                        ;
+
+MultiplicativeExpression   :  CastExpression
+                       |  MultiplicativeExpression   ASTERICK CastExpression
+                       |  MultiplicativeExpression   FORWARDSLASH   CastExpression
+                       |  MultiplicativeExpression   PERCENT   CastExpression
+                       ;
+
+CastExpression :  UnaryExpression
+               |  LPAREN   Type  RPAREN   CastExpression
+               |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
+               ;
+
+UnaryExpression   :  LogicalUnaryExpression
+                  |  ArithmeticUnaryOperator CastExpression
                   ;
-                        
-Identifier  :  IDENTIFIER
-               {
-                  $$ = $1;
-               }
+
+PostfixExpression :  PrimaryExpression
+                  ;
+
+PrimaryExpression :  QualifiedName
+                  |  NotJustName
+                  ;
+
+
+
+AllocationExpression : NEW TypeName LPAREN   ArgumentList   RPAREN
+                     | NEW TypeName LPAREN RPAREN
+                     ;
+
+QualifiedName  : Identifier
+               | QualifiedName PERIOD Identifier
+               ;
+
+NotJustName :  SpecialName
+            |  AllocationExpression
+            |  ComplexPrimary
+            ;
+
+ComplexPrimary :  LPAREN Expression RPAREN
+               |  ComplexPrimaryNoParenthesis
+               ;
+
+ComplexPrimaryNoParenthesis : Literal
+                            | Number
+                            | FieldAccess
+/*                            | MethodCall*/
+                            ;
+
+FieldAccess :  NotJustName PERIOD Identifier
+            ;
+
+MethodCall : MethodReference LPAREN ArgumentList RPAREN
+           ;
+
+MethodReference : ComplexPrimaryNoParenthesis
+                | QualifiedName
+                | SpecialName
+                ;
+
+ArgumentList   :  Expression
+               | ArgumentList COMMA Expression
+               ;
+
+SpecialName : NILL
+            | THIS
+            | SUPER
+            ;
+
+
+
+ArithmeticUnaryOperator :  PLUS
+                        |  MINUS
+                        ;
+
+LogicalUnaryExpression  :  PostfixExpression
+                        |  LogicalUnaryOperator UnaryExpression
+                        ;
+
+LogicalUnaryOperator :  BANG
+                     |  TILDE
+                     ;
+
+Literal  :  STRING
+         ;
+
+Number   :  INT_TOKEN
+         |  FLOAT_TOKEN
+         ;
+
 %%
 
 void 
