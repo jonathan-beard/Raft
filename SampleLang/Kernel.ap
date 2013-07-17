@@ -24,7 +24,7 @@
  * valid types for the language as specified within
  * the XML types specification file.
  */
-final system class Generic< Type T [...] > : extends Type {
+final system class Generic : extends Type {
 @public:
    /**
     * Generic - Constructor, parameters are 
@@ -32,9 +32,9 @@ final system class Generic< Type T [...] > : extends Type {
     * valid type definition object
     * @param type - Type variable length array
     */
-   Generic( );
+   Generic(Type ... );
    
-   Array<Type> get_types();  
+   Type get_type();
 }
 
 /**
@@ -48,7 +48,7 @@ final system class Generic< Type T [...] > : extends Type {
  * where XX is some number greater than zero, this
  * field has no effect for ASDF
  */
-system class Input< Type T, enum DataFlow( ASDF ), int64_t Count( 1 ) > {
+system class Input< Type T, DataFlow D( ASDF ), int64 Count( 1 ) > {
 @public:
    /** 
     * Input constructor for a single type, the 

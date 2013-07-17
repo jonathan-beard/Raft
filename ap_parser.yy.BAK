@@ -272,14 +272,14 @@ LocalVariableDeclarationStatement      :  LocalDeclaration SEMI
                    |  ClassDeclaration
                                      ;
 
-LocalDeclaration        :     TypeName  LocalVariableDeclarators
+LocalDeclaration        :     Type  LocalVariableDeclarators
                         ;
 
 LocalVariableDeclarators   :  LocalVariableDeclaratorName
                       |  LocalVariableDeclarators COMMA LocalVariableDeclaratorName
                            ;
 
-LocalVariableDeclaratorName   : Identifier
+LocalVariableDeclaratorName   : IDENTIFIER
                               ;
 
 Statement   :  EmptyStatement

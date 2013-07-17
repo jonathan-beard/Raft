@@ -48,6 +48,7 @@
 /* token types */
 %union{
    std::string        *sval;
+   bool                 bval;
    uintmax_t          uint_val;
    long double         dval;
 }
@@ -90,7 +91,13 @@
 %token       IF  
 %token       ELSE  
 %token       NILL  
-%token       NEW  
+%token       CONST
+%token       ALLOC
+%token       STATIC
+%token       ATOMIC
+%token       NONATOMIC
+%token       STRUCT
+%token       FREE
 %token       INCREMENT  
 %token       DECREMENT  
 %token       QUESTION  
@@ -118,6 +125,8 @@
 %token       ALIGNOF  
 %token       INSTANCEOF
 %token       BOOLEAN  
+%token   <bval>   TRUE
+%token   <bval>   FALSE
 %token       INT8T  
 %token       INT16T  
 %token       INT32T  
@@ -129,19 +138,13 @@
 %token       FLOAT32  
 %token       FLOAT64  
 %token       FLOAT96  
-%token       VECTOR
 %token   <sval>    STR_TOKEN 
 %token       POUND
 %token       STRING  
 %token   <uint_val>  INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
-%type    <sval>   InstantModifier
-%type    <sval>   TemplateDeclaration
-%type    <sval>   ObjectType
-%type    <sval>   Identifier
-%type    <sval>   Type
-%type    <sval>   TypeModifier
+%type    <sval>    InstantModifier
 %%
 
 
@@ -155,7 +158,7 @@ T                 :     Filename
                   |     T  TypeDeclaration
                   |     error
                   ;
-
+/* handle cpp file names for errors */
 Filename          :     POUND    INT_TOKEN   STR_TOKEN
                         {
                            AP_Common::RemoveStringQuotes( *$3 );
@@ -178,18 +181,21 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
 TypeDeclaration   :     ClassDeclaration
                   |     InterfaceDeclaration
                   |     TemplateDeclaration
+                  |     StructDeclaration InlineStructInitList
                   ;
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Inherit LBRACE Body RBRACE
                         {
-                           /*
-                           std::cerr << "Modifier: " << *$2 << "\n";
-                           std::cerr << *$4 << "\n";
-                           delete( $2 );
-                           delete( $4 );
-                           */
+
                         }
                   ;
+
+StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
+                     {
+                        std::cerr << "Struct\n";
+                     }
+                  ;
+
 
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
@@ -217,6 +223,7 @@ Visibility        :     ATPUBLIC
                   |     ATPROTECTED
                   |     ATPRIVATE
                   |     ATPORTS
+                  |
                   ;
 
 FieldDeclaration  :     FieldVariableDeclaration
@@ -225,15 +232,36 @@ FieldDeclaration  :     FieldVariableDeclaration
                         { std::cerr << "MethodDeclaration\n"; }
                   |     ConstructorDeclaration
                         { std::cerr << "ConstructorDeclaration\n"; }
+                  |     StructDeclaration InlineStructInitList
+                        {  std::cerr << "StructDeclaration, inside class \n"; }
                   ;
 
-FieldVariableDeclaration  : TypeName TypeModifier FieldVariableDeclaration SEMI
-                        {
-                           std::cerr << "Hit field variable declaration\n";
-                        }
+InlineStructInitList   :  MultiObjectInit SEMI
+                       |
+                       ;
+
+FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
+                          | Type TypeModifier Initializer SEMI
                           ;
 
+StorageModifier : CONST
+                | STATIC
+                | STATIC ATOMIC
+                | ATOMIC STATIC
+                | NONATOMIC STATIC
+                | STATIC NONATOMIC
+                | ATOMIC
+                | NONATOMIC
+                ;
+
+
 ConstructorDeclaration   : MethodDeclarator Block
+                         | MethodDeclarator COLON ClassInitializers SEMI
+                         | MethodDeclarator COLON ClassInitializers Block
+                         ;
+
+ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
+                         | ClassInitializers COMMA IDENTIFIER LPAREN Expression RPAREN
                          ;
 
 MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
@@ -243,7 +271,8 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
 MethodBody  :  Block
             ;
 
-MethodDeclarator         : Identifier LPAREN ParameterList RPAREN
+MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
+                         | IDENTIFIER LPAREN RPAREN
                          ;
 
 ParameterList            : Parameter
@@ -251,22 +280,110 @@ ParameterList            : Parameter
                          |
                          ;
 
-Parameter                : TypeName TypeModifier DeclaratorName
+Parameter                : Type TypeModifier DeclaratorName
                          ;
 
-DeclaratorName           : Identifier
+DeclaratorName           : IDENTIFIER
                          ;
 
 Block : LBRACE   RBRACE
+      |  LBRACE   LocalVariableDeclarationsAndStatements RBRACE
       ;
 
-Identifier  :  IDENTIFIER
+
+LocalVariableDeclarationsAndStatements 
+   : LocalVariableDeclarationOrStatement
+   | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
+   ;
+
+LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
+                                       |  Statement
+                                       |  StructDeclaration
+                                       ;
+
+LocalVariableDeclaration   :  LocalStorageModifier Type TypeModifier Initializer SEMI
+                           |  Type TypeModifier Initializer SEMI
+                           ;
+
+LocalStorageModifier : CONST
+                     | ATOMIC
+                     | NONATOMIC
+                     ;
+
+
+Statement   :  EmptyStatement
+            |  ExpressionStatement
+            |  SelectionStatementInit
+            |  IterationStatement
+            |  ReturnStatement
+            |  Block
+            ;
+
+EmptyStatement :  SEMI
+               ;
+
+ExpressionStatement  :  Expression
+                     ;
+
+Expression  :  AssignmentExpression
             ;
 
 
-FieldVariableDeclaration : MultiIntInit
-                         | MultiStringInit
-                         | MultiFloatInit
+SelectionStatementInit  :  
+                   IF LPAREN Expression RPAREN Statement SelectionStatementContinue
+                   ;
+
+SelectionStatementContinue :  ELSE Statement
+                           |
+                           ;
+
+IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
+                     |  ForIterationStatement
+                     ;
+
+ForIterationStatement : BasicFor
+                      ;
+
+BasicFor :  FOR LPAREN InitFor RelationalExpression SEMI AssignmentExpression RPAREN ForStatement
+         ;
+
+ForStatement   :  LBRACE Statement RBRACE
+               |  SEMI
+               |  LBRACE RBRACE
+               ;
+
+InitFor  : LocalVariableDeclaration
+         ;
+
+ReturnStatement   :  RETURN Expression SEMI
+                  |  RETURN SEMI
+                  ;
+
+
+Initializer :  MultiBoolInit
+            |  MultiIntInit
+            |  MultiStringInit
+            |  MultiFloatInit
+            |  MultiObjectInit
+            ;
+
+
+MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
+                         | BoolInitializer
+                         ;
+
+BoolInitializer          : IDENTIFIER LPAREN TRUE RPAREN
+                         | IDENTIFIER LPAREN FALSE RPAREN
+                         | IDENTIFIER LPAREN LogicalUnaryExpression RPAREN
+                         ;
+
+
+MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
+                         | ObjectInitializer
+                         ;
+
+ObjectInitializer        : IDENTIFIER LPAREN ArgumentList RPAREN
+                         | IDENTIFIER LPAREN RPAREN
                          ;
 
 MultiIntInit             : MultiIntInit COMMA IntInitializer
@@ -277,10 +394,19 @@ IntInitializer           : IDENTIFIER LPAREN INT_TOKEN RPAREN
                          ;
 
 MultiStringInit          : MultiStringInit COMMA StrInitializer
+                           {
+                              std::cerr << "MultipleStringInitializer\n";
+                           }
                          | StrInitializer
+                           { 
+                              std::cerr << "SingleStringInitializer\n";
+                           }  
                          ;
 
-StrInitializer           : IDENTIFIER  LPAREN   STR_TOKEN RPAREN
+StrInitializer           : IDENTIFIER  LPAREN STR_TOKEN RPAREN
+                           {
+                              std::cerr << "StringInitializer\n";
+                           }
                          ;
 
 MultiFloatInit          : MultiFloatInit COMMA FltInitializer
@@ -314,87 +440,227 @@ TemplateDeclaration  :  LCARROT STRING  RCARROT
                         }
                      ;
 
-TypeName :  Type
-         |  Identifier
-         ;
+Type  :  BoolType
+      |  IntType
+      |  FloatType
+      |  StringType
+      |  ObjectType
+      ;
 
-Type              :     BOOLEAN
+BoolType          :     BOOLEAN
                         { 
-                           $$ = new std::string( "Boolean" );       
                         }
-                  |     INT8T
+                  ;
+IntType           :     INT8T
                         { 
-                           $$ = new std::string("INT8T");           
                         }
                   |     INT16T
                         { 
-                           $$ = new std::string("INT16T");          
                         }
                   |     INT32T
                         {
-                           $$ = new std::string("INT32T");          
                         }
                   |     INT64T
                         { 
-                           $$ = new std::string("INT64T");          
                         }
                   |     UINT8T
                         { 
-                           $$ = new std::string("UINT8T");          
                         }
                   |     UINT16T
                         { 
-                           $$ = new std::string("UINT16T"); 
                         }
                   |     UINT32T
                         { 
-                           $$ = new std::string("UInt32T"); 
                         }
                   |     UINT64T
                         { 
-                           $$ = new std::string("UINT64T"); 
                         }
-                  |     FLOAT32
+                        ;
+FloatType         :     FLOAT32
                         { 
-                           $$ = new std::string("Float32");       
                         }
                   |     FLOAT64
                         { 
-                           $$ = new std::string("Float32");
                         }
                   |     FLOAT96
                         { 
-                           $$ = new std::string("Float96");       
-                        }
-                  |     STRING
-                        {
-                           $$ = new std::string("String");
-                        }
-                  |     ObjectType
-                        {
-                           $$ = $1;
                         }
                   ;
 
-TypeModifier      :     VECTOR LCARROT INT_TOKEN RCARROT
+StringType        :     STRING
                         {
-                           $$ = new std::string("VectorModifier");
-                        }
-                  |     {  
-                           $$ = nullptr ; 
+                           std::cerr << "StringType\n";
                         }
                   ;
 
 ObjectType        :     IDENTIFIER
                         {
-                           $$ = $1;
                         }
                   ;
+
+TypeModifier      :     LCARROT VectorSize RCARROT
+                        {
+                        }
+                  |
+                  ;
+
+VectorSize        :     VectorSize COMMA INT_TOKEN
+                  |     INT_TOKEN
+                  ;
+
+
+
+AssignmentExpression :  ConditionalExpression
+                     |  UnaryExpression AssignmentOperator
+                     |  UnaryExpression INCREMENT
+                     |  UnaryExpression DECREMENT
+                     ;
+
+AssignmentOperator   :  EQUALS
+                     |  ASS_PLUS
+                     |  ASS_MINUS
+                     ;
+
+ConditionalExpression   :  ConditionalOrExpression
+       |  ConditionalOrExpression QUESTION Expression COLON ConditionalExpression
+       ;
+
+ConditionalOrExpression :  ConditionalAndExpression
+                        |  ConditionalOrExpression OP_LOR ConditionalAndExpression
+                        ;
+
+ConditionalAndExpression   :  InclusiveOrExpression
+                          |  ConditionalAndExpression OP_LAND InclusiveOrExpression
+                          ;
+
+InclusiveOrExpression   :  ExclusiveOrExpression
+                        |  InclusiveOrExpression OR ExclusiveOrExpression
+                        ;
+
+ExclusiveOrExpression   :  AndExpression
+                        |  ExclusiveOrExpression HAT AndExpression
+                        ;
+
+AndExpression           :  EqualityExpression
+                        |  AndExpression  AND   EqualityExpression
+                        ;
+
+EqualityExpression      :  RelationalExpression
+                        |  EqualityExpression   OP_EQ RelationalExpression
+                        |  EqualityExpression   OP_NE RelationalExpression
+                        ;
+
+RelationalExpression    :  ShiftExpression
+                        |  RelationalExpression RCARROT ShiftExpression
+                        |  RelationalExpression LCARROT ShiftExpression
+                        |  RelationalExpression OP_LE ShiftExpression
+                        |  RelationalExpression OP_GE ShiftExpression
+                        |  RelationalExpression INSTANCEOF  Type
+                        ;
+
+ShiftExpression         :  AdditiveExpression
+                        ;
+
+AdditiveExpression      :  MultiplicativeExpression
+                        |  AdditiveExpression   PLUS MultiplicativeExpression
+                        |  AdditiveExpression   MINUS MultiplicativeExpression
+                        ;
+
+MultiplicativeExpression   :  CastExpression
+                       |  MultiplicativeExpression   ASTERICK CastExpression
+                       |  MultiplicativeExpression   FORWARDSLASH   CastExpression
+                       |  MultiplicativeExpression   PERCENT   CastExpression
+                       ;
+
+CastExpression :  UnaryExpression
+               |  LPAREN   Type  RPAREN   CastExpression
+               |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
+               ;
+
+UnaryExpression   :  LogicalUnaryExpression
+                  |  ArithmeticUnaryOperator CastExpression
+                  ;
+
+PostfixExpression :  PrimaryExpression
+                  ;
+
+PrimaryExpression :  QualifiedName
+                  |  NotJustName
+                  ;
+
+
+
+AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
+                     | ALLOC Type LPAREN RPAREN
+                     ;
+
+
+DeAllocationExpression : FREE LPAREN   ArgumentList RPAREN
+                       | FREE LPAREN   RPAREN
+                       ;
+
+QualifiedName  : IDENTIFIER
+               | QualifiedName PERIOD IDENTIFIER
+               ;
+
+NotJustName :  SpecialName
+            |  AllocationExpression
+            |  DeAllocationExpression
+            |  ComplexPrimary
+            ;
+
+ComplexPrimary :  LPAREN Expression RPAREN
+               |  ComplexPrimaryNoParenthesis
+               ;
+
+ComplexPrimaryNoParenthesis : Literal
+                            | Number
+                            | FieldAccess
+                            | MethodCall
+                            ;
+
+FieldAccess :  NotJustName PERIOD IDENTIFIER
+            ;
+
+MethodCall : MethodReference LPAREN ArgumentList RPAREN
+           ;
+
+MethodReference : ComplexPrimaryNoParenthesis
+                | QualifiedName
+                | SpecialName
+                ;
+
+ArgumentList   :  Expression
+               | ArgumentList COMMA Expression
+               ;
+
+SpecialName : NILL
+            | THIS
+            | SUPER
+            ;
+
+
+
+ArithmeticUnaryOperator :  PLUS
+                        |  MINUS
+                        ;
+
+LogicalUnaryExpression  :  PostfixExpression
+                        |  LogicalUnaryOperator UnaryExpression
+                        ;
+
+LogicalUnaryOperator :  BANG
+                     |  TILDE
+                     ;
+
+Literal  :  STRING
+         ;
+
+Number   :  INT_TOKEN
+         |  FLOAT_TOKEN
+         ;
+                  
                         
-Identifier  :  IDENTIFIER
-               {
-                  $$ = $1;
-               }
 %%
 
 void 

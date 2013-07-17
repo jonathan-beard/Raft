@@ -1,20 +1,30 @@
-class Foo{
+
+struct too{
+
+}a(),b(),c(); 
+
+class Foo : extends Kernel{
 @public:
-   String a("b\"o\"o" );
-   int8 a(100), c(0x40);
+   String a("foobar");
+   int8 a(100);
    int64 b(3);
-   float32 c(3.0);
+   float32<32,32> c(3.0);
 
-   Foo(int64 x)
+   Foo( int64 x ) : bar( x ),
+                    tooth( 3 + 100 )
    {
-
+      int32 a( 100 );
    }
-/*   
-   int32 ToString( int64 x)
+
+   int32 ToString( int64 x )
    {
    
    }
-*/
+
+   int64 bar()
+   {
+
+   }
 @private:
    int8 bar(0);
 @protected:

@@ -46,7 +46,7 @@ typedef AP::AP_Parser::token token;
 
 D		               [0-9]
 EXP		            [e][+-]?{D}+
-IDENT		            [A-Za-z\@][A-Za-z0-9_\@]*
+IDENT		            [A-Za-z][A-Za-z0-9_]*
 WSCHAR		         [ \t\f\v\r]
 WHITESPACE	         {WSCHAR}+|({WSCHAR}*\\\n)+{WSCHAR}*
 STRING		         \".*\"
@@ -108,7 +108,13 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "if"                    { TOKEN( IF ); }
 "else"                  { TOKEN( ELSE ); }
 "null"                  { TOKEN( NILL ); }
-"new"                   { TOKEN( NEW ); }
+"alloc"                   { TOKEN( ALLOC ); }
+"const"                 { TOKEN( CONST ); }
+"static"                { TOKEN( STATIC ); }
+"atomic"                { TOKEN( ATOMIC ); }
+"nonatomic"             { TOKEN( NONATOMIC ); } 
+"struct"                { TOKEN( STRUCT ); }
+"free"                  { TOKEN( FREE ); }
 "++"                    { TOKEN( INCREMENT ); }
 "--"                    { TOKEN( DECREMENT ); }
 "?"                     { TOKEN( QUESTION ); }
@@ -135,6 +141,8 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ","                     { TOKEN( COMMA ); }
 "alignof"               { TOKEN( ALIGNOF ); }
 "bool"                  { TOKEN( BOOLEAN ); }
+"true"                  { TOKEN( TRUE ); }
+"false"                 { TOKEN( FALSE ); }
 "int8"                { TOKEN( INT8T ); }
 "int16"               { TOKEN( INT16T ); }
 "int32"               { TOKEN( INT32T ); }
@@ -146,7 +154,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float32"               { TOKEN( FLOAT32 ); }
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
-"vector"                { TOKEN( VECTOR ); }
 "String"                { TOKEN( STRING ); }
 "instanceof"            { TOKEN( INSTANCEOF ); }
 {STRING}                { STOKEN( STR_TOKEN ); }

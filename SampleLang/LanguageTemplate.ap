@@ -34,7 +34,7 @@
  * thrown.
  */
 
-class GenInt : extends Kernel{
+class GenInt< Type T >: extends Kernel{
 @public:
    GenInt( int64_t seed ) : seed( seed )
    {
@@ -51,67 +51,41 @@ class GenInt : extends Kernel{
    }
 
 @ports:
-   Output< Generic( int32_t, int64_t ) > y0;
+   Output< T > y0;
 
 @configs:
    /* single type, no need to specify variables */
    Config< int64_t > seed;
 }
 
-class Sum : extends Kernel{
-   /**
-    * no @public or constructor needed if there's 
-    * nothing to do in the constructor, AP will 
-    * make a "default" constructor for you
-    */
+class Sum<Type T> : extends Kernel{
 @ports:
-   /**
-    * Note on Ports:
-    * these are declarations of ports, types in 
-    * brackets are the valid generic types that
-    * we want to declare for each port, the
-    * underlying block itself can accept int32
-    * through float32_t.  The underlying run-time
-    * system infers the port type as long as some 
-    * information is available to do so, errors 
-    * are generated otherwise
-    */
-
    /**
     * x0 - Input port with generic input port
     * @param - int32_t or int64_t or float32_t
     */
-   Input< Generic( int32_t, int64_t, float32_t ) > x0;
-   /**
-    * x1 - Input port with generic input port
-    * @param - int32_t or int64_t or float32_t
-    */
-   Input< Generic( int32_t, int64_t, float32_t ) > x1;
+   Input< T > x0(), x1()
+
    /**
     * y0 - Output port with generic input port
     * @param - int32_t or int64_t or float32_t
     */
-   Output< Generic( int32_t, int64_t, float32_t ) > y0;
+   Output< T > y0();
 }
 
-class Print : extends Kernel{
-@public:
-/** 
- * no constructor needed, default constructor
- * will call the Init function, the destructor will be
- * called on shutdown.
- */
+class Print< Type T > : extends Kernel{
 @ports:
    /** 
     * you should be able to use the array syntax
     * to make an array of ports of any type
     */
-   Input< Generic( int32_t, int64_t, float32_t ) > x0;
+   Input< T > x0;
 }
 
 class SumApp{
 @public
-void main( String[] args )
+
+void main( String args<> )
 {
    /**
     * Only one port and you don't need to provide a name for 
