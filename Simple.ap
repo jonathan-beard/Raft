@@ -1,19 +1,19 @@
-
 struct too{
 
 }a(),b(),c(); 
 
-class Foo : extends Kernel{
+class Foo< T > : extends Kernel{
 @public:
    String a("foobar");
    int8 a(100);
    int64 b(3);
-   float32<32,32> c(3.0);
+   float32<V>[32,32] c(3.0);
 
    Foo( int64 x ) : bar( x ),
                     tooth( 3 + 100 )
    {
       int32 a( 100 );
+
    }
 
    int32 ToString( int64 x )

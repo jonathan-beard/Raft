@@ -42,10 +42,10 @@ syn keyword javaError		goto const
 syn keyword javaConditional	if else switch
 syn keyword javaRepeat		while for do
 syn keyword javaBoolean		true false
-syn keyword javaConstant	null
+syn keyword javaConstant	nill
 syn keyword javaTypedef		this super
 syn keyword javaOperator	new instanceof
-syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String
+syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
 syn keyword javaType		void
 syn keyword javaStatement	return
 syn keyword javaStorageClass	static synchronized transient volatile final strictfp serializable
@@ -121,8 +121,8 @@ syn match   javaUserLabel	"^\s*[_$a-zA-Z][_$a-zA-Z0-9_]*\s*:"he=e-1 contains=jav
 syn keyword javaLabel		default
 
 if !exists("java_allow_cpp_keywords")
-  syn keyword javaError auto delete extern friend inline redeclared
-  syn keyword javaError register signed sizeof struct template typedef union
+  syn keyword javaError extern friend inline redeclared
+  syn keyword javaError register signed template typedef union
   syn keyword javaError unsigned operator
 endif
 

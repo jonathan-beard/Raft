@@ -184,11 +184,19 @@ TypeDeclaration   :     ClassDeclaration
                   |     StructDeclaration InlineStructInitList
                   ;
 
-ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Inherit LBRACE Body RBRACE
+ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
 
                         }
                   ;
+
+Generic  :  LCARROT IdentifierList RCARROT
+         |  
+         ;
+
+IdentifierList :  IDENTIFIER
+               |  IdentifierList COMMA IDENTIFIER
+               ;
 
 StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
                      {
@@ -498,13 +506,15 @@ ObjectType        :     IDENTIFIER
                         }
                   ;
 
-TypeModifier      :     LCARROT VectorSize RCARROT
+TypeModifier      :     LBRACKET ArraySize RBRACKET
                         {
                         }
+                  |     LCARROT  IdentifierList RCARROT LBRACKET ArraySize RBRACKET
+                  |     LCARROT  IdentifierList RCARROT
                   |
                   ;
 
-VectorSize        :     VectorSize COMMA INT_TOKEN
+ArraySize         :     ArraySize COMMA INT_TOKEN
                   |     INT_TOKEN
                   ;
 
