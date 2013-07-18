@@ -38,20 +38,19 @@ JavaHiLink javaError2 javaError
 " keyword definitions
 syn keyword javaExternal	native package
 syn match javaExternal		"#include"
-syn keyword javaError		goto const
+syn keyword javaError		goto
 syn keyword javaConditional	if else switch
 syn keyword javaRepeat		while for do
 syn keyword javaBoolean		true false
 syn keyword javaConstant	nill
 syn keyword javaTypedef		this super
-syn keyword javaOperator	new instanceof
+syn keyword javaOperator	alloc free instanceof
 syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
 syn keyword javaType		void
 syn keyword javaStatement	return
-syn keyword javaStorageClass	static synchronized transient volatile final strictfp serializable
+syn keyword javaStorageClass	static synchronized transient volatile final
 syn keyword javaExceptions	throw try catch finally
 syn keyword javaAssert		assert
-syn keyword javaMethodDecl	synchronized throws
 syn keyword javaClassDecl	extends implements interface
 " to differentiate the keyword class from MyClass.class we use a match here
 syn match   javaTypedef		"\.\s*\<class\>"ms=s+1
@@ -64,7 +63,7 @@ syn keyword javaBranch		break continue nextgroup=javaUserLabelRef skipwhite
 syn match   javaUserLabelRef	"\k\+" contained
 syn match   javaVarArg		"\.\.\."
 syn keyword javaScopeDecl	@ports @public @protected @private @configs 
-
+syn keyword javaAnnotation overrides implements
 if exists("java_highlight_java_lang_ids")
   let java_highlight_all=1
 endif

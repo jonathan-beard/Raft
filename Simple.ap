@@ -1,22 +1,27 @@
-struct too{
+struct  too{
 
-}a(),b(),c(); 
+}a<synchronized = true>(),b(),c(); 
 
-class Foo< T > : extends Kernel{
+class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
 @public:
    String a("foobar");
    int8 a(100);
    int64 b(3);
-   float32<V>[32,32] c(3.0);
+   float32 c[32,32](3.0);
+   // dynamically allocated array
+   int32 aa[]( nill );
 
-   Foo( int64 x ) : bar( x ),
+   
+
+
+   Foo( int64 x(0 + 3), int32 a[100](0) ) : bar( x ),
                     tooth( 3 + 100 )
    {
       int32 a( 100 );
-
+      aa = alloc int32[ 100 ];
    }
 
-   int32 ToString( int64 x )
+   implements int32 ToString( int64 x )
    {
    
    }
@@ -25,8 +30,12 @@ class Foo< T > : extends Kernel{
    {
 
    }
+
+   void Main(  String args[]( nill ) )
+   {
+      bar();   
+   }
 @private:
    int8 bar(0);
 @protected:
-@ports:
 }

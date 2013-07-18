@@ -85,7 +85,7 @@ class Print< Type T > : extends Kernel{
 class SumApp{
 @public
 
-void main( String args<> )
+void main( String args[] )
 {
    /**
     * Only one port and you don't need to provide a name for 

@@ -22,9 +22,6 @@ members of a class
 when used within something that sub-classes a Kernel.  If used
 outside of a Kernel sub-class this will throw an exception
 
-@configs - used to define compile time configurations within a Kernel 
-object, valid only within a Kernel sub-class
-
 final - when used as a modifier to a class, prevents any sub-classing
 of the class, its invalid for use as a modifier to a template or an 
 abstract class that cannot be instantiated without sub-classing.  Methods

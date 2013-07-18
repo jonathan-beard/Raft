@@ -190,18 +190,19 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
                         }
                   ;
 
-Generic  :  LCARROT IdentifierList RCARROT
+Generic  :  LCARROT GenericList RCARROT
          |  
          ;
 
-IdentifierList :  IDENTIFIER
-               |  IdentifierList COMMA IDENTIFIER
-               ;
+GenericList :  CLASS IDENTIFIER
+            |  Type  IDENTIFIER  TypeModifier
+            |  Type  Initializer
+            |  GenericList COMMA CLASS IDENTIFIER
+            |  GenericList COMMA Type IDENTIFIER TypeModifier 
+            |  GenericList COMMA Type Initializer
+            ;
 
 StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
-                     {
-                        std::cerr << "Struct\n";
-                     }
                   ;
 
 
@@ -235,13 +236,9 @@ Visibility        :     ATPUBLIC
                   ;
 
 FieldDeclaration  :     FieldVariableDeclaration
-                        { std::cerr << "FieldVariableDeclaration\n"; }
                   |     MethodDeclaration
-                        { std::cerr << "MethodDeclaration\n"; }
                   |     ConstructorDeclaration
-                        { std::cerr << "ConstructorDeclaration\n"; }
                   |     StructDeclaration InlineStructInitList
-                        {  std::cerr << "StructDeclaration, inside class \n"; }
                   ;
 
 InlineStructInitList   :  MultiObjectInit SEMI
@@ -272,8 +269,13 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                          | ClassInitializers COMMA IDENTIFIER LPAREN Expression RPAREN
                          ;
 
-MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
-                         { std::cerr << "Here: \n"; }
+MethodDeclaration        
+                         : Type TypeModifier MethodDeclarator MethodBody
+                         | VOID TypeModifier MethodDeclarator MethodBody
+                         | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
+                         | IMPLEMENTS VOID TypeModifier MethodDeclarator MethodBody
+                         | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
+                         | OVERRIDES VOID TypeModifier MethodDeclarator MethodBody
                          ;
 
 MethodBody  :  Block
@@ -284,14 +286,18 @@ MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                          ;
 
 ParameterList            : Parameter
-                         | ParameterList Parameter
-                         |
+                         | ParameterList COMMA Parameter
                          ;
 
-Parameter                : Type TypeModifier DeclaratorName
+Parameter                : Type  DeclaratorName
                          ;
 
 DeclaratorName           : IDENTIFIER
+                         | BoolInitializer 
+                         | ObjectInitializer
+                         | IntInitializer
+                         | StrInitializer
+                         | FltInitializer
                          ;
 
 Block : LBRACE   RBRACE
@@ -309,8 +315,8 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
                                        |  StructDeclaration
                                        ;
 
-LocalVariableDeclaration   :  LocalStorageModifier Type TypeModifier Initializer SEMI
-                           |  Type TypeModifier Initializer SEMI
+LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
+                           |  Type Initializer SEMI
                            ;
 
 LocalStorageModifier : CONST
@@ -380,9 +386,10 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
                          | BoolInitializer
                          ;
 
-BoolInitializer          : IDENTIFIER LPAREN TRUE RPAREN
-                         | IDENTIFIER LPAREN FALSE RPAREN
+BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
+                         | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                          | IDENTIFIER LPAREN LogicalUnaryExpression RPAREN
+                         | IDENTIFIER LPAREN Boolean RPAREN
                          ;
 
 
@@ -390,38 +397,34 @@ MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
                          | ObjectInitializer
                          ;
 
-ObjectInitializer        : IDENTIFIER LPAREN ArgumentList RPAREN
+ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
+                         | IDENTIFIER TypeModifier LPAREN RPAREN
                          | IDENTIFIER LPAREN RPAREN
+                         | IDENTIFIER LPAREN ArgumentList RPAREN
                          ;
 
 MultiIntInit             : MultiIntInit COMMA IntInitializer
                          | IntInitializer
                          ;
 
-IntInitializer           : IDENTIFIER LPAREN INT_TOKEN RPAREN
+IntInitializer           : IDENTIFIER TypeModifier LPAREN Expression RPAREN
+                         | IDENTIFIER LPAREN Expression RPAREN
                          ;
 
 MultiStringInit          : MultiStringInit COMMA StrInitializer
-                           {
-                              std::cerr << "MultipleStringInitializer\n";
-                           }
                          | StrInitializer
-                           { 
-                              std::cerr << "SingleStringInitializer\n";
-                           }  
                          ;
 
-StrInitializer           : IDENTIFIER  LPAREN STR_TOKEN RPAREN
-                           {
-                              std::cerr << "StringInitializer\n";
-                           }
+StrInitializer           : IDENTIFIER  TypeModifier LPAREN STR_TOKEN RPAREN
+                         | IDENTIFIER LPAREN STR_TOKEN RPAREN
                          ;
 
 MultiFloatInit          : MultiFloatInit COMMA FltInitializer
                         | FltInitializer
                         ;
 
-FltInitializer          :  IDENTIFIER  LPAREN   FLOAT_TOKEN RPAREN                 
+FltInitializer          :  IDENTIFIER  TypeModifier LPAREN   Expression RPAREN
+                        |  IDENTIFIER  LPAREN   Expression RPAREN 
                         ;
 
 InstantModifier   :     FINAL SYSTEM
@@ -496,9 +499,6 @@ FloatType         :     FLOAT32
                   ;
 
 StringType        :     STRING
-                        {
-                           std::cerr << "StringType\n";
-                        }
                   ;
 
 ObjectType        :     IDENTIFIER
@@ -507,12 +507,22 @@ ObjectType        :     IDENTIFIER
                   ;
 
 TypeModifier      :     LBRACKET ArraySize RBRACKET
-                        {
-                        }
-                  |     LCARROT  IdentifierList RCARROT LBRACKET ArraySize RBRACKET
-                  |     LCARROT  IdentifierList RCARROT
+                  |     LBRACKET RBRACKET /* dynamic array */
+                  |     LCARROT GenericInstantiationList RCARROT LBRACKET ArraySize RBRACKET
+                  |     LCARROT GenericInstantiationList RCARROT
+                  |     LCARROT GenericInstantiationList RCARROT LBRACKET RBRACKET
                   |
                   ;
+
+GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
+                         | GenericInstantiationList COMMA AllowedGenericInstTypes EQUALS
+                         ;
+
+AllowedGenericInstTypes : IDENTIFIER
+                        | Literal
+                        | Number
+                        | Boolean
+                        ;
 
 ArraySize         :     ArraySize COMMA INT_TOKEN
                   |     INT_TOKEN
@@ -601,12 +611,11 @@ PrimaryExpression :  QualifiedName
 
 
 AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
-                     | ALLOC Type LPAREN RPAREN
+                     | ALLOC Type LBRACKET Expression RBRACKET
                      ;
 
 
-DeAllocationExpression : FREE LPAREN   ArgumentList RPAREN
-                       | FREE LPAREN   RPAREN
+DeAllocationExpression : FREE LPAREN IDENTIFIER RPAREN
                        ;
 
 QualifiedName  : IDENTIFIER
@@ -633,10 +642,12 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
             ;
 
 MethodCall : MethodReference LPAREN ArgumentList RPAREN
+             { std::cerr << "HereArg\n"; }
+           | MethodReference LPAREN  RPAREN
+             { std::cerr << "HereNoArg\n"; }
            ;
 
-MethodReference : ComplexPrimaryNoParenthesis
-                | QualifiedName
+MethodReference : QualifiedName
                 | SpecialName
                 ;
 
@@ -668,6 +679,10 @@ Literal  :  STRING
 
 Number   :  INT_TOKEN
          |  FLOAT_TOKEN
+         ;
+
+Boolean  :  TRUE
+         |  FALSE
          ;
                   
                         
