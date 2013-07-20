@@ -199,6 +199,7 @@ GenericList :  CLASS IDENTIFIER
             ;
 
 StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
+                  |  STRUCT IDENTIFIER Inherit LBRACE RBRACE
                   ;
 
 
@@ -634,6 +635,8 @@ AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
                        { std::cerr << "Allocation With Arguments\n"; }
                      | ALLOC Type LBRACKET Expression RBRACKET
                        { std::cerr << "allocation With Expression\n"; }
+                     | ALLOC Type LPAREN  RPAREN
+                       { std::cerr << "Allocation With No Arguments\n"; }
                      ;
 
 
@@ -706,7 +709,6 @@ ArgumentList   :  Expression
                   { std::cerr << "ArgumentList->Expression\n"; }
                | ArgumentList COMMA Expression
                   { std::cerr << "More than one argument, ArgumentList\n"; }
-               |
                ;
 
 
