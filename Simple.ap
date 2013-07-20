@@ -33,7 +33,7 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
 
    void Main(  String args[]( nill ) )
    {
-      bar();   
+      bar()
    }
 @private:
    int8 bar(0);
