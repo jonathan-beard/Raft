@@ -83,7 +83,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ">"                     { TOKEN( RCARROT ); }
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
-"@"                     { TOKEN( AT ); }
 "autogen"               { TOKEN( AUTOGEN ); }
 "auto"                  { TOKEN( AUTO ); }
 "final"                 { TOKEN( FINAL ); }
@@ -139,7 +138,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 [\.]                    { TOKEN( PERIOD ); }
 "\^"                    { TOKEN( HAT ); }
 ","                     { TOKEN( COMMA ); }
-"alignof"               { TOKEN( ALIGNOF ); }
 "bool"                  { TOKEN( BOOLEAN ); }
 "true"                  { TOKEN( TRUE ); }
 "false"                 { TOKEN( FALSE ); }
@@ -155,7 +153,6 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "float64"               { TOKEN( FLOAT64 ); }
 "float96"               { TOKEN( FLOAT96 ); }
 "String"                { TOKEN( STRING ); }
-"instanceof"            { TOKEN( INSTANCEOF ); }
 {STRING}                { STOKEN( STR_TOKEN ); }
 "-"?{D}+{EXP}?          { 
                            char *buffer(nullptr);

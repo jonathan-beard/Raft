@@ -64,9 +64,6 @@
 %token       RCARROT  
 %token       COLON  
 %token       SEMI  
-%token       AT  
-%token       DEFINE  
-%token       CONFIGS  
 %token       AUTOGEN  
 %token       AUTO  
 %token       FINAL  
@@ -122,8 +119,6 @@
 %token       PERIOD  
 %token       HAT  
 %token       COMMA  
-%token       ALIGNOF  
-%token       INSTANCEOF
 %token       BOOLEAN  
 %token   <bval>   TRUE
 %token   <bval>   FALSE
@@ -188,6 +183,7 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
                         {
 
                         }
+                  |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
                   ;
 
 Generic  :  LCARROT GenericList RCARROT
@@ -219,7 +215,8 @@ Inherit           :     COLON EXTENDS IDENTIFIER
                         }
                   ;
 
-InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE SEMI
+InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE
+                     |  INTERFACE IDENTIFIER LBRACE RBRACE
                      ;
 
 Body              :     Visibility
@@ -232,7 +229,6 @@ Visibility        :     ATPUBLIC
                   |     ATPROTECTED
                   |     ATPRIVATE
                   |     ATPORTS
-                  |
                   ;
 
 FieldDeclaration  :     FieldVariableDeclaration
@@ -241,8 +237,8 @@ FieldDeclaration  :     FieldVariableDeclaration
                   |     StructDeclaration InlineStructInitList
                   ;
 
-InlineStructInitList   :  MultiObjectInit SEMI
-                       |
+InlineStructInitList   :  COLON MultiObjectInit SEMI
+                       | 
                        ;
 
 FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
@@ -422,8 +418,6 @@ MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
 
 ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                          | IDENTIFIER TypeModifier LPAREN RPAREN
-                         | IDENTIFIER LPAREN RPAREN
-                         | IDENTIFIER LPAREN ArgumentList RPAREN
                          ;
 
 MultiIntInit             : MultiIntInit COMMA IntInitializer
@@ -602,7 +596,6 @@ RelationalExpression    :  ShiftExpression
                         |  RelationalExpression LCARROT ShiftExpression
                         |  RelationalExpression OP_LE ShiftExpression
                         |  RelationalExpression OP_GE ShiftExpression
-                        |  RelationalExpression INSTANCEOF  Type
                         ;
 
 ShiftExpression         :  AdditiveExpression
@@ -679,25 +672,15 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
                { std::cerr << "NotJustNmae . " << *$3 << "\n"; }
             ;
 
-MethodCall : MethodReference LPAREN ArgumentList RPAREN
+MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              { std::cerr << "MethodReference - Arg\n"; }
-           | MethodReference LPAREN  RPAREN
+           | QualifiedName LPAREN  RPAREN
              { std::cerr << "MethodReference - NoArg\n"; }
+           | SpecialName PERIOD QualifiedName LPAREN ArgumentList RPAREN
+             { std::cerr << "MethodCall -> SpecialName.Qual( args )\n"; }
+           | SpecialName PERIOD QualifiedName LPAREN RPAREN
+             { std::cerr << "MethodCall -> SpecialName.Qual( NO args )\n"; }
            ;
-
-MethodReference : QualifiedName
-                  { std::cerr << "QualifiedName\n"; }
-                | NILL
-                  { std::cerr << "NILL\n"; }
-                | THIS
-                  { std::cerr << "THIS\n"; }
-                | SUPER
-                { std::cerr << "SUPER\n"; }
-               ;
-
-                SpecialName
-                  { std::cerr << "SpecialName\n"; }
-                ;
 
 QualifiedName  : IDENTIFIER
                  { 
@@ -710,13 +693,20 @@ QualifiedName  : IDENTIFIER
                ;
 
 
-SpecialName : 
+SpecialName     : NILL
+                  { std::cerr << "NILL\n"; }
+                | THIS
+                  { std::cerr << "THIS\n"; }
+                | SUPER
+                  { std::cerr << "SUPER\n"; }
+                ;
 
 
 ArgumentList   :  Expression
                   { std::cerr << "ArgumentList->Expression\n"; }
                | ArgumentList COMMA Expression
                   { std::cerr << "More than one argument, ArgumentList\n"; }
+               |
                ;
 
 

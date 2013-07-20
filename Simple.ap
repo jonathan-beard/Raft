@@ -1,6 +1,6 @@
 struct  too{
 
-}a<synchronized = true>(),b(),c(); 
+} : a<synchronized = true>(),b(),c(); 
 
 class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
 @public:

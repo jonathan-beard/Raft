@@ -1,0 +1,1 @@
+./apcom -f Simple.ap
