@@ -56,6 +56,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 %x ML_COMMENT 
 
 %%
+"@"                 {   TOKEN( AT ); }
 "#"                 {  
                         TOKEN( POUND ); }
 "\n"                { 

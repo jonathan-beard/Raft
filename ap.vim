@@ -25,7 +25,7 @@ else
 endif
 
 " some characters that cannot be in a java program (outside a string)
-syn match javaError "[\\@`]"
+syn match javaError "[`]"
 syn match javaError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|[^-]->\|\*\/"
 syn match javaOK "\.\.\."
 
@@ -41,10 +41,11 @@ syn match javaExternal		"#include"
 syn keyword javaError		goto
 syn keyword javaConditional	if else switch
 syn keyword javaRepeat		while for do
+syn match   javaRepeat     "@/"
 syn keyword javaBoolean		true false
 syn keyword javaConstant	nill
 syn keyword javaTypedef		this super
-syn keyword javaOperator	alloc free instanceof
+syn keyword javaOperator	new alloc free
 syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
 syn keyword javaType		void
 syn keyword javaStatement	return

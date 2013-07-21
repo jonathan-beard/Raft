@@ -54,6 +54,7 @@
 }
 
 %token       END     0     "end of file"
+%token       AT
 %token       LBRACE  
 %token       RBRACE  
 %token       LBRACKET  
