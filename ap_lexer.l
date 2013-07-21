@@ -108,6 +108,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "else"                  { TOKEN( ELSE ); }
 "null"                  { TOKEN( NILL ); }
 "alloc"                   { TOKEN( ALLOC ); }
+"new"                   { TOKEN( NEW ); } 
 "const"                 { TOKEN( CONST ); }
 "static"                { TOKEN( STATIC ); }
 "atomic"                { TOKEN( ATOMIC ); }

@@ -85,11 +85,12 @@
 %token       FOR  
 %token       FOREACH  
 %token       WHILE  
-%token       IF  
+%token       IF 
 %token       ELSE  
 %token       NILL  
 %token       CONST
 %token       ALLOC
+%token       NEW
 %token       STATIC
 %token       ATOMIC
 %token       NONATOMIC
@@ -296,12 +297,10 @@ DeclaratorName           : IDENTIFIER
                            { std::cerr << "Bool Initializer\n"; }
                          | ObjectInitializer
                            { std::cerr << "Object Initializer\n"; }
-                         | IntInitializer
+                         | NumberInitializer
                            { std::cerr << "Int Initializer\n"; }
                          | StrInitializer
                            { std::cerr << "String Initializer\n"; }
-                         | FltInitializer
-                           { std::cerr << "Float Initializer\n"; }
                          ;
 
 Block : LBRACE   RBRACE
@@ -362,14 +361,10 @@ Expression  :  AssignmentExpression
                { std::cerr << "AssignmentExpression\n"; }
             ;
 
-
 SelectionStatementInit  :  
-                   IF LPAREN Expression RPAREN Statement SelectionStatementContinue
-                   ;
-
-SelectionStatementContinue :  ELSE Statement
-                           |
-                           ;
+                        IF LPAREN Expression RPAREN Statement ELSE Statement
+                    |   IF LPAREN Expression RPAREN Statement
+                    ;
 
 IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
                      |  ForIterationStatement
@@ -395,9 +390,8 @@ ReturnStatement   :  RETURN Expression SEMI
 
 
 Initializer :  MultiBoolInit
-            |  MultiIntInit
+            |  MultiNumberInit
             |  MultiStringInit
-            |  MultiFloatInit
             |  MultiObjectInit
             ;
 
@@ -421,11 +415,11 @@ ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                          | IDENTIFIER TypeModifier LPAREN RPAREN
                          ;
 
-MultiIntInit             : MultiIntInit COMMA IntInitializer
-                         | IntInitializer
+MultiNumberInit          : MultiNumberInit COMMA NumberInitializer
+                         | NumberInitializer
                          ;
 
-IntInitializer           : IDENTIFIER TypeModifier LPAREN Expression RPAREN
+NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                          | IDENTIFIER LPAREN Expression RPAREN
                          ;
 
@@ -437,13 +431,6 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN STR_TOKEN RPAREN
                          | IDENTIFIER LPAREN STR_TOKEN RPAREN
                          ;
 
-MultiFloatInit          : MultiFloatInit COMMA FltInitializer
-                        | FltInitializer
-                        ;
-
-FltInitializer          :  IDENTIFIER  TypeModifier LPAREN   Expression RPAREN
-                        |  IDENTIFIER  LPAREN   Expression RPAREN 
-                        ;
 
 InstantModifier   :     FINAL SYSTEM
                         {
@@ -615,7 +602,7 @@ MultiplicativeExpression   :  CastExpression
 
 CastExpression :  UnaryExpression
                |  LPAREN   Type  RPAREN   CastExpression
-               |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
+              /* |  LPAREN   Expression  RPAREN   LogicalUnaryExpression*/
                ;
 
 UnaryExpression   :  LogicalUnaryExpression
@@ -637,6 +624,9 @@ AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
                        { std::cerr << "allocation With Expression\n"; }
                      | ALLOC Type LPAREN  RPAREN
                        { std::cerr << "Allocation With No Arguments\n"; }
+                     | NEW Type LPAREN ArgumentList RPAREN
+                     | NEW Type LPAREN RPAREN
+                     | NEW Type LBRACKET Expression RBRACKET
                      ;
 
 

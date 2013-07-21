@@ -28,7 +28,7 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
 
    int64 bar()
    {
-
+      if( a == b ) a = b;
    }
 
    void Main(  String args[]( nill ) )
