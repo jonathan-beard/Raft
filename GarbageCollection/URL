@@ -1,3 +1,7 @@
 Get code from here: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/
 And insert the code in this directory
 for the compiler to link against.
+
+Alternative URLS:
+https://github.com/ivmai/bdwgc/
+
