@@ -55,6 +55,7 @@
 
 %token       END     0     "end of file"
 %token       AT
+%token       DOLLAR
 %token       LBRACE  
 %token       RBRACE  
 %token       LBRACKET  
@@ -245,7 +246,9 @@ InlineStructInitList   :  COLON MultiObjectInit SEMI
                        ;
 
 FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
+                          | StorageModifier Type TypeModifier Initializer DeclareAndAssignArray SEMI
                           | Type TypeModifier Initializer SEMI
+                          | Type TypeModifier Initializer DeclareAndAssignArray SEMI
                           ;
 
 StorageModifier : CONST
@@ -327,8 +330,22 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
                                        ;
 
 LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
+                           |  LocalStorageModifier Type Initializer DeclareAndAssignArray SEMI
                            |  Type Initializer SEMI
+                           |  Type Initializer DeclareAndAssignArray SEMI
                            ;
+
+DeclareAndAssignArray      :  EQUALS LBRACE ArrayListNumber  RBRACE
+                           |  EQUALS LBRACE ArrayListLiteral RBRACE
+                           ;
+
+ArrayListNumber   : LBRACKET ArraySize RBRACKET EQUALS Number
+                  | ArrayListNumber COMMA LBRACKET ArraySize RBRACKET EQUALS Number
+                  ;
+
+ArrayListLiteral  : LBRACKET ArraySize RBRACKET EQUALS Literal
+                  | ArrayListLiteral COMMA LBRACKET ArraySize RBRACKET EQUALS Literal
+                  ;
 
 LocalStorageModifier : CONST
                      | ATOMIC
@@ -360,7 +377,10 @@ ExpressionStatement  :  Expression
 
 Expression  :  AssignmentExpression
                { std::cerr << "AssignmentExpression\n"; }
+            |  MapExpression
+               { std::cerr << "Hit MapExpression\n"; }
             ;
+
 
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
@@ -381,6 +401,10 @@ ForStatement   :  LBRACE Statement RBRACE
                |  SEMI
                |  LBRACE RBRACE
                ;
+
+MapExpression   :  Expression AT FORWARDSLASH Expression
+                  { std::cerr << "MapExpression\n"; }
+                ;
 
 InitFor  : LocalVariableDeclaration
          ;
@@ -462,7 +486,11 @@ Type  :  BoolType
       |  FloatType
       |  StringType
       |  ObjectType
+      |  AutoType
       ;
+
+AutoType          :     AUTO
+                  ;
 
 BoolType          :     BOOLEAN
                         { 
@@ -531,7 +559,9 @@ AllowedGenericInstTypes : IDENTIFIER
                         ;
 
 ArraySize         :     ArraySize COMMA INT_TOKEN
+                        { std::cerr << "ArraySizeMultiple\n"; }
                   |     INT_TOKEN
+                        { std::cerr << "ArraySizeSingle\n"; }
                   ;
 
 
@@ -547,16 +577,23 @@ AssignmentExpression :  ConditionalExpression
                      ;
 
 AssignmentOperator   :  EQUALS
+                        { std::cerr << "Equals\n"; }
                      |  ASS_PLUS
+                        { std::cerr << "AssPlus\n"; }
                      |  ASS_MINUS
+                        { std::cerr << "AssMinus\n"; }
                      ;
 
 ConditionalExpression   :  ConditionalOrExpression
+                           { std::cerr << "ConditionalExpression-> ConditionalOrExpression\n"; }
        |  ConditionalOrExpression QUESTION Expression COLON ConditionalExpression
+         { std::cerr << "ConditionalExpression->TerniaryConditional\n"; }
        ;
 
 ConditionalOrExpression :  ConditionalAndExpression
+                           { std::cerr << "ConditionalOrExpression -> ConditionalAndExpression\n"; }
                         |  ConditionalOrExpression OP_LOR ConditionalAndExpression
+                           { std::cerr << "ConditionalOrExpression -> LOR \n"; }
                         ;
 
 ConditionalAndExpression   :  InclusiveOrExpression
@@ -603,7 +640,7 @@ MultiplicativeExpression   :  CastExpression
 
 CastExpression :  UnaryExpression
                |  LPAREN   Type  RPAREN   CastExpression
-              /* |  LPAREN   Expression  RPAREN   LogicalUnaryExpression*/
+               |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
                ;
 
 UnaryExpression   :  LogicalUnaryExpression
@@ -660,7 +697,25 @@ ComplexPrimaryNoParenthesis : Literal
                               { std::cerr << "FieldAccess\n"; }
                             | MethodCall
                               { std::cerr << "MethodCall\n"; }
+                            | AnonymousArrayAccess
+                              { 
+                                 std::cerr << "AnonymousArrayAccesss\n"; 
+                              }
+                            | ArrayAccess
+                              {
+                                 std::cerr << "ArrayAccess\n"; 
+                              }
+                            | Placeholder
+                              {
+                                 std::cerr << "Placeholder\n";
+                              }
                             ;
+Placeholder  : POUND
+             ;
+
+ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
+            |  QualifiedName LBRACKET  ArraySize RBRACKET
+            ;
 
 FieldAccess :  NotJustName PERIOD IDENTIFIER
                { std::cerr << "NotJustNmae . " << *$3 << "\n"; }
@@ -737,7 +792,11 @@ Boolean  :  TRUE
          |  FALSE
             { std::cerr << "Boolean FALSE\n"; }
          ;
-                  
+
+
+AnonymousArrayAccess :  DOLLAR
+                     |  DOLLAR LBRACKET   Number   RBRACKET
+                     ;
                         
 %%
 
