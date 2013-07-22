@@ -1,7 +1,0 @@
-# 1 "Simple.ap"
-# 1 "<command-line>"
-# 1 "Simple.ap"
-class Foo{
-@public:
-}
-
