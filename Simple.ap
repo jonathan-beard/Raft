@@ -34,9 +34,9 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
    void Main(  String args[]( nill ) )
    {
       
-      int32 test_array[] = new int32[ 100 ]; 
-       output[]( bar( $1 )@/test_array );
-      bar()
+      int32 test_array[]( new int32[ 100 ], 0 );
+       
+      bar();
    }
 @private:
    int8 bar(0);
