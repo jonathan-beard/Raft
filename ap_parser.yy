@@ -12,6 +12,12 @@
       class AP_Scanner;
       class AP_Data;
    }
+   namespace Node {
+      class NodeAbstract;
+      class Source;
+      class Declaring;
+      class DeclaringList;
+   }
 }
 
 /* params for yylex */
@@ -37,6 +43,12 @@
    #include "ap_data.hpp"
    #include "ap_common.hpp"
    #include "ap_cpp_output_handler.hpp"
+   
+   /* nodes */
+   #include "NodeAbstract.hpp"
+   #include "Source.hpp"
+   #include "Declaring.hpp"
+   #include "DeclaringList.hpp"
 
    /* define proper yylex */
    static int yylex(AP::AP_Parser::semantic_type *yylval,
@@ -47,10 +59,18 @@
 
 /* token types */
 %union{
-   std::string        *sval;
+   semantic_type() : sval( nullptr ){}
+
+   /* mostly basic types */
+   std::string          *sval;
    bool                 bval;
-   uintmax_t          uint_val;
-   long double         dval;
+   uintmax_t            uint_val;
+   long double          dval;
+   /* begin node types */
+   Node::NodeAbstract   *node;
+
+
+
 }
 
 %token       END     0     "end of file"
@@ -142,18 +162,54 @@
 %token   <uint_val>  INT_TOKEN
 %token   <dval>    FLOAT_TOKEN
 %token   <sval>    IDENTIFIER
-%type    <sval>    InstantModifier
+%type    <node>    TypeDeclaration
+%type    <node>    T
 %%
 
 
 CompilationUnit   :     END
                   |     T
+                        {
+                           Node::Source *s( nullptr );
+                           s = new Node::Source();
+                           assert( s != nullptr );
+                           driver.set_root( s );
+                           s->AdoptChildren( $1 );
+                           std::cerr << "Really called this\n"; 
+                        }
                   ;
 
 T                 :     Filename
+                        {
+                           $$ = nullptr;
+                        }
                   |     TypeDeclaration
+                        {
+                           Node::Declaring *d( nullptr );
+                           d = new Node::Declaring();
+                           assert( d != nullptr );
+                           $$->MakeSibling( d );
+                        }
                   |     T  Filename
+                        {
+                        }
                   |     T  TypeDeclaration
+                        {
+                           if( $$ == nullptr )
+                           {
+                              Node::Declaring *d( nullptr );
+                              d = new Node::Declaring();
+                              assert( d != nullptr );
+                              $$ = d;
+                           }
+                           else
+                           {
+                              Node::Declaring *d( nullptr );
+                              d = new Node::Declaring();
+                              assert( d != nullptr );
+                              $1->MakeSibling( d );
+                           }
+                        }
                   |     error
                   ;
 /* handle cpp file names for errors */
@@ -292,41 +348,28 @@ ParameterList            : Parameter
                          ;
 
 Parameter                : Type  DeclaratorName
-                           { std::cerr << "Parameter\n"; }
                          ;
 
 DeclaratorName           : IDENTIFIER
-                           { std::cerr << "Declarator Name: " << *$1 << "\n"; }
                          | BoolInitializer 
-                           { std::cerr << "Bool Initializer\n"; }
                          | ObjectInitializer
-                           { std::cerr << "Object Initializer\n"; }
                          | NumberInitializer
-                           { std::cerr << "Int Initializer\n"; }
                          | StrInitializer
-                           { std::cerr << "String Initializer\n"; }
                          ;
 
 Block : LBRACE   RBRACE
-         { std::cerr << "EmptyBlock\n"; }
       |  LBRACE   LocalVariableDeclarationsAndStatements RBRACE
-         { std::cerr << "NonEmptyBlock\n"; }
       ;
 
 
 LocalVariableDeclarationsAndStatements 
    : LocalVariableDeclarationOrStatement
-      { std::cerr << "LocalVariableDeclarationOrStatemnet\n"; }
    | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
-      { std::cerr << "LongerOneLocalVariableDeclarationOrStatemnet\n"; }
    ;
 
 LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
-                                          { std::cerr << "LocalVariableDeclaration\n"; }
                                        |  Statement
-                                          { std::cerr << "Statement\n"; }
                                        |  StructDeclaration
-                                          { std::cerr << "StructDeclaration\n"; }
                                        ;
 
 LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
@@ -354,31 +397,21 @@ LocalStorageModifier : CONST
 
 
 Statement   :  EmptyStatement
-               { std::cerr << "EmptyStatement\n"; }
             |  ExpressionStatement
-               { std::cerr << "ExpressionStatement\n"; }
             |  SelectionStatementInit
-               { std::cerr << "SelectionStatementInit\n"; }
             |  IterationStatement
-               { std::cerr << "IterationStatement\n"; }
             |  ReturnStatement
-               { std::cerr << "ReturnStatement\n"; }
             |  Block
-               { std::cerr << "Block\n"; }
             ;
 
 EmptyStatement :  SEMI
-               { std::cerr << "SEMI\n"; }
                ;
 
 ExpressionStatement  :  Expression
-                        { std::cerr << "Expression\n"; }
                      ;
 
 Expression  :  AssignmentExpression
-               { std::cerr << "AssignmentExpression\n"; }
             |  MapExpression
-               { std::cerr << "Hit MapExpression\n"; }
             ;
 
 
@@ -403,7 +436,6 @@ ForStatement   :  LBRACE Statement RBRACE
                ;
 
 MapExpression   :  Expression AT FORWARDSLASH Expression
-                  { std::cerr << "MapExpression\n"; }
                 ;
 
 InitFor  : LocalVariableDeclaration
@@ -458,21 +490,9 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN STR_TOKEN RPAREN
 
 
 InstantModifier   :     FINAL SYSTEM
-                        {
-                           $$ = new std::string("finalsystem");
-                        }
                   |     FINAL
-                        {
-                           $$ = new std::string("final");
-                        }
                   |     ABSTRACT
-                        {
-                           $$ = new std::string("abstract");
-                        }
                   |
-                        {
-                           $$ = new std::string("none");
-                        }
                   ;
 
 TemplateDeclaration  :  LCARROT STRING  RCARROT
@@ -559,41 +579,28 @@ AllowedGenericInstTypes : IDENTIFIER
                         ;
 
 ArraySize         :     ArraySize COMMA INT_TOKEN
-                        { std::cerr << "ArraySizeMultiple\n"; }
                   |     INT_TOKEN
-                        { std::cerr << "ArraySizeSingle\n"; }
                   ;
 
 
 
 AssignmentExpression :  ConditionalExpression
-                        { std::cerr << "ConditionalExpression\n"; }
                      |  UnaryExpression AssignmentOperator
-                        { std::cerr << "UnaryAssignmentExpression\n"; }
                      |  UnaryExpression INCREMENT
-                        { std::cerr << "UnaryIncrementExpression\n"; }
                      |  UnaryExpression DECREMENT
-                        { std::cerr << "UnaryDecrementExpression\n"; }
                      ;
 
 AssignmentOperator   :  EQUALS
-                        { std::cerr << "Equals\n"; }
                      |  ASS_PLUS
-                        { std::cerr << "AssPlus\n"; }
                      |  ASS_MINUS
-                        { std::cerr << "AssMinus\n"; }
                      ;
 
 ConditionalExpression   :  ConditionalOrExpression
-                           { std::cerr << "ConditionalExpression-> ConditionalOrExpression\n"; }
        |  ConditionalOrExpression QUESTION Expression COLON ConditionalExpression
-         { std::cerr << "ConditionalExpression->TerniaryConditional\n"; }
        ;
 
 ConditionalOrExpression :  ConditionalAndExpression
-                           { std::cerr << "ConditionalOrExpression -> ConditionalAndExpression\n"; }
                         |  ConditionalOrExpression OP_LOR ConditionalAndExpression
-                           { std::cerr << "ConditionalOrExpression -> LOR \n"; }
                         ;
 
 ConditionalAndExpression   :  InclusiveOrExpression
@@ -657,11 +664,8 @@ PrimaryExpression :  QualifiedName
 
 
 AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
-                       { std::cerr << "Allocation With Arguments\n"; }
                      | ALLOC Type LBRACKET Expression RBRACKET
-                       { std::cerr << "allocation With Expression\n"; }
                      | ALLOC Type LPAREN  RPAREN
-                       { std::cerr << "Allocation With No Arguments\n"; }
                      | NEW Type LPAREN ArgumentList RPAREN
                      | NEW Type LPAREN RPAREN
                      | NEW Type LBRACKET Expression RBRACKET
@@ -669,46 +673,26 @@ AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
 
 
 DeAllocationExpression : FREE LPAREN IDENTIFIER RPAREN
-                        { std::cerr << "DeAllocation For: " << *$3 << "\n"; }
                        ;
 
 
 NotJustName :  SpecialName
-               { std::cerr << "Special Name\n"; }
             |  AllocationExpression
-               { std::cerr << "AllocationExpression\n"; }
             |  DeAllocationExpression
-               { std::cerr << "DeAllocationExpression\n"; }
             |  ComplexPrimary
-               { std::cerr << "ComplexPrimaryExpression\n"; }
             ;
 
 ComplexPrimary :  LPAREN Expression RPAREN
-                  { std::cerr << "ComplexPrimaryOne\n"; }
                |  ComplexPrimaryNoParenthesis
-                  { std::cerr << "ComplexPrimaryNoParenthesis\n"; }
                ;
 
 ComplexPrimaryNoParenthesis : Literal
-                              { std::cerr << "Literal\n"; }
                             | Number
-                              { std::cerr << "Number\n"; }
                             | FieldAccess
-                              { std::cerr << "FieldAccess\n"; }
                             | MethodCall
-                              { std::cerr << "MethodCall\n"; }
                             | AnonymousArrayAccess
-                              { 
-                                 std::cerr << "AnonymousArrayAccesss\n"; 
-                              }
                             | ArrayAccess
-                              {
-                                 std::cerr << "ArrayAccess\n"; 
-                              }
                             | Placeholder
-                              {
-                                 std::cerr << "Placeholder\n";
-                              }
                             ;
 Placeholder  : POUND
              ;
@@ -718,79 +702,52 @@ ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
             ;
 
 FieldAccess :  NotJustName PERIOD IDENTIFIER
-               { std::cerr << "NotJustNmae . " << *$3 << "\n"; }
             ;
 
 MethodCall : QualifiedName LPAREN ArgumentList RPAREN
-             { std::cerr << "MethodReference - Arg\n"; }
            | QualifiedName LPAREN  RPAREN
-             { std::cerr << "MethodReference - NoArg\n"; }
            | SpecialName PERIOD QualifiedName LPAREN ArgumentList RPAREN
-             { std::cerr << "MethodCall -> SpecialName.Qual( args )\n"; }
            | SpecialName PERIOD QualifiedName LPAREN RPAREN
-             { std::cerr << "MethodCall -> SpecialName.Qual( NO args )\n"; }
            ;
 
 QualifiedName  : IDENTIFIER
-                 { 
-                     std::cerr << "Identifier: " << *$1 << "\n";
-                 }
                | QualifiedName PERIOD IDENTIFIER
-                 {
-                     std::cerr << "Qualified Name . " << *$3 << "\n"; 
-                 }
                ;
 
 
 SpecialName     : NILL
-                  { std::cerr << "NILL\n"; }
                 | THIS
-                  { std::cerr << "THIS\n"; }
                 | SUPER
-                  { std::cerr << "SUPER\n"; }
                 ;
 
 
 ArgumentList   :  Expression
-                  { std::cerr << "ArgumentList->Expression\n"; }
                | ArgumentList COMMA Expression
-                  { std::cerr << "More than one argument, ArgumentList\n"; }
                ;
 
 
 
 ArithmeticUnaryOperator :  PLUS
-                           { std::cerr << "plus\n"; }
                         |  MINUS
-                           { std::cerr << "minus\n"; }
                         ;
 
 LogicalUnaryExpression  :  PostfixExpression
-                           { std::cerr << "PostFixExpression\n"; }
                         |  LogicalUnaryOperator UnaryExpression
-                           { std::cerr << "LogicalUnaryOperator + UnaryExpression\n"; }
                         ;
 
 LogicalUnaryOperator :  BANG
-                        { std::cerr << "BANG\n"; }
                      |  TILDE
-                        { std::cerr << "TILDE\n"; }
                      ;
 
 Literal  :  STR_TOKEN
-            { std::cerr << "STRING: \n" << *$1 << "\n"; }
          ;
 
 Number   :  INT_TOKEN
-            { std::cerr << "INT_TOKEN: " << $1 << "\n"; }
          |  FLOAT_TOKEN
-            { std::cerr << "FLOAT_TOKEN: " << $1 << "\n"; }
          ;
 
 Boolean  :  TRUE
-            { std::cerr << "Boolean TRUE\n"; }
          |  FALSE
-            { std::cerr << "Boolean FALSE\n"; }
          ;
 
 

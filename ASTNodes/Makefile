@@ -6,7 +6,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
 				StringType TemplateDeclaration TypeModifier UInt16Type \
 				UInt32Type UInt64Type UInt8Type UIntType VectorType \
             Port DataFlowTypeModifier ASDFTypeModifier BASDFTypeModifier \
-            SDFTypeModifier
+            SDFTypeModifier Source Declaring DeclaringList
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

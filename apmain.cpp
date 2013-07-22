@@ -17,6 +17,8 @@
 #include "ap_common.hpp"
 #include "signalhooks.hpp"
 
+/* visitors */
+#include "DebugVisitor.hpp"
 
 AP::AP_Data ap_data;
 
@@ -149,11 +151,19 @@ main( const int argc, char **argv )
    std::istringstream parser_stream( cpp_output.str() );
  
    AP::AP_Driver driver( ap_data );
-   std::cout << "Calling parse!!\n";
+
+   /* REGISTER VISITORS HERE, IN THE ORDER YOU WANT THEM CALLED */
+   driver.RegisterVisitor( new Visitor::DebugVisitor( ap_data ) );
+   /* END REGISTER VISITORS */
+
+
+   std::cout << "Parsing...\n";
    driver.parse( parser_stream );
-   std::cout << "Done with parse!!\n";
-   
    /* just in case raise parse error stream to flush it if there are any */
    raise( PARSE_ERR_SIG );
+   std::cout << "Done parsing, visiting...\n";
+
+   driver.InvokeVisitors();
+
    return( EXIT_SUCCESS );
 }

@@ -22,7 +22,8 @@ using namespace AP;
 
 AP_Driver::AP_Driver(AP_Data &d) :  parser( nullptr),
                                     scanner( nullptr),
-                                    data( d )
+                                    data( d ),
+                                    root( nullptr )
 {
  /* nothing else to really do here */
 }
@@ -89,4 +90,28 @@ AP_Driver::parse_error( int errorcode, int retval )
    }
    data.get_ap_errorstream() << "\n";
    raise( TERM_ERR_SIG );
+}
+
+void
+AP_Driver::set_root( Node::NodeAbstract *r )
+{
+   assert( r != nullptr );
+   root = r;
+}
+
+void
+AP_Driver::RegisterVisitor( Visitor::DefaultVisitor *visitor )
+{
+   assert( visitor != nullptr );
+   this->visitor_list.push_back( visitor );
+}
+
+void
+AP_Driver::InvokeVisitors()
+{
+   for( Visitor::DefaultVisitor *v : visitor_list )
+   {
+      /* invoke the visitor on the tree */
+      Node::NodeAbstract::invoke( *v, root );
+   }
 }
