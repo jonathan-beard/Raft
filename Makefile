@@ -17,8 +17,8 @@ CSTD = -std=c99
 CXXSTD = -std=c++11 $(DARWIN)
 
 
-APCOMEXE = apcom
-APHEXE = aph
+APCOMEXE = raft
+APHEXE = raft_h
 
 
 APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
@@ -49,9 +49,9 @@ CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
 				 ap_lexer.yy.cc aph_lexer.yy.cc $(APCOMEXE)\
 
 .PHONY: all
-all:  apcom
+all:  raft
 
-apcom: $(APCOMFILES)
+raft: $(APCOMFILES)
 	$(MAKE) nodes
 	$(MAKE) visitors
 	$(MAKE) $(APCOMSOBJ)

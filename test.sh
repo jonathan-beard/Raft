@@ -1,1 +1,1 @@
-./apcom -f Simple.ap
+./raft -f Simple.ap
