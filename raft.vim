@@ -13,7 +13,7 @@ if !exists("main_syntax")
     finish
   endif
   " we define it here so that included files can test for it
-  let main_syntax='ap'
+  let main_syntax='raft'
   syn region javaFold start="{" end="}" transparent fold
 endif
 
@@ -338,9 +338,9 @@ endif
 
 delcommand JavaHiLink
 
-let b:current_syntax = "java"
+let b:current_syntax = "raft"
 
-if main_syntax == 'java'
+if main_syntax == 'raft'
   unlet main_syntax
 endif
 
