@@ -2,15 +2,15 @@
 %require  "2.5"
 %debug
 %defines
-%define   namespace           "AP"
-%define   parser_class_name   "AP_Parser"
+%define   namespace           "Raft"
+%define   parser_class_name   "Parser"
 
 /* pre-declare classes that are needed for the parser here */
 %code requires{
-   namespace AP {
-      class AP_Driver;
-      class AP_Scanner;
-      class AP_Data;
+   namespace Raft {
+      class Driver;
+      class Scanner;
+      class Data;
    }
    namespace Node {
       class NodeAbstract;
@@ -21,14 +21,14 @@
 }
 
 /* params for yylex */
-%lex-param     { AP_Scanner &scanner }
-%parse-param   { AP_Scanner &scanner }
+%lex-param     { Scanner &scanner }
+%parse-param   { Scanner &scanner }
 
-%lex-param     { AP_Driver  &driver  }
-%parse-param   { AP_Driver  &driver  }
+%lex-param     { Driver  &driver  }
+%parse-param   { Driver  &driver  }
 
-%lex-param     { AP_Data    &data    }
-%parse-param   { AP_Data    &data    }
+%lex-param     { Data    &data    }
+%parse-param   { Data    &data    }
 
 %code{
    #include <iostream>
@@ -39,10 +39,10 @@
    #include <cstring>
 
    /* include for all driver functions */
-   #include "ap_driver.hpp"
-   #include "ap_data.hpp"
-   #include "ap_common.hpp"
-   #include "ap_cpp_output_handler.hpp"
+   #include "driver.hpp"
+   #include "data.hpp"
+   #include "common.hpp"
+   #include "cpp_output_handler.hpp"
    
    /* nodes */
    #include "NodeAbstract.hpp"
@@ -51,10 +51,10 @@
    #include "DeclaringList.hpp"
 
    /* define proper yylex */
-   static int yylex(AP::AP_Parser::semantic_type *yylval,
-                    AP::AP_Scanner               &scanner,
-                    AP::AP_Driver                &driver,
-                    AP::AP_Data                  &data );
+   static int yylex(Raft::Parser::semantic_type *yylval,
+                    Raft::Scanner               &scanner,
+                    Raft::Driver                &driver,
+                    Raft::Data                  &data );
 }
 
 /* token types */
@@ -215,7 +215,7 @@ T                 :     Filename
 /* handle cpp file names for errors */
 Filename          :     POUND    INT_TOKEN   STR_TOKEN
                         {
-                           AP_Common::RemoveStringQuotes( *$3 );
+                           Common::RemoveStringQuotes( *$3 );
                            data.get_cpp_handler().AddUpdate( 
                                        $2    /* line # */,
                                        *$3 /* name   */  );
@@ -223,7 +223,7 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                         }
                   |     POUND   INT_TOKEN    STR_TOKEN   INT_TOKEN
                         {
-                           AP_Common::RemoveStringQuotes( *$3 );
+                           Common::RemoveStringQuotes( *$3 );
                            data.get_cpp_handler().AddUpdate(
                                        $2 /* line # */,
                                        *$3 /* name */,
@@ -758,36 +758,36 @@ AnonymousArrayAccess :  DOLLAR
 %%
 
 void 
-AP::AP_Parser::error( const AP::AP_Parser::location_type &l,
-                      const std::string &err_message )
+Raft::Parser::error( const Raft::Parser::location_type &l,
+                     const std::string &err_message )
 {
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
    std::cerr << "Location: " << l << "\n";
-   data.get_ap_errorstream() << "Parser error, in file with " << 
+   data.get_rf_errorstream() << "Parser error, in file with " << 
    str << " with input \"" 
-      << data.get_ap_parsestream().str() << "\"";
+      << data.get_rf_parsestream().str() << "\"";
    if( is_included_file )
    {
       std::string str_included( data.get_cpp_handler().PeekBelowHead() );
-      data.get_ap_errorstream() << ",\n" <<
+      data.get_rf_errorstream() << ",\n" <<
       "in included from file with " << str_included << ".\n";
    }
    else
    {
-      data.get_ap_errorstream() << ".\n";
+      data.get_rf_errorstream() << ".\n";
    }
-   data.get_ap_errorstream() << "Error is somewhere in the line:\n" <<
+   data.get_rf_errorstream() << "Error is somewhere in the line:\n" <<
    data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
-   data.reset_ap_parsestream();
+   data.reset_rf_parsestream();
 }
 
 /* include for access to scanner.yylex */
 static int
-yylex( AP::AP_Parser::semantic_type *yylval,
-       AP::AP_Scanner               &scanner,
-       AP::AP_Driver                &driver,
-       AP::AP_Data                  &data )
+yylex( Raft::Parser::semantic_type *yylval,
+       Raft::Scanner               &scanner,
+       Raft::Driver                &driver,
+       Raft::Data                  &data )
 {
    return( scanner.yylex( yylval ) );
 }

@@ -1,23 +1,23 @@
 /**
- * ap_set_options.cpp - 
+ * set_options.cpp - 
  * @author: Jonathan Beard
  * @version: Thu May 16 09:13:02 2013
  */
 #include <cassert>
 #include <array>
 
-#include "ap_set_options.hpp"
-#include "ap_data.hpp"
+#include "set_options.hpp"
+#include "data.hpp"
 #include "command_arguments.h"
-#include "ap_options_vars.hpp"
-#include "ap_common.hpp"
+#include "options_vars.hpp"
+#include "common.hpp"
 #include "command_option_single.tcc"
 #include "command_option_multiple.tcc"
 
 void
-AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
+Set_Options::SetOptions( CmdArgs &cmd, Raft::Data &data )
 {
-   AP_Options_Vars &options( data.get_options_vars() );
+   Options_Vars &options( data.get_options_vars() );
    cmd.addOption( new Option< bool >( options.help,
                      "-h",
                      "Print this message",
@@ -35,7 +35,7 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                      "Dry run, automatically triggers verbose" ) );
    cmd.addOption( new Option< bool >( options.output_topology_image,
                      "-img_topo",
-                     "Output image of AP app topology via GraphViz") );
+                     "Output image of Raft app topology via GraphViz") );
    cmd.addOption( new Option< bool >( options.clean,
                 "-clean",
                 "Clean all generated code, sort of like 'make clean'") );
@@ -80,7 +80,7 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
    cmd.addOption( new Option< bool >( 
                      options.hardware_map_image,
                      "-img_hardware_topo",
-                     "Output image for AP hardware mapped topology" ));
+                     "Output image for Raft hardware mapped topology" ));
    cmd.addOption( new Option< std::string >(
                      options.map_objective,
                      "-mapping_objective",
@@ -141,13 +141,13 @@ AP_Set_Options::SetOptions( CmdArgs &cmd, AP::AP_Data &data )
                          [&](const char *x, bool &v) /* filename */
                          {
                            std::string out(
-                              AP::AP_Common::GetFileNameFromPath( x, v ) );
+                              Raft::Common::GetFileNameFromPath( x, v ) );
                            return( out ); 
                          },
                          [&](const char *x, bool &v) /* dir path */
                          {
                            std::string out(
-                           AP::AP_Common::ExtractPathNoFileName( x, v ) );
+                           Raft::Common::ExtractPathNoFileName( x, v ) );
                            return( out ); 
                          } }}
                         ) );

@@ -1,5 +1,5 @@
 /**
- * ap_lexer.l - lexer for AutoPipe version 3
+ * raft_lexer.l - lexer for Raft
  * @version 3.0b1
  * @author Jonathan Beard
  * @contact jbeard@wustl.edu
@@ -13,21 +13,21 @@
 #include <cassert>
 #include <cinttypes>
 
-#include "ap_scanner.hpp"
-#include "ap_data.hpp"
-#include "ap_cpp_output_handler.hpp"
+#include "raft_scanner.hpp"
+#include "data.hpp"
+#include "cpp_output_handler.hpp"
 
-typedef AP::AP_Parser::token token;
+typedef Raft::Parser::token token;
 
-#define PUSHTOSTREAM( x )  data.get_ap_parsestream() << yytext;
+#define PUSHTOSTREAM( x )  data.get_rf_parsestream() << yytext;
 
 
 #define TOKEN( x ) \
-                   data.get_ap_parsestream() << yytext; \
+                   data.get_rf_parsestream() << yytext; \
                    return( token::x )
 
 #define STOKEN( x ) yylval->sval = new std::string( yytext ); \
-                    data.get_ap_parsestream() << yytext; \
+                    data.get_rf_parsestream() << yytext; \
                     return( token::x )
 
 /* define yyterminate as this instead of NULL */
@@ -40,7 +40,7 @@ typedef AP::AP_Parser::token token;
 
 %option debug
 %option nodefault
-%option yyclass="AP_Scanner"
+%option yyclass="Scanner"
 %option noyywrap
 %option c++
 
@@ -61,7 +61,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "#"                 {  
                         TOKEN( POUND ); }
 "\n"                { 
-                        data.reset_ap_parsestream(); 
+                        data.reset_rf_parsestream(); 
                         data.get_cpp_handler().IncrementHead();
                     }
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
@@ -73,7 +73,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 }
 
 "//".+[^\n]*             {
-                           data.reset_ap_parsestream();
+                           data.reset_rf_parsestream();
                          }
 "{"                     { TOKEN( LBRACE ); }
 "}"                     { TOKEN( RBRACE ); }

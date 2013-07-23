@@ -1,10 +1,10 @@
 /**
- * AP_Data.hpp - 
+ * Data.hpp - 
  * @author: Jonathan Beard
  * @version: Mon Feb 18 17:39:01 2013
  */
-#ifndef _AP_DATA_HPP_
-#define _AP_DATA_HPP_  1
+#ifndef _DATA_HPP_
+#define _DATA_HPP_  1
 
 #include <iostream>
 #include <sstream>
@@ -13,12 +13,12 @@
 /* for everybody else with C++11 */
 #include <cstdint>
 
-struct AP_Options_Vars;
+struct Options_Vars;
 
-/* type definition for autopipe errorstream */
-typedef std::stringstream APErrorStream;
-/* type definition for autopipe parse stream */
-typedef std::stringstream APParseStream;
+/* type definition for raft errorstream */
+typedef std::stringstream RFErrorStream;
+/* type definition for raft parse stream */
+typedef std::stringstream RFParseStream;
 
 /* type definition for system error stream */
 typedef std::ostream      ErrorStream;
@@ -26,23 +26,23 @@ typedef std::ostream      ErrorStream;
 typedef std::ostream      UserStream;
 
 
-namespace AP{
+namespace Raft{
 
-class AP_CPP_OutputHandler;
+class CPP_OutputHandler;
 
 /** 
- * AP_Data - class for various data elements that are used
+ * Data - class for various data elements that are used
  * throughput the AutoPipev3 compiler infrastructure
  */
-class AP_Data {
+class Data {
 public:
    /* constructor, initialize everything */
-   AP_Data();
+   Data();
    /**
-    * ~AP_Data - virtual destructor, deletes all dynamic data 
+    * ~Data - virtual destructor, deletes all dynamic data 
     * if allocated.
     */
-   virtual        ~AP_Data();
+   virtual        ~Data();
 
    /**
     * Final - function to be called if terminate signal is 
@@ -73,36 +73,36 @@ public:
    virtual  std::ostream&  PrintParseErrors( std::ostream &stream );
 
    /**
-    * reset_ap_parsestream - deallocates and resets the ap_parsestream
+    * reset_rf_parsestream - deallocates and resets the rf_parsestream
     * variable to nullptr.
     */
-   void           reset_ap_parsestream();
+   void           reset_rf_parsestream();
    /**
-    * get_ap_parsestream - returns a reference to an APParseStream,
-    * this might now always be the same ap_parsestream reference 
-    * if reset is called the current ap_parsestream is deallocated
-    * @return APParseStream&
+    * get_rf_parsestream - returns a reference to an RFParseStream,
+    * this might now always be the same rf_parsestream reference 
+    * if reset is called the current rf_parsestream is deallocated
+    * @return RFParseStream&
     */
-   APParseStream&   get_ap_parsestream();
+   RFParseStream&   get_rf_parsestream();
    
    /**
-    * reset_ap_errorstream - resets the error stream.  If one is currently
-    * allocated then the ap_errorstream is deallocated and set to nullptr
+    * reset_rf_errorstream - resets the error stream.  If one is currently
+    * allocated then the rf_errorstream is deallocated and set to nullptr
     */
-   void           reset_ap_errorstream();
+   void           reset_rf_errorstream();
    /**
-    * get_ap_errorstream - If the ap_errorstream is not allocated, this
-    * method allcoates the ap_errorstream variable to a new APErrorStream
+    * get_rf_errorstream - If the rf_errorstream is not allocated, this
+    * method allcoates the rf_errorstream variable to a new RFErrorStream
     * object and returns a reference to it.  This reference may chance,
     * if reset is called so callers should not expect it to stay constant.
-    * @return APErrorStream&
+    * @return RFErrorStream&
     */
-   APErrorStream& get_ap_errorstream();
+   RFErrorStream& get_rf_errorstream();
 
    /**
     *  get_userstream - returs the system wide user stream for output,
     *  by default this is set to std::cout.
-    *  @return APUserStream&
+    *  @return RFUserStream&
     */
    UserStream&   get_userstream();
    /**
@@ -116,43 +116,43 @@ public:
     * set method for options vars, set should be called
     * at least once immediately after the options are set from
     * the command line or to defaults 
-    * @param   vars - AP_Options_Vars ptr
+    * @param   vars - Options_Vars ptr
     */
-   void           set_options_vars( AP_Options_Vars *vars );
+   void           set_options_vars( Options_Vars *vars );
    /**
     * get_options_vars - set must be called before calling this
     * which is otherwise cought by an assertion.  This is a 
     * convenience method so you only have to provide one param
     * to most functions which is the whole data class.
-    * @return  AP_Options_Vars&
+    * @return  Options_Vars&
     */
-   AP_Options_Vars&  get_options_vars();
+   Options_Vars&  get_options_vars();
 
    /**
     * get_cpp_handler - returns a reference to the cpp handler
     * object for this parser
-    * @return AP_CPP_OutputHandler&
+    * @return CPP_OutputHandler&
     */
-   AP_CPP_OutputHandler&   get_cpp_handler();
+   CPP_OutputHandler&   get_cpp_handler();
 
 private:
-   /* auto pipe parse stream, initially nullptr */
-   APParseStream    *ap_parsestream;
-   /* auto pipe error stream, initially nullptr */
-   APErrorStream     *ap_errorstream;
+   /* parse stream, initially nullptr */
+   RFParseStream       *rf_parsestream;
+   /* error stream, initially nullptr */
+   RFErrorStream       *rf_errorstream;
    /* user (system) user stream, typically std::cout */
-   UserStream        &userstream;
+   UserStream           &userstream;
    /* user (system) error stream, typically std::cerr */
-   ErrorStream       &errorstream;
+   ErrorStream          &errorstream;
    /* current parse file from parser, necessary for cpp */
-   std::string       current_parse_file;
+   std::string          current_parse_file;
    /* current whole line, set from lexer */
-   std::string       whole_current_line;
+   std::string          whole_current_line;
    /* global options */
-   AP_Options_Vars   *options;
+   Options_Vars         *options;
    /* cpp output handler */
-   AP_CPP_OutputHandler *cpp_handler;
+   CPP_OutputHandler    *cpp_handler;
 };
 
-} /* end namespace AP */
-#endif /* END _AP_DATA_HPP_ */
+} /* end namespace Raft */
+#endif /* END _DATA_HPP_ */

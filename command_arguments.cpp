@@ -30,7 +30,7 @@
 
 
 
-CmdArgs::CmdArgs(const std::string n, AP::AP_Data &d)
+CmdArgs::CmdArgs(const std::string n, Raft::Data &d)
    : name( n ),
      data( d )
 {
@@ -75,7 +75,7 @@ void CmdArgs::processArgs(int argc, char **argv){
           const bool success( (*it)->setValue(  argv[i]  ) );
           if( success != true )
           {
-             data.get_ap_errorstream() << "Invalid input for flag (" <<
+             data.get_rf_errorstream() << "Invalid input for flag (" <<
                 (*it)->get_flag() << ") : " << argv[i] << "\n";
              raise( TERM_ERR_SIG );
           }

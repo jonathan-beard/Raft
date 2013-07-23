@@ -14,13 +14,13 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include "ap_common.hpp"
+#include "common.hpp"
 #include "signalhooks.hpp"
 
-using namespace AP;
+using namespace Raft;
 
 void
-AP_Common::Dump( const std::string &dump_str,
+Common::Dump( const std::string &dump_str,
       const std::string &dump_file )
 {
    assert( dump_file.length() > 0 );
@@ -39,7 +39,7 @@ AP_Common::Dump( const std::string &dump_str,
 }
 
 bool 
-AP_Common::MkDir( const std::string &dir )
+Common::MkDir( const std::string &dir )
 {
    errno = EXIT_SUCCESS;
    if( mkdir( dir.c_str(), (S_IRWXU | S_IRWXG) ) == EXIT_FAILURE ){
@@ -50,7 +50,7 @@ AP_Common::MkDir( const std::string &dir )
 }
 
 std::string 
-AP_Common::GetFileNameFromPath(std::string path, bool strip_ext)
+Common::GetFileNameFromPath(std::string path, bool strip_ext)
 {
    std::string last_file;
    size_t last_index = path.find_last_of('/');
@@ -71,7 +71,7 @@ AP_Common::GetFileNameFromPath(std::string path, bool strip_ext)
 }
 
 std::string 
-AP_Common::GetFileNameFromPath(const char *Path, bool &status)
+Common::GetFileNameFromPath(const char *Path, bool &status)
 {
    bool strip_ext( false );
    std::string path( Path );
@@ -96,7 +96,7 @@ AP_Common::GetFileNameFromPath(const char *Path, bool &status)
 
 
 std::string 
-AP_Common::ExtractPathNoFileName(std::string path)
+Common::ExtractPathNoFileName(std::string path)
 {
    std::string dir_path;
    size_t last_index = path.find_last_of('/');
@@ -109,7 +109,7 @@ AP_Common::ExtractPathNoFileName(std::string path)
 }
 
 std::string 
-AP_Common::ExtractPathNoFileName(const char *Path, bool &status)
+Common::ExtractPathNoFileName(const char *Path, bool &status)
 {
    std::string path( Path );
    std::string dir_path;
@@ -124,35 +124,8 @@ AP_Common::ExtractPathNoFileName(const char *Path, bool &status)
 }
 
 void
-AP_Common::RemoveStringQuotes( std::string &str )
+Common::RemoveStringQuotes( std::string &str )
 {
    if( str.length() < 2 ) return;
    str = str.substr( 1, str.length() - 2 );
-   
-#if(0)
-   const auto length( strlen( str ) );
-   char *buffer( nullptr );
-   buffer = (char*) malloc( sizeof( char ) * length );
-   assert( buffer != nullptr );
-   memset( buffer, '\0', length );
-   const auto num( sscanf( str, "\"%[^\"]\"", buffer ) );
-   if( num == EOF )
-   {
-      free( buffer );
-      return( "" );
-   }else if( num == 0 )
-   {
-      free( buffer );
-      return( "" );
-   }
-   else
-   {
-      std::stringstream ss;
-      ss << buffer;
-      free( buffer );
-      std::string output( ss.str() );
-      std::cerr << "FD: " << output << "\n";
-      return( ss.str() );
-   }
-#endif   
 }

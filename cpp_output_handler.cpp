@@ -5,19 +5,19 @@
  */
 #include <cassert>
 #include <algorithm>
-#include "ap_data.hpp"
+#include "data.hpp"
 #include "signalhooks.hpp"
-#include "ap_cpp_output_handler.hpp"
+#include "cpp_output_handler.hpp"
 
-using namespace AP;
+using namespace Raft;
 
-AP_CPP_OutputHandler::AP_CPP_OutputHandler( AP_Data &d) :
+CPP_OutputHandler::CPP_OutputHandler( Data &d) :
                                                    data( d )
 {
    /* nothing really to do */
 }
 
-AP_CPP_OutputHandler::~AP_CPP_OutputHandler()
+CPP_OutputHandler::~CPP_OutputHandler()
 {
   for( File *f: cpp_access_queue )
   {
@@ -27,7 +27,7 @@ AP_CPP_OutputHandler::~AP_CPP_OutputHandler()
 }
 
 void
-AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
+CPP_OutputHandler::AddUpdate( int64_t     lineno,
                                  std::string name,
                                  int8_t      flag )
 {
@@ -77,7 +77,7 @@ AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
 }  
 
 void
-AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
+CPP_OutputHandler::AddUpdate( int64_t     lineno,
                                  std::string name )
 {
    /**
@@ -123,7 +123,7 @@ AP_CPP_OutputHandler::AddUpdate( int64_t     lineno,
 }
 
 void 
-AP_CPP_OutputHandler::IncrementHead()
+CPP_OutputHandler::IncrementHead()
 {
    /* if no head, do nothing */
    if( has_head() == true )
@@ -134,13 +134,13 @@ AP_CPP_OutputHandler::IncrementHead()
 }
 
 bool
-AP_CPP_OutputHandler::IsHeadIncludedFile()
+CPP_OutputHandler::IsHeadIncludedFile()
 {
    return( has_below_head() );
 }
 
 std::string
-AP_CPP_OutputHandler::PeekBelowHead()
+CPP_OutputHandler::PeekBelowHead()
 {
    assert( has_below_head() == true );
    std::stringstream ss;
@@ -150,7 +150,7 @@ AP_CPP_OutputHandler::PeekBelowHead()
 }
 
 std::string
-AP_CPP_OutputHandler::PeekHead()
+CPP_OutputHandler::PeekHead()
 {
    if( has_head() == true )
    {
@@ -166,7 +166,7 @@ AP_CPP_OutputHandler::PeekHead()
 }
 
 std::string
-AP_CPP_OutputHandler::GetHeadCurrentLine()
+CPP_OutputHandler::GetHeadCurrentLine()
 {
    if( has_head() == true )
    {
@@ -188,33 +188,33 @@ AP_CPP_OutputHandler::GetHeadCurrentLine()
  */
 
 void
-AP_CPP_OutputHandler::add_file_object( File *f )
+CPP_OutputHandler::add_file_object( File *f )
 {
    assert( f != nullptr );
    cpp_access_queue.push_back( f );
 }
 
 bool
-AP_CPP_OutputHandler::has_head()
+CPP_OutputHandler::has_head()
 {
    return( cpp_access_queue.size() > 0 );
 }
 
 File& 
-AP_CPP_OutputHandler::get_head()
+CPP_OutputHandler::get_head()
 {
    assert( has_head() == true );
    return( *cpp_access_queue.back() );
 }
 
 bool
-AP_CPP_OutputHandler::has_below_head()
+CPP_OutputHandler::has_below_head()
 {
    return( cpp_access_queue.size() > 1 );
 }
 
 File&
-AP_CPP_OutputHandler::get_below_head()
+CPP_OutputHandler::get_below_head()
 {
    assert( has_below_head() == true );
    File *below_head( nullptr );
@@ -224,7 +224,7 @@ AP_CPP_OutputHandler::get_below_head()
 }
 
 void
-AP_CPP_OutputHandler::remove_head()
+CPP_OutputHandler::remove_head()
 {
    assert( has_head() == true );
    File *end( cpp_access_queue.back() );

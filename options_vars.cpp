@@ -1,5 +1,5 @@
 /**
- * AP_Options_Vars.cpp - 
+ * Options_Vars.cpp - 
  * @author: Jonathan Beard
  * @version: Fri Dec 14 13:41:06 2012
  */
@@ -9,16 +9,18 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "ap_options_vars.hpp"
+#include "options_vars.hpp"
 
-AP_Options_Vars::AP_Options_Vars()
+Options_Vars::Options_Vars()
 {
    load_defaults();
 }
 
-AP_Options_Vars::~AP_Options_Vars(){ /* nothing to do here */ }
+Options_Vars::~Options_Vars()
+{ /* nothing to do here */ }
 
-void AP_Options_Vars::load_defaults()
+void 
+Options_Vars::load_defaults()
 {
    /* misc */
    help = false;
@@ -73,10 +75,12 @@ void AP_Options_Vars::load_defaults()
    input_dir_path = get_default_string();
 }
 
-std::string AP_Options_Vars::get_default_string(){
+std::string 
+Options_Vars::get_default_string(){
    return("NONE");
 }
 
-bool  AP_Options_Vars::is_string_default(const std::string &val ){
+bool  
+Options_Vars::is_string_default(const std::string &val ){
    return( val.compare( get_default_string() ) == 0 );
 }

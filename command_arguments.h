@@ -35,7 +35,7 @@
 
 
 
-#include "ap_data.hpp"
+#include "data.hpp"
 #include "command_option_base.hpp"
 
 /**
@@ -46,9 +46,9 @@ class CmdArgs{
       /**
        * Default Constructor - 
        * @param   name - std::string, name of program using CmdArgs
-       * @param   d  - AP::AP_Data&, for error streams
+       * @param   d  - Raft::Data&, for error streams
        */
-      CmdArgs(std::string name, AP::AP_Data &d);
+      CmdArgs(std::string name, Raft::Data &d);
       ~CmdArgs();
       /**
        * printArgs - print all the options
@@ -71,7 +71,7 @@ class CmdArgs{
    private:
       std::vector< OptionBase * > options;
       std::string                 name;
-      AP::AP_Data                 &data;
+      Raft::Data                  &data;
 };
 
  #endif /* END __CMDARGS_H__ */

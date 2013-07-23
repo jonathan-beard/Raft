@@ -1,20 +1,20 @@
 /**
- * AP_Options_Vars.hpp - 
+ * Options_Vars.hpp - 
  * @author: Jonathan Beard
  * @version: Fri Dec 14 13:41:06 2012
  */
-#ifndef _APOPTIONSVARS_HPP_
-#define _APOPTIONSVARS_HPP_  1
+#ifndef _OPTIONSVARS_HPP_
+#define _OPTIONSVARS_HPP_  1
 
 #include <cstdint>
 #include <string>
 
-struct AP_Options_Vars{
+struct Options_Vars{
    /**
-    * AP_Options_Vars - calls load_defaults by default
+    * Options_Vars - calls load_defaults by default
     */
-   AP_Options_Vars();
-   virtual ~AP_Options_Vars();
+   Options_Vars();
+   virtual ~Options_Vars();
    /**
     * load_defaults - sets all the struct data members to
     * their default values, defined in src file
@@ -36,7 +36,7 @@ struct AP_Options_Vars{
    std::string tab;
 
    /**
-    * is_strign_default - returns true if the given string
+    * is_string_default - returns true if the given string
     * is equal to the value returned by get_default_string
     * @param   val - std::string
     * @return  bool
@@ -89,4 +89,4 @@ struct AP_Options_Vars{
    std::string    input_dir_path;
 };
 
-#endif /* END _APOPTIONSVARS_HPP_ */
+#endif /* END _OPTIONSVARS_HPP_ */

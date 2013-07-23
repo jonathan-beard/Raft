@@ -7,8 +7,8 @@
 #include <unistd.h>
 
 #include "signalhooks.hpp"
-#include "ap_driver.hpp"
-#include "ap_data.hpp"
+#include "driver.hpp"
+#include "data.hpp"
 
 #ifndef ACCEPT
 #define ACCEPT 0
@@ -18,9 +18,9 @@
 #define ERRBUFFSIZE 4096
 #endif
 
-using namespace AP;
+using namespace Raft;
 
-AP_Driver::AP_Driver(AP_Data &d) :  parser( nullptr),
+Driver::Driver(Data &d) :  parser( nullptr),
                                     scanner( nullptr),
                                     data( d ),
                                     root( nullptr )
@@ -28,7 +28,7 @@ AP_Driver::AP_Driver(AP_Data &d) :  parser( nullptr),
  /* nothing else to really do here */
 }
 
-AP_Driver::~AP_Driver()
+Driver::~Driver()
 {
    if( parser != nullptr){
       delete( parser );
@@ -41,14 +41,14 @@ AP_Driver::~AP_Driver()
 }
 
 void
-AP_Driver::parse( const char *filename )
+Driver::parse( const char *filename )
 {
    assert( filename != nullptr );
    std::ifstream in_file( filename );
    if( ! in_file.good() ) exit( EXIT_FAILURE );
-   scanner = new AP_Scanner( &in_file , data );
+   scanner = new Scanner( &in_file , data );
    assert( scanner != nullptr );
-   parser = new AP_Parser( (*scanner), (*this), data );
+   parser = new Parser( (*scanner), (*this), data );
    assert( parser != nullptr );
    int retval( ACCEPT );
    errno = EXIT_SUCCESS;
@@ -59,11 +59,11 @@ AP_Driver::parse( const char *filename )
 }
 
 void
-AP_Driver::parse( std::istringstream &iss )
+Driver::parse( std::istringstream &iss )
 {
-   scanner = new AP_Scanner( &iss , data );
+   scanner = new Scanner( &iss , data );
    assert( scanner != nullptr );
-   parser = new AP_Parser( (*scanner), (*this), data );
+   parser = new Parser( (*scanner), (*this), data );
    assert( parser != nullptr );
    int retval( ACCEPT );
    errno = EXIT_SUCCESS;
@@ -75,39 +75,39 @@ AP_Driver::parse( std::istringstream &iss )
 
 
 void 
-AP_Driver::parse_error( int errorcode, int retval )
+Driver::parse_error( int errorcode, int retval )
 {
-   data.get_ap_errorstream() << "Error calling parse(), ";
-   data.get_ap_errorstream() << "exited with code (" << retval << ") ";
+   data.get_rf_errorstream() << "Error calling parse(), ";
+   data.get_rf_errorstream() << "exited with code (" << retval << ") ";
    if( errorcode != EXIT_SUCCESS ){
       char msg[ ERRBUFFSIZE ];
       if( strerror_r( errorcode, msg, ERRBUFFSIZE ) != EXIT_SUCCESS )
       {
-         data.get_ap_errorstream() << "Error getting error code, exiting!!\n";
+         data.get_rf_errorstream() << "Error getting error code, exiting!!\n";
          raise( TERM_ERR_SIG );
       }
-      data.get_ap_errorstream() << "and error message of \"" << msg << "\"";
+      data.get_rf_errorstream() << "and error message of \"" << msg << "\"";
    }
-   data.get_ap_errorstream() << "\n";
+   data.get_rf_errorstream() << "\n";
    raise( TERM_ERR_SIG );
 }
 
 void
-AP_Driver::set_root( Node::NodeAbstract *r )
+Driver::set_root( Node::NodeAbstract *r )
 {
    assert( r != nullptr );
    root = r;
 }
 
 void
-AP_Driver::RegisterVisitor( Visitor::DefaultVisitor *visitor )
+Driver::RegisterVisitor( Visitor::DefaultVisitor *visitor )
 {
    assert( visitor != nullptr );
    this->visitor_list.push_back( visitor );
 }
 
 void
-AP_Driver::InvokeVisitors()
+Driver::InvokeVisitors()
 {
    for( Visitor::DefaultVisitor *v : visitor_list )
    {

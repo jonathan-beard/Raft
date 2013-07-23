@@ -1,5 +1,5 @@
 /**
- * app.cpp - Preprocesses the .ap file, see more rubust documentation in 
+ * p.cpp - Preprocesses the .raft file, see more rubust documentation in 
  * the header file.
  * @author: Jonathan Beard
  * @version: Mon Jan 28 15:14:22 2013
@@ -11,27 +11,27 @@
 #include <errno.h>
 #include <unistd.h>
 #include <cstring>
-#include "app.hpp"
+#include "p.hpp"
 #include "signalhooks.hpp"
 
 #ifndef PIPE_BUFFER_SIZE
 #define PIPE_BUFFER_SIZE 4096
 #endif
 
-#ifndef APBASE
-#define APBASE "APBASE"
+#ifndef RAFTBASE
+#define RAFTBASE "RAFTBASE"
 #endif
 
-APP::APP( AP::AP_Data &d ) : data( d )
+Preprocessor::Preprocessor( Raft::Data &d ) : data( d )
 {
    locations.push_back( location_pwd );
    locations.push_back( location_home );
    locations.push_back( location_base );
 }
 
-APP::~APP(){};
+Preprocessor::~Preprocessor(){};
 
-bool APP::add_file( const std::string base_file )
+bool Preprocessor::add_file( const std::string base_file )
 {
    auto found( files.find( base_file ) );
    const bool already_in( found != files.end() );
@@ -39,12 +39,12 @@ bool APP::add_file( const std::string base_file )
    return( already_in );
 }
 
-bool APP::run( const std::string ap_file_path )
+bool Preprocessor::run( const std::string ap_file_path )
 {
    /* get full path name to app */
    const auto last_sep( ap_file_path.find_last_of( "/" ) );
    const std::string app_path( ap_file_path.substr(0, last_sep ) );
-   return( APP::process( app_path,
+   return( Preprocessor::process( app_path,
                          ap_file_path,
                          files,
                          verified_paths,
@@ -53,27 +53,27 @@ bool APP::run( const std::string ap_file_path )
                          locations ) );
 }
 
-std::stringstream& APP::output()
+std::stringstream& Preprocessor::output()
 {
    return( buffer );
 }
 
-std::set< std::string >& APP::get_file_list()
+std::set< std::string >& Preprocessor::get_file_list()
 {
    return( files );
 }
 
-std::map< std::string, std::string >& APP::get_include_paths()
+std::map< std::string, std::string >& Preprocessor::get_include_paths()
 {
    return( verified_paths );
 }
 
-bool  APP::process(  const std::string app_path,
+bool  Preprocessor::process(  const std::string app_path,
                      const std::string ap_file_path,
                      std::set< std::string > &files,
                      std::map< std::string, std::string > &verified_paths,
                      std::stringstream &buffer,
-                     AP::AP_Data &data, 
+                     Raft::Data &data, 
                      std::vector< LocationFunction > &locations )
 {
    bool error( false );
@@ -93,8 +93,8 @@ bool  APP::process(  const std::string app_path,
                                    buffer_file, 
                                    buffer_ext ) );
       if( num_read != 2 ){
-         data.get_ap_errorstream() << "No file extension detected in input (";
-         data.get_ap_errorstream() << str << ").\n";
+         data.get_rf_errorstream() << "No file extension detected in input (";
+         data.get_rf_errorstream() << str << ").\n";
          error = true;
       }
       if( error ) raise( TERM_ERR_SIG );
@@ -137,9 +137,9 @@ bool  APP::process(  const std::string app_path,
    fflush( nullptr );
    FILE *cpp_pipe( popen( cmd_buffer.str().c_str(), "r" ) );
    if( cpp_pipe == nullptr ){
-      data.get_ap_errorstream() << 
+      data.get_rf_errorstream() << 
             "Failed to execute pipe for cpp, exited with ";
-      data.get_ap_errorstream() << 
+      data.get_rf_errorstream() << 
          "error code: " << strerror( errno ) << "\n";
       raise( TERM_ERR_SIG );
    }
@@ -168,9 +168,9 @@ bool  APP::process(  const std::string app_path,
       if( num_read <= 0 ) break;
       if( errno != 0 )
       {
-         data.get_ap_errorstream() << 
+         data.get_rf_errorstream() << 
                "Error while reading from pipe, fread exited ";
-         data.get_ap_errorstream() << 
+         data.get_rf_errorstream() << 
             "with error code: " << strerror( errno ) << "\n";
          raise( TERM_ERR_SIG );
       }
@@ -181,7 +181,7 @@ bool  APP::process(  const std::string app_path,
    return( true );
 }
 
-bool APP::location_pwd( const std::string app_path,
+bool Preprocessor::location_pwd( const std::string app_path,
                         const char *filename,
                         const char *ext,
                         std::string &full_path,
@@ -200,10 +200,10 @@ bool APP::location_pwd( const std::string app_path,
 
    include_path = include_path_stream.str();
    free( cwd );
-   return( APP::check_file( full_path ) );
+   return( Preprocessor::check_file( full_path ) );
 }
 
-bool APP::location_home( const std::string app_path,
+bool Preprocessor::location_home( const std::string app_path,
                          const char *filename,
                          const char *ext,
                          std::string &full_path,
@@ -229,17 +229,17 @@ bool APP::location_home( const std::string app_path,
    
    include_path_stream << app_path << "/" << filename << "-dir" << "/";
    include_path = include_path_stream.str();
-   return( APP::check_file( full_path ) );
+   return( Preprocessor::check_file( full_path ) );
 }
 
-bool APP::location_base( const std::string app_path,
+bool Preprocessor::location_base( const std::string app_path,
                          const char *filename,
                          const char *ext,
                          std::string &full_path,
                          std::string &include_path )
 {
    char *base( nullptr );
-   base = getenv( APBASE ); 
+   base = getenv( RAFTBASE ); 
    if( base != nullptr ){
       std::stringstream full_path_stream;
       full_path_stream << base << "/base/" << filename << "." << ext;
@@ -247,14 +247,14 @@ bool APP::location_base( const std::string app_path,
       std::stringstream include_path_stream;
       include_path_stream << base << "/base/";
       include_path = include_path_stream.str();
-      return( APP::check_file( full_path ) );
+      return( Preprocessor::check_file( full_path ) );
    }else{
       return( false );
    }
 }
 
 
-bool APP::check_file( const std::string filename ) 
+bool Preprocessor::check_file( const std::string filename ) 
 {
    struct stat st;
    memset(&st, 0, sizeof(struct stat));

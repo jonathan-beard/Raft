@@ -7,11 +7,11 @@
 #include "DebugVisitor.hpp"
 #include "NodeAbstract.hpp"
 
-#include "ap_data.hpp"
+#include "data.hpp"
 
 using namespace Visitor;
 
-DebugVisitor::DebugVisitor( AP::AP_Data &data ) : 
+DebugVisitor::DebugVisitor( Raft::Data &data ) : 
                             DefaultVisitor( data )
 {
    /* nothing really to do here */
@@ -25,6 +25,7 @@ DebugVisitor::~DebugVisitor(){
 void
 DebugVisitor::Visit( Node::NodeAbstract *node )
 {
+   std::cout << get_indent_level();
    node->print( std::cout ) << std::endl;
    VisitChildren( node );
 }

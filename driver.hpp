@@ -1,21 +1,21 @@
-#ifndef _APDRIVER_HPP_
-#define _APDRIVER_HPP_
+#ifndef _DRIVER_HPP_
+#define _DRIVER_HPP_
 
 #include <vector>
 
-#include "ap_scanner.hpp"
-#include "ap_parser.tab.hh"
+#include "raft_scanner.hpp"
+#include "raft_parser.tab.hh"
 #include "NodeAbstract.hpp"
 #include "DefaultVisitor.hpp"
 
-class AP_Data;
+class Data;
 
-namespace AP{
+namespace Raft{
 
-class AP_Driver{
+class Driver{
 public:
-   AP_Driver( AP_Data &d );
-   virtual ~AP_Driver();
+   Driver( Data &d );
+   virtual ~Driver();
 
    void parse( const char *filename );
    void parse( std::istringstream &iss );
@@ -28,14 +28,14 @@ public:
 private:
    void parse_error( int errorcode, int retval );
    
-   AP::AP_Parser  *parser;
-   AP::AP_Scanner *scanner;
-   AP::AP_Data    &data;
+   Raft::Parser  *parser;
+   Raft::Scanner *scanner;
+   Raft::Data    &data;
    Node::NodeAbstract *root;
 
    std::vector< Visitor::DefaultVisitor* >  visitor_list;
 };
 
-} /* end namespace AP */
+} /* end namespace Raft */
 
-#endif /* END _APDRIVER_HPP_ */
+#endif /* END _DRIVER_HPP_ */

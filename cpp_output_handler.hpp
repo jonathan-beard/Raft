@@ -3,8 +3,8 @@
  * @author: Jonathan Beard
  * @version: Sun Jul  7 18:24:28 2013
  */
-#ifndef _AP_CPP_OUTPUT_HANDLER_HPP_
-#define _AP_CPP_OUTPUT_HANDLER_HPP_  1
+#ifndef _CPP_OUTPUT_HANDLER_HPP_
+#define _CPP_OUTPUT_HANDLER_HPP_  1
 #include <vector>
 #include <cstdint>
 #include <cinttypes>
@@ -14,11 +14,11 @@
 #include <iostream>
 #include <sstream>
 
-#include "ap_common.hpp"
+#include "common.hpp"
 
-namespace AP{
+namespace Raft{
 
-class AP_Data;
+class Data;
 
 struct File{
    File( std::string name ) : lineno( 0 ),
@@ -55,7 +55,7 @@ struct File{
     * @param   d  - Data&
     * @return  std::string
     */
-   std::string GetCurrentLine( AP_Data &d )
+   std::string GetCurrentLine( Data &d )
    {
       assert( filename.compare( "" ) != 0 );
       std::ifstream input;
@@ -68,7 +68,7 @@ struct File{
       }
       input.close();
 
-      std::string onlyfilename( AP_Common::GetFileNameFromPath( filename ) );
+      std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
 
       std::stringstream output;
       output << "\033[1;31m";
@@ -82,7 +82,7 @@ struct File{
 };
 
 /**
- * AP_CPP_OutputHandler - simple class to handle
+ * CPP_OutputHandler - simple class to handle
  * the C Pre-processors output format for the parser,
  * encapsulates everything through the AddUpdate
  * methods.  Callers should interact by using the 
@@ -94,12 +94,12 @@ struct File{
  * the Peek Head method gives a way to look at the current
  * file and the current line number.
  */
-class AP_CPP_OutputHandler{
+class CPP_OutputHandler{
 public:
    /* public constructor */
-   AP_CPP_OutputHandler( AP_Data &d );
+   CPP_OutputHandler( Data &d );
    /* public destructor */
-   virtual ~AP_CPP_OutputHandler();
+   virtual ~CPP_OutputHandler();
 
    /**
     * AddUpdate - for use to update internal data structures
@@ -170,9 +170,9 @@ protected:
    virtual void  remove_head();
 private:
    std::vector< File* >  cpp_access_queue; 
-   AP_Data &data;
+   Data &data;
 };
 
 } /* end namespace AP */
 
-#endif /* END _AP_CPP_OUTPUT_HANDLER_HPP_ */
+#endif /* END _CPP_OUTPUT_HANDLER_HPP_ */

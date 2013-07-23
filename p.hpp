@@ -1,20 +1,20 @@
 /**
- * app.hpp - This is the "new" ap-pre processor
+ * p.hpp - This is the pre-processor
  * calling it reasults in a nice single file 
- * representation on which to call the ap-language
- * lexer and parser.  The ENV variable APBASE must 
- * point to the base directory for the AP language
+ * representation on which to call the raft language
+ * lexer and parser.  The ENV variable RAFTBASE must 
+ * point to the base directory for the Raft language
  * parser which contains the folder "base"
- * NOTE: you can chance the name of APBASE for the 
+ * NOTE: you can chance the name of RAFTBASE for the 
  * environment variable at compile time by adding
- * the flag -DAPBASE="xxx" where "xxx" is to be replaced
+ * the flag -DRAFTBASE="xxx" where "xxx" is to be replaced
  * by the new environment name to look for.
  *
  * @author: Jonathan Beard
  * @version: Mon Jan 28 15:14:22 2013
  */
-#ifndef _APP_HPP_
-#define _APP_HPP_  1
+#ifndef _P_HPP_
+#define _P_HPP_  1
 
 #include <set>
 #include <map>
@@ -22,12 +22,12 @@
 #include <sstream>
 #include <string>
 
-#include "ap_data.hpp"
+#include "data.hpp"
 
-class APP{
+class Preprocessor{
 public:
-   APP( AP::AP_Data &d );
-   virtual ~APP();
+   Preprocessor( Raft::Data &d );
+   virtual ~Preprocessor();
 
    /**
     * add_file - adds a file to the list to pre-process,
@@ -70,7 +70,7 @@ private:
                     std::set< std::string >   &files, 
                     std::map< std::string , std::string > &verified_paths,
                     std::stringstream         &buffer,
-                    AP::AP_Data &data,
+                    Raft::Data &data,
                     std::vector< LocationFunction > &locations );
 
 
@@ -100,6 +100,6 @@ private:
    std::map< std::string, std::string >         verified_paths; 
    std::stringstream                            buffer;
    std::vector< LocationFunction >              locations;
-   AP::AP_Data                                      &data;
+   Raft::Data                                   &data;
 };
-#endif /* END _APP_HPP_ */
+#endif /* END _P_HPP_ */

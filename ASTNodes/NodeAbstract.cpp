@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 #include "Type.hpp"
@@ -25,7 +26,11 @@ NodeAbstract::NodeAbstract() :
             parent( nullptr ),
             child( nullptr )
 {
-   /* nothing really to do here */
+   /* set parent to self, this is b/c we need all the nodes
+    * parent to point to the same thing so when we adopt 
+    * we only have to change one pointer value 
+    */
+   parent = this;
 }
 
 NodeAbstract::NodeAbstract( const std::string n ):
@@ -34,7 +39,11 @@ NodeAbstract::NodeAbstract( const std::string n ):
                            parent( nullptr ),
                            child( nullptr )
 {
-   /* nothing really to do here */
+   /* set parent to self, this is b/c we need all the nodes
+    * parent to point to the same thing so when we adopt 
+    * we only have to change one pointer value 
+    */
+   parent = this;
 }
                            
 
@@ -68,12 +77,19 @@ void
 NodeAbstract::MakeSibling( NodeAbstract *sib )
 {
    assert( sib != nullptr );
+   assert( this->parent != nullptr );
+
    siblings.insert( sib );
    sib->siblings.insert( this );
 
    auto &sib_siblings( sib->siblings ); 
+   /* make sure each node has all siblings */
    siblings.insert( sib_siblings.begin(), sib_siblings.end() );
    sib_siblings.insert( siblings.begin(), siblings.end() ); 
+
+   /* update parents to this nodes parent */
+   for_each( sib_siblings.begin(), sib_siblings.end(), 
+             [&]( NodeAbstract *n ){ n->set_parent( this->parent ); } );
 }
 
 

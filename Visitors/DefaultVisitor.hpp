@@ -8,8 +8,8 @@
 
 #include <ostream>
 
-namespace AP{
-   class AP_Data;
+namespace Raft{
+   class Data;
 }
 
 namespace Node{
@@ -20,7 +20,7 @@ namespace Visitor{
 
 class DefaultVisitor {
 public:
-   DefaultVisitor( AP::AP_Data &d );
+   DefaultVisitor( Raft::Data &d );
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
@@ -31,7 +31,14 @@ public:
 
    virtual void Error(std::string s);
 protected:
-   AP::AP_Data  &data;
+   void increase_indent();
+   void decrease_indent();
+   std::string get_indent_level();
+   
+   Raft::Data  &data;
+private:
+   /* for prettier printing of nodes */
+   static int64_t indent_level;
 };
 
 } /* end namespace visitor */

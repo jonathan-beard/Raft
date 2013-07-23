@@ -8,8 +8,8 @@
 
 #include "DefaultVisitor.hpp"
 
-namespace AP{
-   class AP_Data;
+namespace Raft{
+   class Data;
 }
 
 namespace Node{
@@ -20,7 +20,7 @@ namespace Visitor{
 
 class DebugVisitor : public DefaultVisitor {
 public:
-   DebugVisitor( AP::AP_Data &d );
+   DebugVisitor( Raft::Data &d );
    virtual ~DebugVisitor();
 
    /**

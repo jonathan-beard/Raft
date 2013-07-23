@@ -3,11 +3,11 @@
  * @author: Jonathan Beard
  * @version: Mon May 20 13:20:59 2013
  */
-#ifndef _AP_COMMON_HPP_
-#define _AP_COMMON_HPP_  1
-namespace AP{
+#ifndef _COMMON_HPP_
+#define _COMMON_HPP_  1
+namespace Raft{
 
-class AP_Common{
+class Common{
 public:
 /**
  *  Dump - function to do basically what it says, used
@@ -60,10 +60,10 @@ static std::string ExtractPathNoFileName( const char* Path, bool &status );
 static void RemoveStringQuotes( std::string &str );
 
 private:
-   AP_Common(){};
-   ~AP_Common(){};
+   Common(){};
+   ~Common(){};
 
 };
 
-} /* end namespace AP */
-#endif /* END _AP_COMMON_HPP_ */
+} /* end namespace Raft */
+#endif /* END _COMMON_HPP_ */

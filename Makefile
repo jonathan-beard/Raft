@@ -21,12 +21,12 @@ APCOMEXE = raft
 APHEXE = raft_h
 
 
-APCOMCPPOBJ = apmain ap_data app ap_prep ap_options_vars \
-				  command_arguments ap_set_options ap_driver \
-				  ap_common command_option_base \
-              ap_cpp_output_handler
+APCOMCPPOBJ = main data p prep options_vars \
+				  command_arguments set_options driver \
+				  common command_option_base \
+              cpp_output_handler
 
-APCOMSOBJ =  ap_parser ap_lexer
+APCOMSOBJ =  raft_parser raft_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 
 APCOMFILES = $(addsuffix .cpp, $(APCOMCPPOBJ))
@@ -43,10 +43,10 @@ CLEANLIST =  $(addsuffix .o, $(OBJ)) $(OBJS) \
              $(APCOMSOBJS)\
              $(addsuffix .o, $(APHSOBJ) )    \
 				 $(APCOMOBJS)\
-				 ap_parser.tab.cc ap_parser.tab.hh \
+				 raft_parser.tab.cc raft_parser.tab.hh \
 				 location.hh position.hh \
-			    stack.hh ap_parser.output \
-				 ap_lexer.yy.cc aph_lexer.yy.cc $(APCOMEXE)\
+			    stack.hh raft_parser.output \
+				 raft_lexer.yy.cc rafth_lexer.yy.cc $(APCOMEXE)\
 
 .PHONY: all
 all:  raft
@@ -59,27 +59,27 @@ raft: $(APCOMFILES)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APCOMEXE) $(APCOMOBJS) \
 	$(APCOMSOBJS) $(ASTNODEOBJS) $(VISITOROBJS) $(LIBS)
 
-aph: $(APHFILES)
+rafth: $(APHFILES)
 	$(MAKE) $(APHSOBJ)
 	$(MAKE) $(APHOBJS)
 	$(CXX) $(CXXFLAGS) $(CXXSTD) -o $(APHEXE) $(APHOBJS) \
-	aph_parser.o aph_lexer.o $(LIBS)
+	rafth_parser.o rafth_lexer.o $(LIBS)
 
-ap_parser: ap_parser.yy
-	bison -d -v ap_parser.yy
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o ap_parser.o ap_parser.tab.cc
+raft_parser: raft_parser.yy
+	bison -d -v raft_parser.yy
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o raft_parser.o raft_parser.tab.cc
 
-ap_lexer: ap_lexer.l
-	flex --outfile=ap_lexer.yy.cc $<
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c ap_lexer.yy.cc -o ap_lexer.o
+raft_lexer: raft_lexer.l
+	flex --outfile=raft_lexer.yy.cc $<
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c raft_lexer.yy.cc -o raft_lexer.o
 
-aph_parser: aph_parser.yy
-	bison -d -v aph_parser.yy
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o aph_parser.o aph_parser.tab.cc
+rafth_parser: rafth_parser.yy
+	bison -d -v rafth_parser.yy
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o rafth_parser.o rafth_parser.tab.cc
 
-aph_lexer: aph_lexer.l
-	flex --outfile=aph_lexer.yy.cc $<
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c aph_lexer.yy.cc -o aph_lexer.o
+rafth_lexer: rafth_lexer.l
+	flex --outfile=rafth_lexer.yy.cc $<
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -c rafth_lexer.yy.cc -o rafth_lexer.o
 
 %.o: %.cpp
 	$(CXX) $(CXXSTD) -c $(CXXFLAGS) $(CXXSTD) -o $@ $<
