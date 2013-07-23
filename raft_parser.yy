@@ -199,7 +199,6 @@
 %type    <node>    LocalVariableDeclarationsAndStatements
 %type    <node>    LocalVariableDeclarationsOrStatement
 %type    <node>    LocalVariableDeclaration
-%type    <node>    DeclareAndAssignArray
 %type    <node>    ArrayListNumber
 %type    <node>    ArrayListLiteral
 %type    <node>    LocalStorageModifier
@@ -215,16 +214,13 @@
 %type    <node>    MapExpression
 %type    <node>    InitFor
 %type    <node>    ReturnStatement
-%type    <node>    Initializer
 %type    <node>    MultiBoolInit
 %type    <node>    BoolInitializer
-%type    <node>    MultiObjectInit
 %type    <node>    ObjectInitializer
 %type    <node>    MultiNumberInit
 %type    <node>    NumberInitializer
 %type    <node>    MultiStringInit
 %type    <node>    StrInitializer
-%type    <node>    Type
 %type    <node>    AutoType
 %type    <node>    BoolType
 %type    <node>    IntType
@@ -371,7 +367,7 @@ Generic  :  LCARROT GenericList RCARROT
             { 
                $$ = $2;
             }
-         |  
+         |  {  $$ = nullptr; }
          ;
 
 GenericList :  CLASS IDENTIFIER
@@ -424,6 +420,9 @@ FieldDeclaration  :     FieldVariableDeclaration
 
 InlineStructInitList   :  COLON MultiObjectInit SEMI
                        | 
+                          {
+                              $$ = nullptr;
+                          }
                        ;
 
 FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
@@ -617,7 +616,10 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN STR_TOKEN RPAREN
 InstantModifier   :     FINAL SYSTEM
                   |     FINAL
                   |     ABSTRACT
-                  |
+                  |     
+                        {
+                           $$ = nullptr; 
+                        }
                   ;
 
 TemplateDeclaration  :  LCARROT STRING  RCARROT
@@ -691,6 +693,9 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                   |     LCARROT GenericInstantiationList RCARROT
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET RBRACKET
                   |
+                        {
+                           $$ = nullptr;
+                        }
                   ;
 
 GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
@@ -765,114 +770,396 @@ AdditiveExpression      :  MultiplicativeExpression
                         ;
 
 MultiplicativeExpression   :  CastExpression
-                       |  MultiplicativeExpression   ASTERICK CastExpression
-                       |  MultiplicativeExpression   FORWARDSLASH   CastExpression
-                       |  MultiplicativeExpression   PERCENT   CastExpression
+                           {
+                              $$ = $1;
+                           }
+                       |   MultiplicativeExpression   ASTERICK CastExpression
+                           {
+                              //TODO start here 
+                           }
+                       |   MultiplicativeExpression   FORWARDSLASH   CastExpression
+                           {
+                              $$ = new NodeAbstract();
+                              $$->set_name( "MultiplicativeExpression" );
+                              $1->MakeSibling
+                           }
+                       |   MultiplicativeExpression   PERCENT   CastExpression
+                           {
+                              $$ = new NodeAbstract();
+                              $$->set_name( "MultiplicativeExpression" );
+                           }
                        ;
 
 CastExpression :  UnaryExpression
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "CastExpression" );
+                     $$->AdoptChildren( $1 );
+                  }
                |  LPAREN   Type  RPAREN   CastExpression
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "CastExpression" );
+                     $2->MakeSibling( $4 );
+                     $$->AdoptChildren( $2 );
+                  }
                |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "CastExpression" );
+                     $2->MakeSibling( $4 );
+                     $$->AdoptChildren( $2 );
+                  }
                ;
 
 UnaryExpression   :  LogicalUnaryExpression
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "UnaryExpression" );
+                        $$->AdoptChildren( $1 );
+                     }
                   |  ArithmeticUnaryOperator CastExpression
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "UnaryExpression" );
+                        $1->MakeSibling( $2 );
+                        $$->AdoptChildren( $1 );
+                     }
                   ;
 
 PostfixExpression :  PrimaryExpression
+                     {
+                        $$ = $1;
+                     }
                   ;
 
 PrimaryExpression :  QualifiedName
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "PrimaryExpression" );
+                        $$->AdoptChildren( $1 );
+                     }
                   |  NotJustName
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "PrimaryExpression" );
+                        $$->AdoptChildren( $1 );
+                     }
                   ;
 
 
 
-AllocationExpression : ALLOC Type LPAREN   ArgumentList   RPAREN
-                     | ALLOC Type LBRACKET Expression RBRACKET
-                     | ALLOC Type LPAREN  RPAREN
-                     | NEW Type LPAREN ArgumentList RPAREN
-                     | NEW Type LPAREN RPAREN
-                     | NEW Type LBRACKET Expression RBRACKET
+AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "AllocationExpression" );
+                           $2->MakeSibling( $4 );
+                           $$->AdoptChildren( $2 );
+                        }
+                     |  ALLOC Type LBRACKET Expression RBRACKET
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "AllocationExpression" );
+                           $2->MakeSibling( $4 );
+                           $$->AdoptChildren( $2 );
+                        }
+                     |  ALLOC Type LPAREN  RPAREN
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "AllocationExpression" );
+                           $$->AdoptChildren( $2 );
+                        }
+                     |  NEW Type LPAREN ArgumentList RPAREN
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "NewExpression" );
+                           $2->MakeSibling( $4 );
+                           $$->AdoptChildren( $2 );
+                        }
+                     |  NEW Type LPAREN RPAREN
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "NewExpression" );
+                           $$->AdoptChildren( $2 );
+                        }
+                     |  NEW Type LBRACKET Expression RBRACKET
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "NewExpression" );
+                           $2->MakeSibling( $4 );
+                           $$->AdoptChildren( $2 );
+                        }
                      ;
 
 
 DeAllocationExpression : FREE LPAREN IDENTIFIER RPAREN
+                         {
+                           $$ = new NodeAbstract();
+                           std::stringstream ss;
+                           ss << "DeAllocationExpression - " << *$3;
+                           $$->set_name( ss.str() );
+                           delete( $3 );
+                         }
                        ;
 
 
 NotJustName :  SpecialName
+               {
+                  $$ = $1;
+               }
             |  AllocationExpression
+               {
+                  $$ = $1;
+               }
             |  DeAllocationExpression
+               {
+                  $$ = $1;
+               }
             |  ComplexPrimary
+               {
+                  $$ = $1;
+               }
             ;
 
 ComplexPrimary :  LPAREN Expression RPAREN
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "ComplexPrimary" );
+                     $$->AdoptChildren( $2 );
+                  }
                |  ComplexPrimaryNoParenthesis
+                  {
+                     $$ = $1;
+                  }
                ;
 
 ComplexPrimaryNoParenthesis : Literal
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | Number
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | FieldAccess
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | MethodCall
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | AnonymousArrayAccess
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | ArrayAccess
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             | Placeholder
+                              {
+                                 $$ = new NodeAbstract();
+                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
+                                 $$->AdoptChildren( $1 );
+                              }
                             ;
 Placeholder  : POUND
+               {
+                  $$ = new NodeAbstract();
+                  $$->set_name( "Placeholder" );
+               }
              ;
 
 ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
+               {
+                  $$ = new NodeAbstract();
+                  $$->set_name( "ArrayAccess" );
+                  $$->MakeSibling( $1 );
+                  $$->MakeSibling( $3 );
+               }
             |  QualifiedName LBRACKET  ArraySize RBRACKET
+               {
+                  $$ = new NodeAbstract();
+                  $$->set_name( "ArrayAccess" );
+                  $$->MakeSibling( $1 );
+                  $$->MakeSibling( $3 );
+               }
             ;
 
 FieldAccess :  NotJustName PERIOD IDENTIFIER
+               {
+                  $$ = new NodeAbstract();
+                  $$->set_name( "FieldAccess" );
+                  $$->MakeSibling( $1 );
+                  NodeAbstract *field_name( nullptr );
+                  field_name = new NodeAbstract( *$3 );
+                  assert( field_name != nullptr );
+                  delete( $3 );
+                  $$->MakeSibling( field_name );
+               }
             ;
 
 MethodCall : QualifiedName LPAREN ArgumentList RPAREN
+             {
+               $$ = new NodeAbstract();
+               $$->set_name( "MethodCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+             }
            | QualifiedName LPAREN  RPAREN
+             {
+               $$ = new NodeAbstract();
+               $$->set_name( "MethodCall" );
+               $$->MakeSibling( $1 );
+             }
            | SpecialName PERIOD QualifiedName LPAREN ArgumentList RPAREN
+             {
+               $$ = new NodeAbstract();
+               $$->set_name( "MethodCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+               $$->MakeSibling( $5 );
+             }
            | SpecialName PERIOD QualifiedName LPAREN RPAREN
+             {
+               $$ = new NodeAbstract();
+               $$->set_name( "MethodCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+             }
            ;
 
-QualifiedName  : IDENTIFIER
-               | QualifiedName PERIOD IDENTIFIER
+QualifiedName  :  IDENTIFIER
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( *$1 );
+                     delete( $1 );
+                  }
+               |  QualifiedName PERIOD IDENTIFIER
+                  {
+                     NodeAbstract *node( nullptr );
+                     node = new NodeAbstract( *$3 );
+                     assert( node != nullptr );
+                     $$->MakeSibling( node );
+                     delete( $3 );
+                  }
                ;
 
 
 SpecialName     : NILL
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "Nill" );
+                  }
                 | THIS
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "This" );
+                  }
                 | SUPER
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "Super" );
+                  }
                 ;
 
 
 ArgumentList   :  Expression
-               | ArgumentList COMMA Expression
+                  {
+                     $$ = new NodeAbstract();
+                     $$->set_name( "ArgumentList" );
+                     $$->AdoptChildren( $1 );
+                  }
+               |  ArgumentList COMMA Expression
+                  {
+                     $1->AdoptChildren( $3 );
+                  }   
                ;
 
 
 
 ArithmeticUnaryOperator :  PLUS
+                           {
+                              $$ = new NodeAbstract();
+                              $$->set_name( "Plus" );
+                           }
                         |  MINUS
+                           {
+                              $$ = new NodeAbstract();
+                              $$->set_name( "Minus" );
+                           }
                         ;
 
 LogicalUnaryExpression  :  PostfixExpression
+                           {
+                              $$ = $1; 
+                           }
                         |  LogicalUnaryOperator UnaryExpression
+                           {
+                              $1->AdoptChildren( $2 );
+                              $$ = $1;
+                           }
                         ;
 
 LogicalUnaryOperator :  BANG
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name("Tilde");
+                        }
                      |  TILDE
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name("Tilde");
+                        }
                      ;
 
 Literal  :  STR_TOKEN
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( *$1 ); 
+               delete( $1 );
+            }
          ;
 
 Number   :  INT_TOKEN
+            {
+               $$ = new NodeAbstract();
+               std::stringstream ss;
+               ss << $1;
+               $$->set_name( ss.str() ); 
+            }
          |  FLOAT_TOKEN
+            {
+               $$ = new NodeAbstract();
+               std::stringstream ss;
+               ss << $1;
+               $$->set_name( ss.str() ); 
+            }
          ;
 
 Boolean  :  TRUE
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( "True" );
+            }
          |  FALSE
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( "False" );
+            }
          ;
 
 
