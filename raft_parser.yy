@@ -168,7 +168,111 @@
 /* begin types */
 %type    <node>    TypeDeclaration
 %type    <node>    T
-%type    <sval>    Filename
+%type    <node>    Filename
+
+%type    <node>    ClassDeclaration
+%type    <node>    StructDeclaration
+%type    <node>    TemplateDeclaration
+%type    <node>    Generic
+%type    <node>    GenericList
+%type    <node>    Inherit
+%type    <node>    InlineStructInitList
+%type    <node>    InstantModifier
+%type    <node>    Body
+%type    <node>    Type
+%type    <node>    TypeModifier
+%type    <node>    Initializer
+%type    <node>    Visibility
+%type    <node>    FieldDeclaration
+%type    <node>    FieldVariableDeclaration
+%type    <node>    MethodDeclaration
+%type    <node>    ConstructorDeclaration
+%type    <node>    MultiObjectInit
+%type    <node>    StorageModifier
+%type    <node>    DeclareAndAssignArray
+%type    <node>    ClassInitializers
+%type    <node>    MethodBody
+%type    <node>    MethodDeclarator
+%type    <node>    ParameterList
+%type    <node>    Parameter
+%type    <node>    DeclaratorName
+%type    <node>    LocalVariableDeclarationsAndStatements
+%type    <node>    LocalVariableDeclarationsOrStatement
+%type    <node>    LocalVariableDeclaration
+%type    <node>    DeclareAndAssignArray
+%type    <node>    ArrayListNumber
+%type    <node>    ArrayListLiteral
+%type    <node>    LocalStorageModifier
+%type    <node>    Statement
+%type    <node>    EmptyStatement
+%type    <node>    ExpressionStatement
+%type    <node>    Expression
+%type    <node>    SelectionStatementInit
+%type    <node>    IterationStatement
+%type    <node>    ForIterationStatement
+%type    <node>    BasicFor
+%type    <node>    ForStatement
+%type    <node>    MapExpression
+%type    <node>    InitFor
+%type    <node>    ReturnStatement
+%type    <node>    Initializer
+%type    <node>    MultiBoolInit
+%type    <node>    BoolInitializer
+%type    <node>    MultiObjectInit
+%type    <node>    ObjectInitializer
+%type    <node>    MultiNumberInit
+%type    <node>    NumberInitializer
+%type    <node>    MultiStringInit
+%type    <node>    StrInitializer
+%type    <node>    Type
+%type    <node>    AutoType
+%type    <node>    BoolType
+%type    <node>    IntType
+%type    <node>    FloatType
+%type    <node>    StringType
+%type    <node>    ObjectType
+%type    <node>    GenericInstantiationList
+%type    <node>    AllowedGenericInstTypes
+%type    <node>    ArraySize
+%type    <node>    AssignmentExpression
+%type    <node>    AssignmentOperator
+%type    <node>    ConditionalExpression
+%type    <node>    ConditionalOrExpression
+%type    <node>    ConditionalAndExpression
+%type    <node>    InclusiveOrExpression
+%type    <node>    ExclusiveOrExpression
+%type    <node>    AndExpression
+%type    <node>    EqualityExpression
+%type    <node>    RelationalExpression
+%type    <node>    ShiftExpression
+%type    <node>    AdditiveExpression
+%type    <node>    MultiplicativeExpression
+%type    <node>    CastExpression
+%type    <node>    UnaryExpression
+%type    <node>    PostfixExpression
+%type    <node>    PrimaryExpression
+%type    <node>    AllocationExpression
+%type    <node>    DeAllocationExpression
+%type    <node>    NotJustName
+%type    <node>    ComplexPrimary
+%type    <node>    ComplexPrimaryNoParenthesis
+%type    <node>    Placeholder
+%type    <node>    ArrayAccess
+%type    <node>    FieldAccess
+%type    <node>    MethodCall
+%type    <node>    QualifiedName
+%type    <node>    SpecialName
+%type    <node>    ArgumentList
+%type    <node>    ArithmeticUnaryOperator
+%type    <node>    LogicalUnaryExpression
+%type    <node>    LogicalUnaryOperator
+%type    <node>    Literal
+%type    <node>    Number
+%type    <node>    Boolean
+%type    <node>    AnonymousArrayAccess
+
+
+
 %%
 
 
@@ -186,39 +290,19 @@ CompilationUnit   :     END
 
 T                 :     Filename
                         {
-                           Node::Filename *f( nullptr );
-                           f = new Node::Filename( *$1 );
-                           assert( f != nullptr );
-                           f->SetOrigin( data );
-                           $$ = f;
-                           /* get rid of allocated string */
-                           delete( $1 );
+                           $$ = $1;
                         }
                   |     TypeDeclaration
                         {
-                           Node::Declaring *d( nullptr );
-                           d = new Node::Declaring();
-                           assert( d != nullptr );
-                           d->SetOrigin( data );
-                           $$->MakeSibling( d );
-                           std::cerr << "HERE\n";
+                           $$ = $1;
                         }
                   |     T  Filename
                         {
-                           Node::Filename *f( nullptr );
-                           f = new Node::Filename( *$2 );
-                           assert( f != nullptr );
-                           f->SetOrigin( data );
-                           $1->MakeSibling( f );
-                           delete( $2 );
+                           $1->MakeSibling( $2 );
                         }
                   |     T  TypeDeclaration
                         {
-                           Node::Declaring *d( nullptr );
-                           d = new Node::Declaring();
-                           d->SetOrigin( data );
-                           assert( d != nullptr );
-                           $1->MakeSibling( d );
+                           $1->MakeSibling( $2 );
                         }
                   |     error
                   ;
@@ -229,7 +313,13 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                            data.get_cpp_handler().AddUpdate( 
                                        $2    /* line # */,
                                        *$3 /* name   */  );
-                           $$ = $3;
+                           Node::Filename *f( nullptr );
+                           f = new Node::Filename( *$3 );
+                           assert( f != nullptr );
+                           f->SetOrigin( data );
+                           $$ = f;
+                           /* get rid of allocated string */
+                           delete( $3 );
                         }
                   |     POUND   INT_TOKEN    STR_TOKEN   INT_TOKEN
                         {
@@ -239,23 +329,48 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        *$3 /* name */,
                                        $4 /* flags */ );
                            $$ = $3;
+                           Node::Filename *f( nullptr );
+                           f = new Node::Filename( *$3 );
+                           assert( f != nullptr );
+                           f->SetOrigin( data );
+                           $$ = f;
+                           /* get rid of allocated string */
+                           delete( $3 );
                         }
                   ;
 
 TypeDeclaration   :     ClassDeclaration
+                        {
+                           $$ = $1;
+                        }
                   |     InterfaceDeclaration
-                  |     TemplateDeclaration
+                        {
+                           $$ = $1;
+                        }
                   |     StructDeclaration InlineStructInitList
+                        {
+                           $$ = $1;
+                        }
                   ;
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
-
+                           $$ = new Node::NodeAbstract();
+                           $$.set_name(*$3);
+                           delete( $3 );
                         }
                   |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
+                        {
+                           $$ = new Node::NodeAbstract();
+                           $$.set_name( *$3 );
+                           delete( $3 );
+                        }
                   ;
 
 Generic  :  LCARROT GenericList RCARROT
+            { 
+               $$ = $2;
+            }
          |  
          ;
 
