@@ -13,6 +13,8 @@
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 #include "Type.hpp"
+#include "data.hpp"
+#include "cpp_output_handler.hpp"
 
 using namespace Node;
 
@@ -179,7 +181,8 @@ NodeAbstract::print( std::ostream &stream)
    }
 
    stream << "Node: " << get_number() << " - " << get_name();
-   stream << " Parent: " << the_parent_name.str();
+   stream << " Parent: " << the_parent_name.str() << " Origin: " << 
+   file_details.name << " @ " << file_details.line_text;
    return( stream );
 }
 
@@ -201,6 +204,13 @@ void
 NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
    visitor.Visit( this );
+}
+
+void 
+NodeAbstract::SetOrigin( Raft::Data &d )
+{
+   file_details.name      = d.get_cpp_handler().PeekHead();
+   file_details.line_text = d.get_cpp_handler().GetHeadCurrentLine();
 }
 
 void  

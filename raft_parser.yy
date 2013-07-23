@@ -17,6 +17,7 @@
       class Source;
       class Declaring;
       class DeclaringList;
+      class Filename;
    }
 }
 
@@ -49,6 +50,7 @@
    #include "Source.hpp"
    #include "Declaring.hpp"
    #include "DeclaringList.hpp"
+   #include "Filename.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -143,8 +145,6 @@
 %token       HAT  
 %token       COMMA  
 %token       BOOLEAN  
-%token   <bval>   TRUE
-%token   <bval>   FALSE
 %token       INT8T  
 %token       INT16T  
 %token       INT32T  
@@ -156,14 +156,19 @@
 %token       FLOAT32  
 %token       FLOAT64  
 %token       FLOAT96  
-%token   <sval>    STR_TOKEN 
 %token       POUND
 %token       STRING  
+%token   <bval>      TRUE
+%token   <bval>      FALSE
+%token   <sval>      STR_TOKEN 
 %token   <uint_val>  INT_TOKEN
-%token   <dval>    FLOAT_TOKEN
-%token   <sval>    IDENTIFIER
+%token   <dval>      FLOAT_TOKEN
+%token   <sval>      IDENTIFIER
+
+/* begin types */
 %type    <node>    TypeDeclaration
 %type    <node>    T
+%type    <sval>    Filename
 %%
 
 
@@ -181,34 +186,39 @@ CompilationUnit   :     END
 
 T                 :     Filename
                         {
-                           $$ = nullptr;
+                           Node::Filename *f( nullptr );
+                           f = new Node::Filename( *$1 );
+                           assert( f != nullptr );
+                           f->SetOrigin( data );
+                           $$ = f;
+                           /* get rid of allocated string */
+                           delete( $1 );
                         }
                   |     TypeDeclaration
                         {
                            Node::Declaring *d( nullptr );
                            d = new Node::Declaring();
                            assert( d != nullptr );
+                           d->SetOrigin( data );
                            $$->MakeSibling( d );
+                           std::cerr << "HERE\n";
                         }
                   |     T  Filename
                         {
+                           Node::Filename *f( nullptr );
+                           f = new Node::Filename( *$2 );
+                           assert( f != nullptr );
+                           f->SetOrigin( data );
+                           $1->MakeSibling( f );
+                           delete( $2 );
                         }
                   |     T  TypeDeclaration
                         {
-                           if( $$ == nullptr )
-                           {
-                              Node::Declaring *d( nullptr );
-                              d = new Node::Declaring();
-                              assert( d != nullptr );
-                              $$ = d;
-                           }
-                           else
-                           {
-                              Node::Declaring *d( nullptr );
-                              d = new Node::Declaring();
-                              assert( d != nullptr );
-                              $1->MakeSibling( d );
-                           }
+                           Node::Declaring *d( nullptr );
+                           d = new Node::Declaring();
+                           d->SetOrigin( data );
+                           assert( d != nullptr );
+                           $1->MakeSibling( d );
                         }
                   |     error
                   ;
@@ -219,7 +229,7 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                            data.get_cpp_handler().AddUpdate( 
                                        $2    /* line # */,
                                        *$3 /* name   */  );
-                           delete( $3 );
+                           $$ = $3;
                         }
                   |     POUND   INT_TOKEN    STR_TOKEN   INT_TOKEN
                         {
@@ -228,7 +238,7 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        $2 /* line # */,
                                        *$3 /* name */,
                                        $4 /* flags */ );
-                           delete( $3 );
+                           $$ = $3;
                         }
                   ;
 
@@ -763,7 +773,6 @@ Raft::Parser::error( const Raft::Parser::location_type &l,
 {
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
-   std::cerr << "Location: " << l << "\n";
    data.get_rf_errorstream() << "Parser error, in file with " << 
    str << " with input \"" 
       << data.get_rf_parsestream().str() << "\"";

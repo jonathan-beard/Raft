@@ -15,6 +15,10 @@ namespace Visitor{
    class DefaultVisitor;
 }
 
+namespace Raft{
+   class Data;
+}
+
 namespace Node{
    
 class NodeAbstract {
@@ -112,6 +116,13 @@ public:
    void                 Accept( Visitor::DefaultVisitor &visitor );
 
    /**
+    * SetOrigin - takes a data object that is used to give each 
+    * node the current line number where this node was reduced.
+    * @param   d  - Raft::Data&
+    */
+   void  SetOrigin( Raft::Data &d );
+   
+   /**
     * invoke - invokes the visitor v on the root node passed in 
     * the parameter.  The visitor has the option of returning 
     * an entirely new tree or re-using the same one, if a new 
@@ -124,6 +135,7 @@ public:
    static   void  invoke( Visitor::DefaultVisitor &visitor, 
                           NodeAbstract *root );
     
+
 protected:
    /* convenience constructor for sub-classes */
    NodeAbstract( const std::string name );
@@ -135,6 +147,10 @@ private:
    NodeAbstract                *parent;
    NodeAbstract                *child;
    std::set<NodeAbstract* >    siblings;
+   struct {
+      std::string name;
+      std::string line_text;
+   }file_details;
 };
 
 } /* end namespace Node */
