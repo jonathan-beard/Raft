@@ -57,6 +57,8 @@
                     Raft::Scanner               &scanner,
                     Raft::Driver                &driver,
                     Raft::Data                  &data );
+
+   using namespace Node;                    
 }
 
 /* token types */
@@ -169,10 +171,9 @@
 %type    <node>    TypeDeclaration
 %type    <node>    T
 %type    <node>    Filename
-
+%type    <node>    InterfaceDeclaration
 %type    <node>    ClassDeclaration
 %type    <node>    StructDeclaration
-%type    <node>    TemplateDeclaration
 %type    <node>    Generic
 %type    <node>    GenericList
 %type    <node>    Inherit
@@ -197,7 +198,7 @@
 %type    <node>    Parameter
 %type    <node>    DeclaratorName
 %type    <node>    LocalVariableDeclarationsAndStatements
-%type    <node>    LocalVariableDeclarationsOrStatement
+%type    <node>    LocalVariableDeclarationOrStatement
 %type    <node>    LocalVariableDeclaration
 %type    <node>    ArrayListNumber
 %type    <node>    ArrayListLiteral
@@ -266,7 +267,7 @@
 %type    <node>    Number
 %type    <node>    Boolean
 %type    <node>    AnonymousArrayAccess
-
+%type    <node>    Block
 
 
 %%
@@ -324,7 +325,7 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        $2 /* line # */,
                                        *$3 /* name */,
                                        $4 /* flags */ );
-                           $$ = $3;
+                           $$->set_name( *$3 );
                            Node::Filename *f( nullptr );
                            f = new Node::Filename( *$3 );
                            assert( f != nullptr );
@@ -352,13 +353,13 @@ TypeDeclaration   :     ClassDeclaration
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
                            $$ = new Node::NodeAbstract();
-                           $$.set_name(*$3);
+                           $$->set_name(*$3);
                            delete( $3 );
                         }
                   |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
                         {
                            $$ = new Node::NodeAbstract();
-                           $$.set_name( *$3 );
+                           $$->set_name( *$3 );
                            delete( $3 );
                         }
                   ;
@@ -929,99 +930,456 @@ MethodBody  :  Block
             ;
 
 MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
+                           {
+                              NodeAbstract *methodd( nullptr );
+                              methodd = new NodeAbstract();
+                              assert( methodd );
+                              methodd->set_name( "MethodDecl" );
+
+                              methodd->AdoptChildren( $3 );
+                              $$ = methodd;
+                           }
                          | IDENTIFIER LPAREN RPAREN
+                           {
+                              NodeAbstract *methodd( nullptr );
+                              methodd = new NodeAbstract();
+                              assert( methodd );
+                              methodd->set_name( "MethodDecl" );
+                              
+                              NodeAbstract *noparams( nullptr );
+                              noparams = new NodeAbstract();
+                              assert( noparams != nullptr );
+
+                              methodd->AdoptChildren( noparams );
+                              $$ = methodd;
+                           }
                          ;
 
 ParameterList            : Parameter
+                           {
+                              $$ = $1;
+                           }
                          | ParameterList COMMA Parameter
+                           {
+                              $1->MakeSibling( $3 );
+                              $$ = $1;
+                           }  
                          ;
 
 Parameter                : Type  DeclaratorName
+                           {
+                              NodeAbstract *param( nullptr );
+                              param = new NodeAbstract();
+                              assert( param != nullptr );
+
+                              param->MakeSibling( $1 );
+                              param->MakeSibling( $2 );
+                              $$ = param;
+                           }
                          ;
 
 DeclaratorName           : IDENTIFIER
+                           {
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+
+                              id->set_name( *$1 );
+                              delete( $1 );
+                              
+                              $$ = id ;
+                           }
                          | BoolInitializer 
+                           {
+                              $$ = $1;
+                           }
                          | ObjectInitializer
+                           {
+                              $$ = $1;
+                           }
                          | NumberInitializer
+                           {
+                              $$ = $1;
+                           }
                          | StrInitializer
+                           {
+                              $$ = $1;
+                           }
                          ;
 
 Block : LBRACE   RBRACE
+        {
+          NodeAbstract *empty( nullptr );
+          empty = new NodeAbstract();
+          assert( empty != nullptr );
+          empty->set_name( "EmptyBlock" );
+          $$ = empty;
+        }
       |  LBRACE   LocalVariableDeclarationsAndStatements RBRACE
+         {
+            NodeAbstract *block( nullptr );
+            block = new NodeAbstract();
+            assert( block != nullptr );
+
+            block->set_name( "Block" );
+            block->AdoptChildren( $2 );
+            $$ = block;
+         }
       ;
 
 
 LocalVariableDeclarationsAndStatements 
    : LocalVariableDeclarationOrStatement
+     {   
+       $$ = $1;
+     }
    | LocalVariableDeclarationsAndStatements LocalVariableDeclarationOrStatement
+      {
+         $1->MakeSibling( $2 );
+         $$ = $1;
+      }
    ;
 
 LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
+                                          {
+                                           $$ = $1;
+                                          }
                                        |  Statement
+                                          {
+                                           $$ = $1;
+                                          }
                                        |  StructDeclaration
+                                          {
+                                           $$ = $1;
+                                          }
                                        ;
 
 LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
+                              {
+                                 NodeAbstract *var( nullptr );
+                                 var = new NodeAbstract();
+                                 assert( var != nullptr );
+                                 var->set_name( "VarDecl" );
+
+                                 $1->MakeSibling( $2 );
+                                 $1->MakeSibling( $3 );
+
+                                 var->AdoptChildren( $1 );
+
+                                 $$ = var;
+                              }
                            |  LocalStorageModifier Type Initializer DeclareAndAssignArray SEMI
+                              {
+                                 NodeAbstract *var( nullptr );
+                                 var = new NodeAbstract();
+                                 assert( var != nullptr );
+                                 var->set_name( "VarDecl" );
+
+                                 $1->MakeSibling( $2 );
+                                 $1->MakeSibling( $3 );
+                                 $1->MakeSibling( $4 );
+
+                                 var->AdoptChildren( $1 );
+
+                                 $$ = var;
+                              }
                            |  Type Initializer SEMI
+                              {
+                                 NodeAbstract *var( nullptr );
+                                 var = new NodeAbstract();
+                                 assert( var != nullptr );
+                                 
+                                 var->set_name( "VarDecl" );
+                                 $1->MakeSibling( $2 );
+                                 var->AdoptChildren( $1 );
+                                 $$ = var;
+                              }
                            |  Type Initializer DeclareAndAssignArray SEMI
+                              {
+                                 NodeAbstract *var( nullptr );
+                                 var = new NodeAbstract();
+                                 assert( var != nullptr );
+                                 
+                                 var->set_name( "VarDecl" );
+                                 $1->MakeSibling( $2 );
+                                 $1->MakeSibling( $3 );
+                                 var->AdoptChildren( $1 );
+                                 $$ = var;
+                              }
                            ;
 
 DeclareAndAssignArray      :  EQUALS LBRACE ArrayListNumber  RBRACE
+                              {
+                                 NodeAbstract *decl( nullptr );
+                                 decl = new NodeAbstract();
+                                 assert( decl != nullptr );
+
+                                 decl->set_name( "DeclareAndAssignArrNum" );
+                                 
+                                 decl->AdoptChildren( $3 );
+
+                                 $$ = decl;
+                              }
                            |  EQUALS LBRACE ArrayListLiteral RBRACE
+                              {
+                                 NodeAbstract *decl( nullptr );
+                                 decl = new NodeAbstract();
+                                 assert( decl != nullptr );
+
+                                 decl->set_name( "DeclareAndAssignArrLit" );
+                                 
+                                 decl->AdoptChildren( $3 );
+
+                                 $$ = decl;
+                              }
                            ;
 
 ArrayListNumber   : LBRACKET ArraySize RBRACKET EQUALS Number
+                     {
+                        NodeAbstract *arr( nullptr );
+                        arr = new NodeAbstract();
+                        assert( arr != nullptr );
+                        
+                        arr->set_name("Assign");
+
+                        $2->MakeSibling( $5 );
+                        arr->AdoptChildren( $2 );
+                        $$ = arr;
+                     }
                   | ArrayListNumber COMMA LBRACKET ArraySize RBRACKET EQUALS Number
+                     {
+                        NodeAbstract *arr( nullptr );
+                        arr = new NodeAbstract();
+                        assert( arr != nullptr );
+                        
+                        arr->set_name("Assign");
+
+                        $4->MakeSibling( $7 );
+                        arr->AdoptChildren( $4 );
+
+                        $1->MakeSibling( arr );
+
+                        $$ = $1;
+                     }
                   ;
 
-ArrayListLiteral  : LBRACKET ArraySize RBRACKET EQUALS Literal
-                  | ArrayListLiteral COMMA LBRACKET ArraySize RBRACKET EQUALS Literal
+ArrayListLiteral  :  LBRACKET ArraySize RBRACKET EQUALS Literal
+                     {
+                        NodeAbstract *arr( nullptr );
+                        arr = new NodeAbstract();
+                        assert( arr != nullptr );
+                        
+                        arr->set_name("Assign");
+
+                        $2->MakeSibling( $5 );
+                        arr->AdoptChildren( $2 );
+                        $$ = arr;
+                     }
+                  |  ArrayListLiteral COMMA LBRACKET ArraySize RBRACKET EQUALS Literal
+                     {
+                        NodeAbstract *arr( nullptr );
+                        arr = new NodeAbstract();
+                        assert( arr != nullptr );
+                        
+                        arr->set_name("Assign");
+
+                        $4->MakeSibling( $7 );
+                        arr->AdoptChildren( $4 );
+
+                        $1->MakeSibling( arr );
+
+                        $$ = $1;
+                     }
                   ;
 
 LocalStorageModifier : CONST
+                        {
+                           NodeAbstract *mod( nullptr );
+                           mod = new NodeAbstract();
+                           assert( mod != nullptr );
+
+                           mod->set_name("Const" );
+                           $$ = mod;
+                        }
                      | ATOMIC
-                     | NONATOMIC
+                        {
+                           NodeAbstract *mod( nullptr );
+                           mod = new NodeAbstract();
+                           assert( mod != nullptr );
+
+                           mod->set_name("Atomic" );
+                           $$ = mod;
+                        }
+                     |  NONATOMIC
+                        {
+                           NodeAbstract *mod( nullptr );
+                           mod = new NodeAbstract();
+                           assert( mod != nullptr );
+
+                           mod->set_name("NonAtomic" );
+                           $$ = mod;
+                        }
                      ;
 
 
 Statement   :  EmptyStatement
+               {
+                  $$ = $1;
+               }
             |  ExpressionStatement
+               {
+                  $$ = $1;
+               }
             |  SelectionStatementInit
+               {
+                  $$ = $1;
+               }
             |  IterationStatement
+               {
+                  $$ = $1;
+               }
             |  ReturnStatement
+               {
+                  $$ = $1;
+               }
             |  Block
+               {
+                  $$ = $1;
+               }
             ;
 
 EmptyStatement :  SEMI
+                  {
+                     NodeAbstract *semi( nullptr );
+                     semi = new NodeAbstract();
+                     assert( semi != nullptr );
+
+                     semi->set_name( "EmptyStatement" );
+
+                     $$ = semi;
+                  }
                ;
 
 ExpressionStatement  :  Expression
+                        {
+                           $$ = $1;
+                        }
                      ;
 
 Expression  :  AssignmentExpression
+               {
+                  $$ = $1;
+               }
             |  MapExpression
+               {
+                  $$ = $1;   
+               }
             ;
 
 
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
+                        {
+                           NodeAbstract *con( nullptr );
+                           con = new NodeAbstract();
+                           assert( con != nullptr );
+                           con->set_name( "Conditional" );
+                           
+                           /* first will be cond, then true then false */
+                           $3->MakeSibling( $5 ); 
+                           $3->MakeSibling( $7 );
+                           con->AdoptChildren( con );
+
+                           $$ = con;
+                        }
                     |   IF LPAREN Expression RPAREN Statement
+                        {
+                           NodeAbstract *con( nullptr );
+                           con = new NodeAbstract();
+                           assert( con != nullptr );
+                           con->set_name( "Conditional" );
+                           
+                           $3->MakeSibling( $5 );
+
+                           con->AdoptChildren( con );
+
+                           $$ = con;
+                        }
                     ;
 
 IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
+                        {
+                           NodeAbstract *wh( nullptr );
+                           wh = new NodeAbstract();
+                           assert( wh != nullptr );
+
+                           wh->set_name( "WhileStatement" );
+
+                           $3->MakeSibling( $5 );
+
+                           wh->AdoptChildren( $3 );
+
+                           $$ = wh;
+                        }
                      |  ForIterationStatement
+                        {
+                           $$ = $1;
+                        }
                      ;
 
 ForIterationStatement : BasicFor
+                        {
+                           $$ = $1;
+                        }
                       ;
 
 BasicFor :  FOR LPAREN InitFor RelationalExpression SEMI AssignmentExpression RPAREN ForStatement
+            {
+               NodeAbstract *f( nullptr );
+               f = new NodeAbstract();
+               assert( f != nullptr );
+
+               f->set_name( "BasicFor" );
+
+               $3->MakeSibling( $4 );
+               $3->MakeSibling( $6 );
+               $3->MakeSibling( $8 );
+
+               f->AdoptChildren( $3 );
+               $$ = f;
+            }
          ;
 
 ForStatement   :  LBRACE Statement RBRACE
+                  {
+                     NodeAbstract *st( nullptr );
+                     st = new NodeAbstract();
+                     assert( st != nullptr );
+
+                     st->set_name( "ForStatement" );
+
+                     st->AdoptChildren( $2 );
+
+                     $$ = st;
+                  }
                |  SEMI
+                  {
+                     NodeAbstract *st( nullptr );
+                     st = new NodeAbstract();
+                     assert( st != nullptr );
+
+                     st->set_name( "EmptyForStatement" );
+                     $$ = st;
+                  }
                |  LBRACE RBRACE
+                  {
+                     NodeAbstract *st( nullptr );
+                     st = new NodeAbstract();
+                     assert( st != nullptr );
+
+                     st->set_name( "EmptyForStatement" );
+                     $$ = st;
+                  }
                ;
 
 MapExpression   :    Expression AT FORWARDSLASH Expression
@@ -1029,7 +1387,13 @@ MapExpression   :    Expression AT FORWARDSLASH Expression
                         NodeAbstract *map( nullptr );
                         map = new NodeAbstract();
                         assert( map != nullptr );
+                        
+                        map->set_name( "MapExpression" );
 
+                        $1->MakeSibling( $4 );
+                        map->AdoptChildren( $1 );
+
+                        $$ = map;
                      }
                 ;
 
@@ -1340,16 +1704,6 @@ InstantModifier   :     FINAL SYSTEM
                         }
                   ;
 
-TemplateDeclaration  :  LCARROT STRING  RCARROT
-                        {
-                         //TODO fix this guy
-                         $$ = new NodeAbstract();
-                         std::string s( "Template " );
-                         $$->set_name( s + *$2 );
-                         delete( $2 );
-                        }
-                     ;
-
 Type  :  BoolType
          {
             $$ = $1;
@@ -1489,7 +1843,7 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                         {  
                            $$ = new NodeAbstract();
                            $$->set_name( "TypeModifier->Generic" );
-                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $2 );
                         }     
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET RBRACKET
                         {
@@ -1513,10 +1867,11 @@ GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
                               assert( id != nullptr );
                               id->set_name( *$1 );
                               delete( $1 );
+
                               NodeAbstract *eq( nullptr );
                               eq = new NodeAbstract();
                               assert( eq != nullptr );
-                              eq->set_name( *$1 );
+                              eq->set_name( "=" );
                               eq->AdoptChildren( id );
                               eq->AdoptChildren( $3 );
                               $$->AdoptChildren( eq );
@@ -1525,17 +1880,22 @@ GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
                            {
                               $$ = new NodeAbstract();
                               $$->set_name( "GenericInstantiationList" );
+                              
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
                               assert( id != nullptr );
+                              
                               id->set_name( *$3 );
-                              delete( $1 );
+                              delete( $3 );
+
                               NodeAbstract *eq( nullptr );
                               eq = new NodeAbstract();
                               assert( eq != nullptr );
-                              eq->set_name( *$1 );
+                              eq->set_name( "=" );
+
                               eq->AdoptChildren( id );
                               eq->AdoptChildren( $5 );
+
                               $1->MakeSibling( eq );
                               $$->AdoptChildren( $1 );
                            }
@@ -1628,15 +1988,13 @@ AssignmentExpression :  ConditionalExpression
                         {
                            $$ = new NodeAbstract();
                            $$->set_name( "Increment" );
-                           $2->AdoptChildren( $1 );
-                           $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $1 );
                         }
                      |  UnaryExpression DECREMENT
                         {
                            $$ = new NodeAbstract();
                            $$->set_name( "Decrement" );
-                           $2->AdoptChildren( $1 );
-                           $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $1 );
                         }
                      ;
 
@@ -1717,13 +2075,13 @@ InclusiveOrExpression   :  ExclusiveOrExpression
                            }
                         |  InclusiveOrExpression OR ExclusiveOrExpression
                            {  
-                              NodeAbstract *or( nullptr );
-                              or = new NodeAbstract();
-                              assert( or != nullptr );
-                              or->set_name( "OR" );
-                              or->AdoptChildren( $1 );
-                              or->AdoptChildren( $3 );
-                              $$ = or;
+                              NodeAbstract *node( nullptr );
+                              node = new NodeAbstract();
+                              assert( node != nullptr );
+                              node->set_name( "OR" );
+                              node->AdoptChildren( $1 );
+                              node->AdoptChildren( $3 );
+                              $$ = node;
                            }  
                         ;
 
@@ -1749,13 +2107,13 @@ AndExpression           :  EqualityExpression
                            }
                         |  AndExpression  AND   EqualityExpression
                            {
-                              NodeAbstract *and( nullptr );
-                              and = new NodeAbstract();
-                              assert( and != nullptr );
-                              and->set_name( "AND" );
-                              and->AdoptChildren( $1 );
-                              and->AdoptChildren( $3 );
-                              $$ = and;
+                              NodeAbstract *node( nullptr );
+                              node = new NodeAbstract();
+                              assert( node != nullptr );
+                              node->set_name( "AND" );
+                              node->AdoptChildren( $1 );
+                              node->AdoptChildren( $3 );
+                              $$ = node;
                            }
                         ;
 
@@ -1766,7 +2124,7 @@ EqualityExpression      :  RelationalExpression
                         |  EqualityExpression   OP_EQ RelationalExpression
                            {  
                               NodeAbstract *eq( nullptr );
-                              eq = eqw NodeAbstract();
+                              eq = new NodeAbstract();
                               assert( eq != nullptr );
                               eq->set_name( "EqualityExpression ==" );
                               eq->AdoptChildren( $1 );
@@ -2118,8 +2476,9 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
                   $$->set_name( "FieldAccess" );
                   $$->MakeSibling( $1 );
                   NodeAbstract *field_name( nullptr );
-                  field_name = new NodeAbstract( *$3 );
+                  field_name = new NodeAbstract( );
                   assert( field_name != nullptr );
+                  field_name->set_name( *$3 );
                   delete( $3 );
                   $$->MakeSibling( field_name );
                }
@@ -2164,8 +2523,9 @@ QualifiedName  :  IDENTIFIER
                |  QualifiedName PERIOD IDENTIFIER
                   {
                      NodeAbstract *node( nullptr );
-                     node = new NodeAbstract( *$3 );
+                     node = new NodeAbstract( );
                      assert( node != nullptr );
+                     node->set_name( *$3 );
                      $$->MakeSibling( node );
                      delete( $3 );
                   }
@@ -2277,7 +2637,22 @@ Boolean  :  TRUE
 
 
 AnonymousArrayAccess :  DOLLAR
-                     |  DOLLAR LBRACKET   Number   RBRACKET
+                        {
+                           NodeAbstract *d( nullptr );
+                           d = new NodeAbstract();
+                           assert( d != nullptr );
+                           d->set_name( "#" );
+                           $$ = d;
+                        }
+                     |  DOLLAR LBRACKET   ArraySize   RBRACKET
+                        {
+                           NodeAbstract *d( nullptr );
+                           d = new NodeAbstract();
+                           assert( d != nullptr );
+                           d->set_name( "#" );
+                           d->AdoptChildren( $3 );
+                           $$ = d;
+                        }
                      ;
                         
 %%
