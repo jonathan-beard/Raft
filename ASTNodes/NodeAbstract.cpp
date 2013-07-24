@@ -181,8 +181,7 @@ NodeAbstract::print( std::ostream &stream)
    }
 
    stream << "Node: " << get_number() << " - " << get_name();
-   stream << " Parent: " << the_parent_name.str() << " Origin: " << 
-   file_details.name << " @ " << file_details.line_text;
+   stream << " Parent: " << the_parent_name.str();
    return( stream );
 }
 
