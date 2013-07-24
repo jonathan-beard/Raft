@@ -371,8 +371,35 @@ Generic  :  LCARROT GenericList RCARROT
          ;
 
 GenericList :  CLASS IDENTIFIER
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( *$2 );
+                  delete( $2 );
+                  $$ = cl;
+               }
             |  Type  IDENTIFIER  TypeModifier
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( *$2 );
+                  delete( $2 );
+                  cl->AdoptChildren( $1 );
+                  cl->AdoptChildren( $3 );
+                  $$ = cl;
+               }
             |  Type  Initializer
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( "TypeGeneric" );
+                  cl->AdoptChildren( $1 );
+                  cl->AdoptChildren( $2 );
+                  $$ = cl;
+               }
             |  GenericList COMMA CLASS IDENTIFIER
             |  GenericList COMMA Type IDENTIFIER TypeModifier 
             |  GenericList COMMA Type Initializer
