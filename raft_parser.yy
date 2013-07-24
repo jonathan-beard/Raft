@@ -401,30 +401,155 @@ GenericList :  CLASS IDENTIFIER
                   $$ = cl;
                }
             |  GenericList COMMA CLASS IDENTIFIER
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( *$4 );
+                  delete( $4 );
+                  $1->MakeSibling( cl );
+                  $$ = $1;
+               }
             |  GenericList COMMA Type IDENTIFIER TypeModifier 
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( *$4 );
+                  delete( $4 );
+                  cl->AdoptChildren( $3 );
+                  cl->AdoptChildren( $5 );
+                  $1->MakeSibling( cl );
+                  $$ = $1;
+               }
             |  GenericList COMMA Type Initializer
+               {
+                  NodeAbstract *cl( nullptr );
+                  cl = new NodeAbstract();
+                  assert( cl != nullptr );
+                  cl->set_name( "TypeGeneric" );
+                  cl->AdoptChildren( $3 );
+                  cl->AdoptChildren( $4 );
+                  $1->MakeSibling( cl );
+                  $$ = $1;
+               }
             ;
 
 StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
+                     {
+                        NodeAbstract *str( nullptr );
+                        str = new NodeAbstract();
+                        assert( str != nullptr );
+                        str->set_name( "StructDeclaration" );
+                        
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        id->set_name( *$2 );
+                        delete( $2 );
+
+                        id->MakeSibling( $3 );
+                        id->MakeSibling( $5 );
+
+                        str->AdoptChildren( id );
+
+                        $$ = str;
+                     }
                   |  STRUCT IDENTIFIER Inherit LBRACE RBRACE
+                     {
+                        NodeAbstract *str( nullptr );
+                        str = new NodeAbstract();
+                        assert( str != nullptr );
+                        str->set_name( "StructDeclaration" );
+                        
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        id->set_name( *$2 );
+                        delete( $2 );
+
+                        id->MakeSibling( $3 );
+
+                        NodeAbstract *empty( nullptr );
+                        empty = new NodeAbstract();
+                        assert( empty != nullptr );
+                        empty->set_name( "Empty Body" );
+
+                        id->MakeSibling( empty );
+
+                        str->AdoptChildren( id );
+
+                        $$ = str;
+                     }
                   ;
 
 
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
+                           NodeAbstract *in( nullptr );
+                           in = new NodeAbstract();
+                           assert( in != nullptr );
+                           std::stringstream ss;
+                           ss << "Inherits from: " << *$3;
+                           in->set_name( ss.str() );
+                           delete( $3 );
+                           $$ = in;
                         }
                   |     COLON IMPLEMENTS IDENTIFIER 
                         {
-
+                           NodeAbstract *in( nullptr );
+                           in = new NodeAbstract();
+                           assert( in != nullptr );
+                           std::stringstream ss;
+                           ss << "Implements: " << *$3;
+                           in->set_name( ss.str() );
+                           delete( $3 );
+                           $$ = in;
                         }
                   |
                         {
-
+                           NodeAbstract *empty( nullptr );
+                           empty = new NodeAbstract();
+                           assert( empty != nullptr );
+                           empty->set_name( "No Inherit" );
+                           $$ = empty;
                         }
                   ;
 
 InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE
+                        {
+                           NodeAbstract *interface( nullptr );
+                           interface = new NodeAbstract();
+                           assert( interface != nullptr );
+                           interface->set_name( "Interface Delcaration" );
+
+                           NodeAbstract *name( nullptr );
+                           name = new NodeAbstract();
+                           name->set_name( *$2 );
+                           delete( $2 );
+
+                           name->MakeSibling( $4 );
+
+                           interface->AdoptChildren( name );
+
+                           $$ = interface;
+                        }
                      |  INTERFACE IDENTIFIER LBRACE RBRACE
+                        {
+                           NodeAbstract *interface( nullptr );
+                           interface = new NodeAbstract();
+                           assert( interface != nullptr );
+                           interface->set_name( "Interface Delcaration" );
+
+                           NodeAbstract *name( nullptr );
+                           name = new NodeAbstract();
+                           name->set_name( *$2 );
+                           delete( $2 );
+
+                           interface->AdoptChildren( name );
+
+                           $$ = interface;
+                        }
                      ;
 
 Body              :     Visibility
@@ -510,41 +635,297 @@ InlineStructInitList   :  COLON MultiObjectInit SEMI
                        ;
 
 FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
+                            {
+                              NodeAbstract *fieldvar( nullptr );
+                              fieldvar = new NodeAbstract();
+                              assert( fieldvar != nullptr );
+
+                              fieldvar->set_name( "FieldVariableDeclaration" );
+
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $3 );
+                              $1->MakeSibling( $4 );
+
+                              fieldvar->AdoptChildren( $1 );
+                              $$ = fieldvar;
+                            }
                           | StorageModifier Type TypeModifier Initializer DeclareAndAssignArray SEMI
+                            {
+                             NodeAbstract *fieldvar( nullptr );
+                             fieldvar = new NodeAbstract();
+                             assert( fieldvar != nullptr );
+
+                             fieldvar->set_name( "FieldVariableDeclaration" );
+
+                             $1->MakeSibling( $2 );
+                             $1->MakeSibling( $3 );
+                             $1->MakeSibling( $4 );
+                             $1->MakeSibling( $5 );
+
+                             fieldvar->AdoptChildren( $1 );
+                             $$ = fieldvar;
+                            }
                           | Type TypeModifier Initializer SEMI
+                            {
+                             NodeAbstract *fieldvar( nullptr );
+                             fieldvar = new NodeAbstract();
+                             assert( fieldvar != nullptr );
+
+                             fieldvar->set_name( "FieldVariableDeclaration" );
+
+                             $1->MakeSibling( $2 );
+                             $1->MakeSibling( $3 );
+
+                             fieldvar->AdoptChildren( $1 );
+                             $$ = fieldvar;
+                            }
                           | Type TypeModifier Initializer DeclareAndAssignArray SEMI
+                            {
+                              NodeAbstract *fieldvar( nullptr );
+                              fieldvar = new NodeAbstract();
+                              assert( fieldvar != nullptr );
+
+                              fieldvar->set_name( "FieldVariableDeclaration" );
+                              
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $3 );
+                              $1->MakeSibling( $4 );
+
+                              fieldvar->AdoptChildren( $1 );
+
+                              $$ = fieldvar;
+                            }
                           ;
 
 StorageModifier : CONST
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("const");
+                     $$ = sm;
+                  }
                 | STATIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("static");
+                     $$ = sm;
+                  }
                 | STATIC ATOMIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("static atomic");
+                     $$ = sm;
+                  }
                 | ATOMIC STATIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("atomic static");
+                     $$ = sm;
+                  }
                 | NONATOMIC STATIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("nonatomic static");
+                     $$ = sm;
+                  }
                 | STATIC NONATOMIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("static nonatomic");
+                     $$ = sm;
+                  }
                 | ATOMIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("atomic");
+                     $$ = sm;
+                  }
                 | NONATOMIC
+                  {
+                     NodeAbstract *sm( nullptr );
+                     sm = new NodeAbstract();
+                     assert( sm != nullptr );
+
+                     sm->set_name("nonatomic");
+                     $$ = sm;
+                  }
                 ;
 
 
 ConstructorDeclaration   : MethodDeclarator Block
+                           {
+                              NodeAbstract *cons( nullptr );
+                              cons = new NodeAbstract();
+                              assert( cons != nullptr );
+
+                              cons->set_name( "ConstructorDeclaration" );
+                              $1->MakeSibling( $2 );
+                              cons->AdoptChildren( $1 );
+                              $$ = cons;
+                           }
                          | MethodDeclarator COLON ClassInitializers SEMI
+                           {
+                              NodeAbstract *cons( nullptr );
+                              cons = new NodeAbstract();
+                              assert( cons != nullptr );
+
+                              cons->set_name( "ConstructorDeclaration" );
+                              $1->MakeSibling( $3 );
+                              cons->AdoptChildren( $1 );
+                              $$ = cons;
+                           }
                          | MethodDeclarator COLON ClassInitializers Block
+                           {
+                              NodeAbstract *cons( nullptr );
+                              cons = new NodeAbstract();
+                              assert( cons != nullptr );
+
+                              cons->set_name( "ConstructorDeclaration" );
+                              $1->MakeSibling( $3 );
+                              $1->MakeSibling( $4 );
+                              cons->AdoptChildren( $1 );
+                              $$ = cons;
+                           }
                          ;
 
 ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
+                           {
+                              NodeAbstract *ini(nullptr);
+                              ini = new NodeAbstract();
+                              assert( ini != nullptr );
+
+                              ini->set_name( "ClassInitializer" );
+
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+
+                              id->MakeSibling( $3 );
+
+                              ini->AdoptChildren( id );
+
+                              $$ = ini;
+                           }
                          | ClassInitializers COMMA IDENTIFIER LPAREN Expression RPAREN
+                           {
+                              NodeAbstract *ini(nullptr);
+                              ini = new NodeAbstract();
+                              assert( ini != nullptr );
+
+                              ini->set_name( "ClassInitializer" );
+
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$3 );
+                              delete( $3 );
+
+                              id->MakeSibling( $5 );
+
+                              ini->AdoptChildren( id );
+                              
+                              $1->MakeSibling( ini );
+
+                              $$ = $1;
+                           }
                          ;
 
 MethodDeclaration        
                          : Type TypeModifier MethodDeclarator MethodBody
-                         | VOID TypeModifier MethodDeclarator MethodBody
+                           {
+                              NodeAbstract *method( nullptr );
+                              method = new NodeAbstract();
+                              assert( method != nullptr );
+                              method->set_name( "MethodDeclaration" );
+
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $3 );
+                              $1->MakeSibling( $4 );
+
+                              method->AdoptChildren( $1 );
+
+                              $$ = method;
+                           }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
-                         | IMPLEMENTS VOID TypeModifier MethodDeclarator MethodBody
+                           {
+                              NodeAbstract *method( nullptr );
+                              method = new NodeAbstract();
+                              assert( method != nullptr );
+                              method->set_name( "MethodDeclaration" );
+   
+                              NodeAbstract *impl( nullptr );
+                              impl = new NodeAbstract();
+                              assert( impl != nullptr );
+
+                              impl->set_name( "implements" );
+   
+                              impl->MakeSibling( $2 );
+                              impl->MakeSibling( $3 );
+                              impl->MakeSibling( $4 );
+                              impl->MakeSibling( $5 );
+
+                              method->AdoptChildren( impl );
+
+                              $$ = method;
+                           }
                          | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
-                         | OVERRIDES VOID TypeModifier MethodDeclarator MethodBody
+                           {
+                              NodeAbstract *method( nullptr );
+                              method = new NodeAbstract();
+                              assert( method != nullptr );
+                              method->set_name( "MethodDeclaration" );
+   
+                              NodeAbstract *over( nullptr );
+                              over = new NodeAbstract();
+                              assert( over != nullptr );
+
+                              over->set_name( "overrides" );
+   
+                              over->MakeSibling( $2 );
+                              over->MakeSibling( $3 );
+                              over->MakeSibling( $4 );
+                              over->MakeSibling( $5 );
+
+                              method->AdoptChildren( over );
+
+                              $$ = method;
+                           }
                          ;
 
 MethodBody  :  Block
+               {
+                  NodeAbstract *method( nullptr );
+                  method = new NodeAbstract();
+                  assert( method != nullptr );
+
+                  method->set_name( "MethodBody" );
+
+                  method->AdoptChildren( $1 );
+
+                  $$ = method;
+               }
             ;
 
 MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
@@ -643,32 +1024,155 @@ ForStatement   :  LBRACE Statement RBRACE
                |  LBRACE RBRACE
                ;
 
-MapExpression   :  Expression AT FORWARDSLASH Expression
+MapExpression   :    Expression AT FORWARDSLASH Expression
+                     {
+                        NodeAbstract *map( nullptr );
+                        map = new NodeAbstract();
+                        assert( map != nullptr );
+
+                     }
                 ;
 
-InitFor  : LocalVariableDeclaration
+InitFor  :  LocalVariableDeclaration
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( "InitFor" );
+               $$->AdoptChildren( $1 );
+            }
          ;
 
-ReturnStatement   :  RETURN Expression SEMI
-                  |  RETURN SEMI
+ReturnStatement   :  RETURN SEMI
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "Return" );
+                     }
                   ;
 
 
 Initializer :  MultiBoolInit
+               {
+                  NodeAbstract *ini( nullptr );
+                  ini = new NodeAbstract();
+                  assert( ini != nullptr );
+
+                  ini->set_name( "BoolInitializers" );
+
+                  ini->AdoptChildren( $1 );
+
+                  $$ = ini;
+               }
             |  MultiNumberInit
+               {
+                  NodeAbstract *ini( nullptr );
+                  ini = new NodeAbstract();
+                  assert( ini != nullptr );
+
+                  ini->set_name( "NumberInitializers" );
+
+                  ini->AdoptChildren( $1 );
+
+                  $$ = ini;
+               }
             |  MultiStringInit
+               {
+                  NodeAbstract *ini( nullptr );
+                  ini = new NodeAbstract();
+                  assert( ini != nullptr );
+
+                  ini->set_name( "StringInitializers" );
+
+                  ini->AdoptChildren( $1 );
+
+                  $$ = ini;
+               }
             |  MultiObjectInit
+               {
+                  NodeAbstract *ini( nullptr );
+                  ini = new NodeAbstract();
+                  assert( ini != nullptr );
+
+                  ini->set_name( "ObjectInitializers" );
+
+                  ini->AdoptChildren( $1 );
+
+                  $$ = ini;
+               }
             ;
 
 
 MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
+                           {
+                              $1->MakeSibling( $3 );
+                              $$ = $1;
+                           }
                          | BoolInitializer
+                           {
+                              $$ = $1;
+                           }
                          ;
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
+                           {
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+
+                              $$ = new NodeAbstract();
+                              $$->set_name( "BoolInitializer" );
+
+                              id->MakeSibling( $2 );
+                              id->MakeSibling( $4 );
+
+                              $$->AdoptChildren( id );
+                           }
                          | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
+                           {
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+
+                              $$ = new NodeAbstract();
+                              $$->set_name( "BoolInitializer" );
+
+                              id->MakeSibling( $2 );
+                              id->MakeSibling( $4 );
+
+                              $$->AdoptChildren( id );
+                           }
                          | IDENTIFIER LPAREN LogicalUnaryExpression RPAREN
+                           {
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+
+                              $$ = new NodeAbstract();
+                              $$->set_name( "BoolInitializer" );
+
+                              id->MakeSibling( $3 );
+
+                              $$->AdoptChildren( id );
+                           }
                          | IDENTIFIER LPAREN Boolean RPAREN
+                           {
+                              NodeAbstract *id( nullptr );
+                              id = new NodeAbstract();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+
+                              $$ = new NodeAbstract();
+                              $$->set_name( "BoolInitializer" );
+
+                              id->MakeSibling( $3 );
+
+                              $$->AdoptChildren( id );
+                           }
                          ;
 
 
@@ -869,6 +1373,11 @@ Type  :  BoolType
       |  AutoType
          {
             $$ = $1;
+         }
+      |  VOID
+         {
+            $$ = new NodeAbstract();
+            $$->set_name("Void");
          }
       ;
 
