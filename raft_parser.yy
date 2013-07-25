@@ -346,21 +346,58 @@ TypeDeclaration   :     ClassDeclaration
                         }
                   |     StructDeclaration InlineStructInitList
                         {
+                           $1->AdoptChildren( $2 );
                            $$ = $1;
                         }
                   ;
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
-                           $$ = new Node::NodeAbstract();
-                           $$->set_name(*$3);
+                           NodeAbstract *class( nullptr );
+                           class = new NodeAbstract();
+                           assert( class != nullptr );
+                           class->set_name( "ClassDecl" );
+
+                           NodeAbstract *id( nullptr );
+                           id = new NodeAbstract();
+                           assert( id != nullptr );
+                           id->set_name( *$3 );
                            delete( $3 );
+
+                           id->MakeSibling( $1 );
+                           id->MakeSibling( $4 );
+                           id->MakeSibling( $5 );
+                           id->MakeSibling( $7 );
+
+                           class->AdoptChildren( id );
+                           $$ = class;
                         }
                   |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
                         {
-                           $$ = new Node::NodeAbstract();
-                           $$->set_name( *$3 );
+                           NodeAbstract *cls( nullptr );
+                           cls = new NodeAbstract();
+                           assert( cls != nullptr );
+                           cls->set_name( "ClassDecl" );
+
+                           NodeAbstract *id( nullptr );
+                           id = new NodeAbstract();
+                           assert( id != nullptr );
+                           id->set_name( *$3 );
                            delete( $3 );
+
+                           id->MakeSibling( $1 );
+                           id->MakeSibling( $4 );
+                           id->MakeSibling( $5 );
+
+                           NodeAbstract *empty( nullptr );
+                           empty = new NodeAbstract();
+                           assert( empty != nullptr );
+                           empty->set_name( "EmptyBody" );
+
+                           id->MakeSibling( empty );
+
+                           cls->AdoptChildren( id );
+                           $$ = cls;
                         }
                   ;
 
