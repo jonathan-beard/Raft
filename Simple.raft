@@ -29,7 +29,10 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
 
    int64 bar( int32 a )
    {
-      if( a == b ) a = b;
+      if( a < 4 )
+      {
+
+      }
    }
 
    void test( int32 a, int64 t )

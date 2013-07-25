@@ -302,6 +302,10 @@ T                 :     Filename
                            $1->MakeSibling( $2 );
                         }
                   |     error
+                        {
+                           $$ = new NodeAbstract();
+                           $$->set_name( "Error");
+                        }
                   ;
 /* handle cpp file names for errors */
 Filename          :     POUND    INT_TOKEN   STR_TOKEN
@@ -1321,12 +1325,12 @@ SelectionStatementInit  :
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
-                           con->set_name( "Conditional" );
+                           con->set_name( "IfElseConditional" );
                            
                            /* first will be cond, then true then false */
                            $3->MakeSibling( $5 ); 
                            $3->MakeSibling( $7 );
-                           con->AdoptChildren( con );
+                           con->AdoptChildren( $3 );
 
                            $$ = con;
                         }
@@ -1335,11 +1339,11 @@ SelectionStatementInit  :
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
-                           con->set_name( "Conditional" );
+                           con->set_name( "IfConditional" );
                            
                            $3->MakeSibling( $5 );
 
-                           con->AdoptChildren( con );
+                           con->AdoptChildren( $3 );
 
                            $$ = con;
                         }
