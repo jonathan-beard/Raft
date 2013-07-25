@@ -353,10 +353,10 @@ TypeDeclaration   :     ClassDeclaration
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
-                           NodeAbstract *class( nullptr );
-                           class = new NodeAbstract();
-                           assert( class != nullptr );
-                           class->set_name( "ClassDecl" );
+                           NodeAbstract *cls( nullptr );
+                           cls = new NodeAbstract();
+                           assert( cls != nullptr );
+                           cls->set_name( "ClassDecl" );
 
                            NodeAbstract *id( nullptr );
                            id = new NodeAbstract();
@@ -369,8 +369,8 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
                            id->MakeSibling( $5 );
                            id->MakeSibling( $7 );
 
-                           class->AdoptChildren( id );
-                           $$ = class;
+                           cls->AdoptChildren( id );
+                           $$ = cls;
                         }
                   |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
                         {
@@ -405,7 +405,8 @@ Generic  :  LCARROT GenericList RCARROT
             { 
                $$ = $2;
             }
-         |  {  $$ = nullptr; }
+         |  {  $$ = new NodeAbstract();
+               $$->set_name("EmptyGenericList"); }
          ;
 
 GenericList :  CLASS IDENTIFIER
