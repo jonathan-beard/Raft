@@ -1,8 +1,8 @@
 class Foo{
    int32 a( 0 );
 
-   int32 b(0)
-   Foo( int64 x(0) ) : bar(0)
+   <<bool a( false )>>
+   Foo( int32 a(0) ) : foo(3)
    {
 
    }
