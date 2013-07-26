@@ -268,8 +268,11 @@
 %type    <node>    Boolean
 %type    <node>    AnonymousArrayAccess
 %type    <node>    Block
-
-
+%type    <node>    SingleInitializers
+%type    <node>    StreamingKernelConstructor
+%type    <node>    AnonymousStructDeclaration
+%type    <node>    ForceInheritance
+%type    <node>    NumberType
 %%
 
 
@@ -281,7 +284,6 @@ CompilationUnit   :     END
                            assert( s != nullptr );
                            driver.set_root( s );
                            s->AdoptChildren( $1 );
-                           std::cerr << "Really called this\n"; 
                         }
                   ;
 
@@ -304,7 +306,7 @@ T                 :     Filename
                   |     error
                         {
                            $$ = new NodeAbstract();
-                           $$->set_name( "Error");
+                           $$->set_name( "Error" );
                         }
                   ;
 /* handle cpp file names for errors */
@@ -526,6 +528,64 @@ StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
                      }
                   ;
 
+AnonymousStructDeclaration :  STRUCT Inherit LBRACE Body RBRACE
+                              {
+                                  NodeAbstract *str( nullptr );
+                                  str = new NodeAbstract();
+                                  assert( str != nullptr );
+                                  str->set_name( "AnonymousStructDeclaration" );
+                                  
+                                  NodeAbstract *id( nullptr );
+                                  id = new NodeAbstract();
+                                  assert( id != nullptr );
+                                  id->set_name( "Anonymous" );
+
+                                  id->MakeSibling( $2 );
+                                  id->MakeSibling( $4 );
+
+                                  str->AdoptChildren( id );
+
+                                  $$ = str;
+                              }
+                           |  STRUCT ForceInheritance LBRACE RBRACE
+                              {
+                                 NodeAbstract *str( nullptr );
+                                 str = new NodeAbstract();
+                                 assert( str != nullptr );
+                                 str->set_name( "AnonymousStructDeclaration" );
+                                 
+                                 NodeAbstract *id( nullptr );
+                                 id = new NodeAbstract();
+                                 assert( id != nullptr );
+                                 id->set_name( "Anonymous" );
+
+                                 id->MakeSibling( $2 );
+
+                                 NodeAbstract *empty( nullptr );
+                                 empty = new NodeAbstract();
+                                 assert( empty != nullptr );
+                                 empty->set_name( "Empty Body" );
+
+                                 id->MakeSibling( empty );
+
+                                 str->AdoptChildren( id );
+
+                                 $$ = str;
+                              }
+                           ;
+
+ForceInheritance  :  COLON EXTENDS IDENTIFIER
+                     {
+                         NodeAbstract *in( nullptr );
+                         in = new NodeAbstract();
+                         assert( in != nullptr );
+                         std::stringstream ss;
+                         ss << "Inherits from: " << *$3;
+                         in->set_name( ss.str() );
+                         delete( $3 );
+                         $$ = in;
+                     }
+                  ;
 
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
@@ -849,7 +909,40 @@ ConstructorDeclaration   : MethodDeclarator Block
                               cons->AdoptChildren( $1 );
                               $$ = cons;
                            }
+                         | StreamingKernelConstructor
+                           {
+                              $$ = $1;
+                           }
                          ;
+
+StreamingKernelConstructor :  SingleInitializers MethodDeclarator COLON ClassInitializers SEMI
+                           {
+                              std::cerr << "HERE\n"; 
+                              NodeAbstract *cons( nullptr );
+                              cons = new NodeAbstract();
+                              assert( cons != nullptr );
+
+                              cons->set_name( "StreamingConstructorDeclaration" );
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $4 );
+                              cons->AdoptChildren( $1 );
+                              $$ = cons;
+                           }
+                           |  SingleInitializers MethodDeclarator COLON ClassInitializers Block
+                           {
+                              std::cerr << "Or HERE\n";
+                              NodeAbstract *cons( nullptr );
+                              cons = new NodeAbstract();
+                              assert( cons != nullptr );
+
+                              cons->set_name( "StreamingConstructorDeclaration" );
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $4 );
+                              $1->MakeSibling( $5 );
+                              cons->AdoptChildren( $1 );
+                              $$ = cons;
+                           }
+                           ;
 
 ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            {
@@ -895,8 +988,7 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            }
                          ;
 
-MethodDeclaration        
-                         : Type TypeModifier MethodDeclarator MethodBody
+MethodDeclaration        : SingleInitializers MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -905,13 +997,12 @@ MethodDeclaration
 
                               $1->MakeSibling( $2 );
                               $1->MakeSibling( $3 );
-                              $1->MakeSibling( $4 );
 
                               method->AdoptChildren( $1 );
 
                               $$ = method;
                            }
-                         | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
+                         | IMPLEMENTS SingleInitializers MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -927,13 +1018,12 @@ MethodDeclaration
                               impl->MakeSibling( $2 );
                               impl->MakeSibling( $3 );
                               impl->MakeSibling( $4 );
-                              impl->MakeSibling( $5 );
 
                               method->AdoptChildren( impl );
 
                               $$ = method;
                            }
-                         | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
+                         | OVERRIDES SingleInitializers MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -949,7 +1039,6 @@ MethodDeclaration
                               over->MakeSibling( $2 );
                               over->MakeSibling( $3 );
                               over->MakeSibling( $4 );
-                              over->MakeSibling( $5 );
 
                               method->AdoptChildren( over );
 
@@ -1454,6 +1543,64 @@ ReturnStatement   :  RETURN SEMI
                      }
                   ;
 
+SingleInitializers:  BoolType BoolInitializer
+                     {
+                        NodeAbstract *s( nullptr );
+                        s = new NodeAbstract();
+                        assert( s != nullptr );
+                        s->set_name( "SingleBoolInitializer" );
+                        $1->MakeSibling( $2 );
+                        s->AdoptChildren( $1 );
+                        $$ = s;
+                     }
+                  |  ObjectType ObjectInitializer
+                     {
+                        NodeAbstract *s( nullptr );
+                        s = new NodeAbstract();
+                        assert( s != nullptr );
+                        s->set_name( "SingleObjectInitializer" );
+                        $1->MakeSibling( $2 );
+                        s->AdoptChildren( $1 );
+                        $$ = s;
+                     }
+                  |  StringType StrInitializer
+                     {
+                        NodeAbstract *s( nullptr );
+                        s = new NodeAbstract();
+                        assert( s != nullptr );
+                        s->set_name( "SingleStringInitializer" );
+                        $1->MakeSibling( $2 );
+                        s->AdoptChildren( $1 );
+                        $$ = s;
+                     }
+                  |  NumberType NumberInitializer
+                     {
+                        NodeAbstract *s( nullptr );
+                        s = new NodeAbstract();
+                        assert( s != nullptr );
+                        s->set_name( "SingleNumberInitializer" );
+                        $1->MakeSibling( $2 );
+                        s->AdoptChildren( $1 );
+                        $$ = s;
+                     }
+                  |  VOID
+                     {
+                        /**
+                         * this is a bit odd to put here, however
+                         * its the cleanest way with named return
+                         * types to allow a void return
+                         */
+                        NodeAbstract *s( nullptr );
+                        s = new NodeAbstract();
+                        assert( s != nullptr );
+                        s->set_name( "VoidReturn" );
+                        $$ = s;
+                     }
+                  |  AnonymousStructDeclaration
+                     {
+                        $$ = $1;
+                     }
+                  ;
 
 Initializer :  MultiBoolInit
                {
@@ -1533,7 +1680,7 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
 
                               $$->AdoptChildren( id );
                            }
-                         | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
+                    /*     | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
@@ -1581,7 +1728,7 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            }
                          ;
 
-
+                        */
 MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
                            {
                               $1->MakeSibling( $3 );
@@ -1790,6 +1937,17 @@ BoolType          :     BOOLEAN
                            $$->set_name( "BOOL" );
                         }
                   ;
+
+NumberType        :     IntType
+                        {
+                           $$ = $1;
+                        }
+                  |     FloatType
+                        {
+                           $$ = $1;
+                        }
+                  ;
+
 IntType           :     INT8T
                         { 
                            $$ = new NodeAbstract();
