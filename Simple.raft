@@ -12,7 +12,6 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
    int32 aa[]( nill );
 
    
-   int32 a(0)
    Foo( int64 x(0 + 3), int32 a[100](0) ) : bar( x ),
                     tooth( 3 + 100 )
    {
@@ -21,14 +20,14 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
       c[0,0] = 4;
    }
 
-   implements 
-   <<struct : public too{}>>
+   streams 
+   [[ String a ]]
    ToString( int64 x )
    {
       
    }
 
-   << int64 a(0) >>
+   void
    bar( int32 a )
    {
       if( a < 4 )
@@ -37,7 +36,8 @@ class Foo< class Type, int32 array_size[2](1) > : extends Kernel{
       }
    }
 
-   void test( int32 a, int64 t )
+   void 
+   test( int32 a, int64 t )
    {
       OS.out.println( "Vars: %d %d", a, t );
    }

@@ -1,9 +1,27 @@
 class Foo{
-   int32 a( 0 );
-
-   <<bool a( false )>>
-   Foo( int32 a(0) ) : foo(3)
+@public:
+   implements int32 a( 0 );
+   Foo( int32 a) : foo(3)
    {
+
+   }
+   
+   /**
+    * [[type id, type id]] indicates name of output ports for type,
+    * the standard type modifiers work for these too so you can do
+    * type id<synchronized =true, asdf=yes> type symantics and extend
+    * the behavior of ports without modifying the language
+    * the streams keyword is necessary to avoid some really nasty reduce/reduce
+    * compiler behavior. The keyword is also valid for constructors which
+    * is really handy in conjunction with the map function to expand and 
+    * reduce streams.  When accepting a return from a streaming kernel
+    * two things can happen, one the acceptor is itself a stream or its 
+    * a procedural program.  In either even the follow-on procedural code
+    * will be called by the scheduler when data is available and the user
+    * can do what they like with it, if its a streaming kernel then the
+    * standard symantics apply.
+    */
+   streams  [[bool c]] bar(){
 
    }
 }

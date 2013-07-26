@@ -72,9 +72,6 @@
    long double          dval;
    /* begin node types */
    Node::NodeAbstract   *node;
-
-
-
 }
 
 %token       END     0     "end of file"
@@ -88,6 +85,10 @@
 %token       RPAREN  
 %token       LCARROT  
 %token       RCARROT  
+%token       DLBRACKET
+%token       DRBRACKET
+%token       DLCARROT
+%token       DRCARROT
 %token       COLON  
 %token       SEMI  
 %token       AUTOGEN  
@@ -99,7 +100,8 @@
 %token       INTERFACE  
 %token       OVERRIDES  
 %token       IMPLEMENTS  
-%token       EXTENDS  
+%token       EXTENDS 
+%token       STREAMS
 %token       ATPUBLIC
 %token       ATPORTS  
 %token       ATPRIVATE  
@@ -268,11 +270,9 @@
 %type    <node>    Boolean
 %type    <node>    AnonymousArrayAccess
 %type    <node>    Block
-%type    <node>    SingleInitializers
+%type    <node>    StreamInitializers
+%type    <node>    StreamInitializer
 %type    <node>    StreamingKernelConstructor
-%type    <node>    AnonymousStructDeclaration
-%type    <node>    ForceInheritance
-%type    <node>    NumberType
 %%
 
 
@@ -528,64 +528,7 @@ StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
                      }
                   ;
 
-AnonymousStructDeclaration :  STRUCT Inherit LBRACE Body RBRACE
-                              {
-                                  NodeAbstract *str( nullptr );
-                                  str = new NodeAbstract();
-                                  assert( str != nullptr );
-                                  str->set_name( "AnonymousStructDeclaration" );
-                                  
-                                  NodeAbstract *id( nullptr );
-                                  id = new NodeAbstract();
-                                  assert( id != nullptr );
-                                  id->set_name( "Anonymous" );
 
-                                  id->MakeSibling( $2 );
-                                  id->MakeSibling( $4 );
-
-                                  str->AdoptChildren( id );
-
-                                  $$ = str;
-                              }
-                           |  STRUCT ForceInheritance LBRACE RBRACE
-                              {
-                                 NodeAbstract *str( nullptr );
-                                 str = new NodeAbstract();
-                                 assert( str != nullptr );
-                                 str->set_name( "AnonymousStructDeclaration" );
-                                 
-                                 NodeAbstract *id( nullptr );
-                                 id = new NodeAbstract();
-                                 assert( id != nullptr );
-                                 id->set_name( "Anonymous" );
-
-                                 id->MakeSibling( $2 );
-
-                                 NodeAbstract *empty( nullptr );
-                                 empty = new NodeAbstract();
-                                 assert( empty != nullptr );
-                                 empty->set_name( "Empty Body" );
-
-                                 id->MakeSibling( empty );
-
-                                 str->AdoptChildren( id );
-
-                                 $$ = str;
-                              }
-                           ;
-
-ForceInheritance  :  COLON EXTENDS IDENTIFIER
-                     {
-                         NodeAbstract *in( nullptr );
-                         in = new NodeAbstract();
-                         assert( in != nullptr );
-                         std::stringstream ss;
-                         ss << "Inherits from: " << *$3;
-                         in->set_name( ss.str() );
-                         delete( $3 );
-                         $$ = in;
-                     }
-                  ;
 
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
@@ -884,7 +827,7 @@ ConstructorDeclaration   : MethodDeclarator Block
                               cons->set_name( "ConstructorDeclaration" );
                               $1->MakeSibling( $2 );
                               cons->AdoptChildren( $1 );
-                              $$ = cons;
+                              $$ = cons;  
                            }
                          | MethodDeclarator COLON ClassInitializers SEMI
                            {
@@ -915,31 +858,42 @@ ConstructorDeclaration   : MethodDeclarator Block
                            }
                          ;
 
-StreamingKernelConstructor :  SingleInitializers MethodDeclarator COLON ClassInitializers SEMI
+StreamingKernelConstructor :  STREAMS StreamInitializer MethodDeclarator Block
+                              {
+                                 NodeAbstract *cons( nullptr );
+                                 cons = new NodeAbstract();
+                                 assert( cons != nullptr );
+
+                                 cons->set_name( "StreamingConstructorDeclaration" );
+                                 $2->MakeSibling( $3 );
+                                 $2->MakeSibling( $4 );
+                                 cons->AdoptChildren( $2 );
+                                 $$ = cons;  
+                              }
+
+                           |  STREAMS StreamInitializer MethodDeclarator COLON ClassInitializers SEMI
                            {
-                              std::cerr << "HERE\n"; 
                               NodeAbstract *cons( nullptr );
                               cons = new NodeAbstract();
                               assert( cons != nullptr );
 
                               cons->set_name( "StreamingConstructorDeclaration" );
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $4 );
-                              cons->AdoptChildren( $1 );
+                              $2->MakeSibling( $3 );
+                              $2->MakeSibling( $5 );
+                              cons->AdoptChildren( $2 );
                               $$ = cons;
                            }
-                           |  SingleInitializers MethodDeclarator COLON ClassInitializers Block
+                           |  STREAMS StreamInitializer MethodDeclarator COLON ClassInitializers Block
                            {
-                              std::cerr << "Or HERE\n";
                               NodeAbstract *cons( nullptr );
                               cons = new NodeAbstract();
                               assert( cons != nullptr );
 
                               cons->set_name( "StreamingConstructorDeclaration" );
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $4 );
-                              $1->MakeSibling( $5 );
-                              cons->AdoptChildren( $1 );
+                              $2->MakeSibling( $3 );
+                              $2->MakeSibling( $5 );
+                              $2->MakeSibling( $6 );
+                              cons->AdoptChildren( $2 );
                               $$ = cons;
                            }
                            ;
@@ -988,7 +942,7 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            }
                          ;
 
-MethodDeclaration        : SingleInitializers MethodDeclarator MethodBody
+MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -997,12 +951,13 @@ MethodDeclaration        : SingleInitializers MethodDeclarator MethodBody
 
                               $1->MakeSibling( $2 );
                               $1->MakeSibling( $3 );
+                              $1->MakeSibling( $4 );
 
                               method->AdoptChildren( $1 );
 
                               $$ = method;
                            }
-                         | IMPLEMENTS SingleInitializers MethodDeclarator MethodBody
+                         | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -1018,12 +973,13 @@ MethodDeclaration        : SingleInitializers MethodDeclarator MethodBody
                               impl->MakeSibling( $2 );
                               impl->MakeSibling( $3 );
                               impl->MakeSibling( $4 );
+                              impl->MakeSibling( $5 );
 
                               method->AdoptChildren( impl );
 
                               $$ = method;
                            }
-                         | OVERRIDES SingleInitializers MethodDeclarator MethodBody
+                         | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
                               method = new NodeAbstract();
@@ -1039,6 +995,7 @@ MethodDeclaration        : SingleInitializers MethodDeclarator MethodBody
                               over->MakeSibling( $2 );
                               over->MakeSibling( $3 );
                               over->MakeSibling( $4 );
+                              over->MakeSibling( $5 );
 
                               method->AdoptChildren( over );
 
@@ -1543,64 +1500,67 @@ ReturnStatement   :  RETURN SEMI
                      }
                   ;
 
-SingleInitializers:  BoolType BoolInitializer
+
+StreamInitializer: DLBRACKET StreamInitializers DRBRACKET
+                     {  
+                        NodeAbstract *node( nullptr );
+                        node = new NodeAbstract();
+                        assert( node != nullptr );
+                        node->set_name( "ReturnStreamInitializer" );
+                        
+                        node->AdoptChildren( $2 );
+                        $$ = node;
+                     }  
+                  ;
+
+StreamInitializers   :  VOID  
                      {
-                        NodeAbstract *s( nullptr );
-                        s = new NodeAbstract();
-                        assert( s != nullptr );
-                        s->set_name( "SingleBoolInitializer" );
-                        $1->MakeSibling( $2 );
-                        s->AdoptChildren( $1 );
-                        $$ = s;
+                        NodeAbstract *v( nullptr );
+                        v = new NodeAbstract();
+                        assert( v != nullptr );
+                        v->set_name("NoOutStream");
+                        $$ = v;
                      }
-                  |  ObjectType ObjectInitializer
+                     | Type TypeModifier IDENTIFIER
                      {
-                        NodeAbstract *s( nullptr );
-                        s = new NodeAbstract();
-                        assert( s != nullptr );
-                        s->set_name( "SingleObjectInitializer" );
-                        $1->MakeSibling( $2 );
-                        s->AdoptChildren( $1 );
-                        $$ = s;
+                        NodeAbstract *ini( nullptr );
+                        ini = new NodeAbstract();
+                        assert( ini != nullptr );
+                        ini->set_name( "Stream" );
+
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        id->set_name( *$3 );
+                        delete( $3 );
+                        ini->MakeSibling( id );
+                        ini->MakeSibling( $1 );
+                        ini->MakeSibling( $2 );
+
+                        $$ = ini;
                      }
-                  |  StringType StrInitializer
+                  |  StreamInitializers COMMA Type TypeModifier IDENTIFIER
                      {
-                        NodeAbstract *s( nullptr );
-                        s = new NodeAbstract();
-                        assert( s != nullptr );
-                        s->set_name( "SingleStringInitializer" );
-                        $1->MakeSibling( $2 );
-                        s->AdoptChildren( $1 );
-                        $$ = s;
-                     }
-                  |  NumberType NumberInitializer
-                     {
-                        NodeAbstract *s( nullptr );
-                        s = new NodeAbstract();
-                        assert( s != nullptr );
-                        s->set_name( "SingleNumberInitializer" );
-                        $1->MakeSibling( $2 );
-                        s->AdoptChildren( $1 );
-                        $$ = s;
-                     }
-                  |  VOID
-                     {
-                        /**
-                         * this is a bit odd to put here, however
-                         * its the cleanest way with named return
-                         * types to allow a void return
-                         */
-                        NodeAbstract *s( nullptr );
-                        s = new NodeAbstract();
-                        assert( s != nullptr );
-                        s->set_name( "VoidReturn" );
-                        $$ = s;
-                     }
-                  |  AnonymousStructDeclaration
-                     {
+                        NodeAbstract *ini( nullptr );
+                        ini = new NodeAbstract();
+                        assert( ini != nullptr );
+                        ini->set_name( "Stream" );
+                        
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        id->set_name( *$5 );
+                        delete( $5 );
+                        
+                        ini->MakeSibling( id );
+                        ini->MakeSibling( $3 );
+                        ini->MakeSibling( $4 );
+               
+                        $1->MakeSibling( ini );
                         $$ = $1;
                      }
                   ;
+
 
 Initializer :  MultiBoolInit
                {
@@ -1938,15 +1898,6 @@ BoolType          :     BOOLEAN
                         }
                   ;
 
-NumberType        :     IntType
-                        {
-                           $$ = $1;
-                        }
-                  |     FloatType
-                        {
-                           $$ = $1;
-                        }
-                  ;
 
 IntType           :     INT8T
                         { 

@@ -65,7 +65,7 @@ syn keyword javaBranch		break continue nextgroup=javaUserLabelRef skipwhite
 syn match   javaUserLabelRef	"\k\+" contained
 syn match   javaVarArg		"\.\.\."
 syn keyword javaScopeDecl	@ports @public @protected @private @configs 
-syn keyword javaAnnotation overrides implements
+syn keyword javaAnnotation overrides implements streams
 if exists("java_highlight_java_lang_ids")
   let java_highlight_all=1
 endif
