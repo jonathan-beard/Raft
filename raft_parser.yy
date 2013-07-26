@@ -1495,8 +1495,24 @@ InitFor  :  LocalVariableDeclaration
 
 ReturnStatement   :  RETURN SEMI
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "Return" );
+                        NodeAbstract *ret( nullptr );
+                        ret = new NodeAbstract();
+                        assert( ret != nullptr );
+
+                        ret->set_name( "Return" );
+                        $$ = ret;
+                     }
+                     RETURN LPAREN Expression RPAREN SEMI
+                     {
+                        NodeAbstract *ret( nullptr );
+                        ret = new NodeAbstract(0);
+                        assert( ret != nullptr );
+
+                        ret->set_name( "Return" );
+                        assert( $3 != nullptr );
+                        ret->AdoptChildren( $3 );
+                        
+                        $$ = ret;
                      }
                   ;
 
