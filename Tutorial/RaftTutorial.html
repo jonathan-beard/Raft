@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Raft Tutorial</title>
+<style type="text/css">
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #000000; background-color: #ffffff; }
+body {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #666666;
+	margin: 0;
+   padding: 0;
+	text-align: center;
+   color: #000000;
+}
+.oneColElsCtrHdr #container {
+	width: 90%;  
+   background: #FFFFFF;
+	margin: 0 auto; 
+   border: 1px solid #000000;
+	text-align: left;
+}
+.oneColElsCtrHdr #header { 
+	background: #DDDDDD; 
+	padding: 0 10px 0 20px; 
+} 
+.oneColElsCtrHdr #header h1 {
+	margin: 0;
+   padding: 10px 0; 
+}
+
+.oneColElsCtrHdr #mainContent {
+	padding: 0 20px; 
+   background: #FFFFFF;
+}
+.oneColElsCtrHdr #footer { 
+	padding: 0 10px;
+   background:#DDDDDD;
+} 
+.oneColElsCtrHdr #footer p {
+	margin: 0;
+   padding: 10px 0;
+}
+.lnr { color: #888888; background-color: #e6e6e6; }
+.Constant { color: #ff8c00; }
+.Statement { color: #b03060; font-weight: bold; }
+.PreProc { color: #1874cd; }
+.Special { color: #ff0000; }
+.Comment { color: #80a0ff; }
+.Identifier { color: #458b74; }
+.Type { color: #60ff60; font-weight: bold; }
+-->
+</style>
+</head>
+
+<body class="oneColElsCtrHdr">
+
+<meta name="keywords" content="Raft, Language, Stream, Parallel, Streaming, Threads, Process, Compiler" />
+<meta name="description" content="Short tutorial and introduction to the Raft language and run-time" />
+
+<div id="container">
+  <div id="header">
+    <h1>Raft Tutorial</h1>
+
+  <!-- end #header --></div>
+  <div id="mainContent">
+   <h3>Class Declaration</h3>
+   <p>
+       <!-- Text -->
+       A class is the basic unit within Raft.  A class can have several visibility levels, the default being
+       private if no visibility is specified.  Visibility is modified with the keywords <code>@public</code>,
+       <code>@private</code>,<code>@protected</code>.  Public visibility means that the members specified
+       after the keyword are visible to any calling class.  Protected visibility means that any class 
+       extending this class can use the methods or variables within this scope.  Private visibility ensures
+       that the code after this keyword is usable only by this class or accessed through accessor methods.
+   </p>
+   <p> 
+   <pre>
+<span class="lnr">1 </span><span class="Type">class</span> Example{
+<span class="lnr">2 </span><span class="PreProc">@public</span>:
+<span class="lnr">3 </span>
+<span class="lnr">4 </span><span class="PreProc">@protected</span>:
+<span class="lnr">5 </span>
+<span class="lnr">6 </span><span class="PreProc">@private</span>:
+<span class="lnr">7 </span>}
+</pre>
+   </p>
+   <h3>Inheritance</h3>
+   <p>
+      Classes can extend one class in order to inherit functionality, or implement an interface along with 
+      extending another class.  Single inheritance greatly simplifies virtual function lookup.  
+   </p>
+   <p>
+<pre>
+<span class="lnr">1 </span><span class="Type">class</span> Example : <span class="Type">extends</span> Kernel{
+<span class="lnr">2 </span>
+<span class="lnr">3 </span>}
+</pre>
+   </p>
+   <h3> Generics </h3>
+   <p>
+      Raft also supports generic classes where some types or class variables are left as variables until
+      compile time where they must be specified.  The example below shows a generic class <em>Example</em>
+      which takes a class <em>Type</em> and specifies a constant array <em>array</em> which has both its
+      elements with the default initialization of 2 for both.  Generic arguments with default parameters
+      are not required to be specified if the user wants to keep the default values.
+   </p>
+   <p>
+<pre>
+<span class="lnr">1 </span><span class="Type">class</span> Example&lt;<span class="Type">class</span> Type, <span class="Type">int32</span> array[<span class="Constant">2</span>](<span class="Constant">2</span>)&gt; : <span class="Type">extends</span> Kernel{
+<span class="lnr">2 </span>
+<span class="lnr">3 </span>}
+</pre>
+   </p>
+   <h3>Types</h3>
+   <p>
+   Raft supports the following types: </br></br>
+   <span class="Type">int8</span> - signed 8-bit integer </br>
+   <span class="Type">int16</span> - signed 16-bit integer </br>
+   <span class="Type">int32</span> - signed 32-bit integer </br>
+   <span class="Type">int64</span> - signed 64-bit integer </br>
+   <span class="Type">uint8</span> - un-signed 8-bit integer </br>
+   <span class="Type">uint16</span> - un-signed 16-bit integer </br>
+   <span class="Type">uint32</span> - un-signed 32-bit integer </br>
+   <span class="Type">uint64</span> - un-signed 64-bit integer </br>
+   <span class="Type">float32</span> - 32-bit floating point </br>
+   <span class="Type">float64</span> - 64-bit floating point </br>
+   <span class="Type">float96</span> - 96-bit floating point </br>
+   <span class="Type">String</span> - String object, arbitrary length </br>
+   </p>
+   <h3>Streaming</h3>
+   <p>
+   Raft explicitly supports stream processing.  It diverges from styles that have been used in the past
+   in order to more naturally express a streaming application in conjunction with more traditional 
+   procedural and threaded code.  The keyword <em>streams</em> is used to specify a function or constructor
+   (yikes!!) that utilizes the streaming paradigm.  The following example has a single constructor with
+   the streams keyword.  This means the entire class is built to support a single streaming kernel.
+   </p>
+   <p>
+<pre>
+<span class="lnr"> 1 </span><span class="Type">class</span> Sum&lt;<span class="Type">class</span> Type, <span class="Type">int32</span> array[<span class="Constant">2</span>](<span class="Constant">2</span>)&gt; : <span class="Type">extends</span> Kernel{
+<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example( <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 )
+<span class="lnr"> 3 </span>   {
+<span class="lnr"> 4 </span>      <span class="Comment">/**</span>
+<span class="lnr"> 5 </span><span class="Comment">       *</span><span class="Special"> With no further direction the compiler infers that you</span>
+<span class="lnr"> 6 </span><span class="Comment">       *</span><span class="Special"> want a pair-wise addition of all elements available on</span>
+<span class="lnr"> 7 </span><span class="Comment">       *</span><span class="Special"> input streams x0 and x1 and assign the sum to the outbound</span>
+<span class="lnr"> 8 </span><span class="Comment">       *</span><span class="Special"> stream a.</span>
+<span class="lnr"> 9 </span><span class="Comment">       */</span>
+<span class="lnr">10 </span>      a = x0 + x1;
+<span class="lnr">11 </span>   }
+<span class="lnr">12 </span>}
+</pre>
+   </p>
+   <p>
+   For more complicated behavior there is another way of specifying the behavior of a section of code with 
+   respect to streams as is shown in the next example.
+   </p>
+
+<pre>
+<span class="lnr"> 1 </span><span class="Type">class</span> Sum&lt;<span class="Type">class</span> Type, <span class="Type">int32</span> array[<span class="Constant">2</span>](<span class="Constant">2</span>)&gt; : <span class="Type">extends</span> Kernel{
+<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example( <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 )
+<span class="lnr"> 3 </span>   {
+<span class="lnr"> 4 </span>      <span class="Comment">/**</span>
+<span class="lnr"> 5 </span><span class="Comment">       *</span><span class="Special"> using the get method of the base class Kernel, a user</span>
+<span class="lnr"> 6 </span><span class="Comment">       *</span><span class="Special"> tells the compiler explicitly to remove the number of </span>
+<span class="lnr"> 7 </span><span class="Comment">       *</span><span class="Special"> items specified in the parameter, e.g. x0.get( 1 ) would
+<span class="lnr"> 8 </span><span class="Comment">       *</span><span class="Special"> specify 1 item to be removed.  The push function has the</span>
+<span class="lnr"> 9 </span><span class="Comment">       * </span><span class = "Special">effect on an output stream of sending the specified number of</span>
+<span class="lnr">10 </span><span class="Comment">       *</span><span class="Special"> items, e.g. a.push( #elements, elements ) sends #elements items.  </span>
+<span class="lnr">11 </span><span class="Comment">       *</span><span class="Special"> Send can be modified by adding a third parameter of false to </span>
+<span class="lnr">12 </span><span class="Comment">       *</span><span class="Special"> specify non-blocking behavior.  </span>
+<span class="lnr">13 </span><span class="Comment">       */</span></span>
+<span class="lnr">14 </span>       a.push( <span class="Constant">1</span>, x0.get( <span class="Constant">1</span> ) + x1.get( <span class="Constant">1</span> ) );
+<span class="lnr">15 </span>   }
+<span class="lnr">16 </span>}
+</pre>
+</p>
+<h3>Partial Evaluation</h3>
+<p>
+   Often it is necessary to produce a method, constructor (as well as the streaming counterparts) with some
+   value.  Raft provides a way to provide input to a function and provide placeholder values for the rest
+   to produce a partially evaluated function.  
+</p>
+<p>
+<pre>
+<span class="lnr">1 </span><span class="Type">auto</span> X( test( <span class="Constant">#</span> , <span class="Constant">100</span> ) );
+</pre>
+</p>
+	<!-- end #mainContent -->
+  </div>
+  <div id="footer">
+	<p>
+    <center><cite>If you have any other suggestions, please let me know.  I'm always looking for new cool tips!!</cite></center></p>
+  <!-- end #footer --></div>
+<!-- end #container --></div>
+
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'flexandbisoncplusplus'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+    </script>
+        
+
+</body>
+</html>

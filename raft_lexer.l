@@ -89,21 +89,22 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ">"                     { TOKEN( RCARROT ); }
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
-"autogen"               { TOKEN( AUTOGEN ); }
-"auto"                  { TOKEN( AUTO ); }
-"final"                 { TOKEN( FINAL ); }
-"class"                 { TOKEN( CLASS ); }
-"system"                { TOKEN( SYSTEM); }
-"abstract"              { TOKEN( ABSTRACT ); }
-"interface"             { TOKEN( INTERFACE ); }
-"overrides"             { TOKEN( OVERRIDES ); }
-"implements"            { TOKEN( IMPLEMENTS ); }
-"extends"               { TOKEN( EXTENDS ); }
-"streams"               { TOKEN( STREAMS ); }
-"@public:"              { TOKEN( ATPUBLIC ); }
-"@private:"               { TOKEN( ATPRIVATE ); }
-"@protected:"             { TOKEN( ATPROTECTED ); }
-"@ports:"                 { TOKEN( ATPORTS ); }
+"autogen"               { TOKEN( AUTOGEN );   } /* automagically generate get/set functions */
+"auto"                  { TOKEN( AUTO );      } /* infer return type and set LHS type to match */
+"final"                 { TOKEN( FINAL );     } /* no extending this class or method */
+"class"                 { TOKEN( CLASS );     } /* class */
+"system"                { TOKEN( SYSTEM);     } /* this is a system defined, not in Raft lang */
+"abstract"              { TOKEN( ABSTRACT );  } /* must be extended to instantiate */
+"interface"             { TOKEN( INTERFACE ); } /* only an interface, no implementation */
+"overrides"             { TOKEN( OVERRIDES ); } /* functions mus thave this if they override s sub */
+"implements"            { TOKEN( IMPLEMENTS );} /* use if we implement an abstract or interface */
+"extends"               { TOKEN( EXTENDS ); }   /* use for classes to inherit from sub-classes */
+"streams"               { TOKEN( STREAMS ); }   /* use to define streaming methods or constructors */
+"lambda"                { TOKEN( LAMBDA ); }    /* define a lambda function */
+"lambdakernel"          { TOKEN( LAMBDAKERNEL ); } /* define a lambda streaming kernel */
+"@public:"              { TOKEN( ATPUBLIC ); }  /* set visibility public */
+"@private:"               { TOKEN( ATPRIVATE ); } /* visibility private */
+"@protected:"             { TOKEN( ATPROTECTED ); } /* visitility protected */
 "return"                { TOKEN( RETURN ); }
 "void"                  { TOKEN( VOID ); }
 "this"                  { TOKEN( THIS ); }

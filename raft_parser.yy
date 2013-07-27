@@ -102,8 +102,9 @@
 %token       IMPLEMENTS  
 %token       EXTENDS 
 %token       STREAMS
+%token       LAMBDA
+%token       LAMBDAKERNEL
 %token       ATPUBLIC
-%token       ATPORTS  
 %token       ATPRIVATE  
 %token       ATPROTECTED  
 %token       RETURN  
@@ -632,11 +633,6 @@ Visibility        :     ATPUBLIC
                         {
                            $$ = new NodeAbstract();
                            $$->set_name( "private" );
-                        }
-                  |     ATPORTS
-                        {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "ports" );
                         }
                   ;
 
