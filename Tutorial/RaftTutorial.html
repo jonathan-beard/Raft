@@ -140,7 +140,7 @@ body {
    <p>
 <pre>
 <span class="lnr"> 1 </span><span class="Type">class</span> Sum&lt;<span class="Type">class</span> Type, <span class="Type">int32</span> array[<span class="Constant">2</span>](<span class="Constant">2</span>)&gt; : <span class="Type">extends</span> Kernel{
-<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example( <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 )
+<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example[[ <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 ]]
 <span class="lnr"> 3 </span>   {
 <span class="lnr"> 4 </span>      <span class="Comment">/**</span>
 <span class="lnr"> 5 </span><span class="Comment">       *</span><span class="Special"> With no further direction the compiler infers that you</span>
@@ -160,7 +160,7 @@ body {
 
 <pre>
 <span class="lnr"> 1 </span><span class="Type">class</span> Sum&lt;<span class="Type">class</span> Type, <span class="Type">int32</span> array[<span class="Constant">2</span>](<span class="Constant">2</span>)&gt; : <span class="Type">extends</span> Kernel{
-<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example( <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 )
+<span class="lnr"> 2 </span>   <span class="PreProc">streams</span> [[ <span class="Type">int32</span> a ]] Example[[ <span class="Type">int32</span> x0, <span class="Type">int32</span> x1 ]]
 <span class="lnr"> 3 </span>   {
 <span class="lnr"> 4 </span>      <span class="Comment">/**</span>
 <span class="lnr"> 5 </span><span class="Comment">       *</span><span class="Special"> using the get method of the base class Kernel, a user</span>

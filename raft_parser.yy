@@ -274,6 +274,7 @@
 %type    <node>    StreamInitializers
 %type    <node>    StreamInitializer
 %type    <node>    StreamingKernelConstructor
+%type    <node>    StreamDeclarator
 %%
 
 
@@ -854,7 +855,7 @@ ConstructorDeclaration   : MethodDeclarator Block
                            }
                          ;
 
-StreamingKernelConstructor :  STREAMS StreamInitializer MethodDeclarator Block
+StreamingKernelConstructor :  STREAMS StreamInitializer StreamDeclarator Block
                               {
                                  NodeAbstract *cons( nullptr );
                                  cons = new NodeAbstract();
@@ -867,7 +868,7 @@ StreamingKernelConstructor :  STREAMS StreamInitializer MethodDeclarator Block
                                  $$ = cons;  
                               }
 
-                           |  STREAMS StreamInitializer MethodDeclarator COLON ClassInitializers SEMI
+                           |  STREAMS StreamInitializer StreamDeclarator COLON ClassInitializers SEMI
                            {
                               NodeAbstract *cons( nullptr );
                               cons = new NodeAbstract();
@@ -879,7 +880,7 @@ StreamingKernelConstructor :  STREAMS StreamInitializer MethodDeclarator Block
                               cons->AdoptChildren( $2 );
                               $$ = cons;
                            }
-                           |  STREAMS StreamInitializer MethodDeclarator COLON ClassInitializers Block
+                           |  STREAMS StreamInitializer StreamDeclarator COLON ClassInitializers Block
                            {
                               NodeAbstract *cons( nullptr );
                               cons = new NodeAbstract();
@@ -1012,6 +1013,54 @@ MethodBody  :  Block
                   $$ = method;
                }
             ;
+
+StreamDeclarator  :  IDENTIFIER StreamInitializers
+                     {
+                        NodeAbstract *streamdecl( nullptr );
+                        streamdecl = new NodeAbstract();
+                        assert( streamdecl != nullptr );
+                        streamdecl->set_name( "StreamDecl" );
+   
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        assert( $1 != nullptr );
+                        id->set_name( *$1 );
+                        delete( $1 );
+                       
+
+                        assert( $2 != nullptr );
+                        id->MakeSibling( $2 );
+
+                        streamdecl->AdoptChildren( id );
+
+                        $$ = streamdecl;
+                     }
+                  |  IDENTIFIER DLBRACKET DRBRACKET
+                     {
+                        NodeAbstract *streamdecl( nullptr );
+                        streamdecl = new NodeAbstract();
+                        assert( streamdecl != nullptr );
+                        streamdecl->set_name( "StreamDecl" );
+
+                        NodeAbstract *id( nullptr );
+                        id = new NodeAbstract();
+                        assert( id != nullptr );
+                        assert( $1 != nullptr );
+                        id->set_name( *$1 );
+                        delete( $1 );
+                        
+                        NodeAbstract *empty( nullptr );
+                        empty = new NodeAbstract();
+                        empty->set_name( "EmptyInitializerList" );
+                        
+                        id->MakeSibling( empty );
+                        streamdecl->AdoptChildren( id );
+
+                        $$ = streamdecl;
+                     }
+                  ;
+
 
 MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                            {
@@ -1498,10 +1547,10 @@ ReturnStatement   :  RETURN SEMI
                         ret->set_name( "Return" );
                         $$ = ret;
                      }
-                     RETURN LPAREN Expression RPAREN SEMI
+                  |  RETURN LPAREN Expression RPAREN SEMI
                      {
                         NodeAbstract *ret( nullptr );
-                        ret = new NodeAbstract(0);
+                        ret = new NodeAbstract();
                         assert( ret != nullptr );
 
                         ret->set_name( "Return" );
@@ -1530,7 +1579,7 @@ StreamInitializers   :  VOID
                         NodeAbstract *v( nullptr );
                         v = new NodeAbstract();
                         assert( v != nullptr );
-                        v->set_name("NoOutStream");
+                        v->set_name("NoStream");
                         $$ = v;
                      }
                      | Type TypeModifier IDENTIFIER
