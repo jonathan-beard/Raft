@@ -1,10 +1,26 @@
 class Foo{
 @public:
-   implements int32 a( 0 );
+   int32 a( 0 );
+
+
+   /**
+    * Foo - example of a constructor, will be called once
+    * at instantiation but no more.
+    */
    Foo( int32 a) : foo(3)
    {
 
    }
+   
+   /**
+    * Foo - example of a streaming kernel with
+    * a self named streaming function
+    */
+   streams [[ int64 a ]] Foo [[ void ]]
+   {
+      /* do something */
+   }
+
    streams  [[bool c]] bar [[void]]
    {
 

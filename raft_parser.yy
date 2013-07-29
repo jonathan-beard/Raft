@@ -1014,7 +1014,7 @@ MethodBody  :  Block
                }
             ;
 
-StreamDeclarator  :  IDENTIFIER StreamInitializers
+StreamDeclarator  :  IDENTIFIER StreamInitializer
                      {
                         NodeAbstract *streamdecl( nullptr );
                         streamdecl = new NodeAbstract();
