@@ -56,8 +56,10 @@ body {
 
 <body class="oneColElsCtrHdr">
 
-<meta name="keywords" content="Raft, Language, Stream, Parallel, Streaming, Threads, Process, Compiler" />
-<meta name="description" content="Short tutorial and introduction to the Raft language and run-time" />
+<meta name="keywords" content="Raft, Language, Stream, Parallel, Streaming, 
+                               Threads, Process, Compiler" />
+<meta name="description" content="Short tutorial and introduction 
+                                  to the Raft language and run-time" />
 
 <div id="container">
   <div id="header">
@@ -117,6 +119,7 @@ body {
    <p>
    Raft supports the following types: </br></br>
    <span class="Type">int8</span> - signed 8-bit integer </br>
+   <span class="Type">char</span> - char, size of int8 </br>
    <span class="Type">int16</span> - signed 16-bit integer </br>
    <span class="Type">int32</span> - signed 32-bit integer </br>
    <span class="Type">int64</span> - signed 64-bit integer </br>
@@ -131,11 +134,13 @@ body {
    </p>
    <h3>Streaming</h3>
    <p>
-   Raft explicitly supports stream processing.  It diverges from styles that have been used in the past
-   in order to more naturally express a streaming application in conjunction with more traditional 
-   procedural and threaded code.  The keyword <em>streams</em> is used to specify a function or constructor
-   (yikes!!) that utilizes the streaming paradigm.  The following example has a single constructor with
-   the streams keyword.  This means the entire class is built to support a single streaming kernel.
+   Raft explicitly supports stream processing.  It diverges from styles 
+   that have been used in the past in order to more naturally express a 
+   streaming application in conjunction with more traditional procedural 
+   and threaded code.  The keyword <em>streams</em> is used to specify a 
+   function or constructor (yikes!!) that utilizes the streaming paradigm.  
+   The following example has a single constructor with the streams keyword.  
+   This means the entire class is built to support a single streaming kernel.
    </p>
    <p>
 <pre>
@@ -154,8 +159,9 @@ body {
 </pre>
    </p>
    <p>
-   For more complicated behavior there is another way of specifying the behavior of a section of code with 
-   respect to streams as is shown in the next example.
+   For more complicated behavior there is another way of specifying the 
+   behavior of a section of code with respect to streams as is shown in 
+   the next example.
    </p>
 
 <pre>
@@ -177,13 +183,35 @@ body {
 <span class="lnr">16 </span>}
 </pre>
 </p>
-<h3>Partial Evaluation</h3>
 <p>
-   Often it is necessary to produce a method, constructor (as well as the streaming counterparts) with some
-   value.  Raft provides a way to provide input to a function and provide placeholder values for the rest
-   to produce a partially evaluated function.  
+   If initialization variables are needed for a specific kernel, then a standard
+   constructor can be used along with a streaming style constructor.  Through
+   two different mechanisms.  The first and simplest is to call the non-streaming
+   constructor, assigning the instantiated object to a name.  The name can then 
+   be used with the <code>CreateInstance()</code> function in order to create
+   a new instance of this object that has the same configuration parameters
+   initialized.  A second method is to use partial evaluation (described in the
+   next section).  Partial evaluation provides a way to give parameters to a 
+   function, in this case a constructor, that can be used in follow on calls
+   of that function.
 </p>
 <p>
+   TODO cut and paste example
+</p>
+<h3>Partial Evaluation</h3>
+<p>
+   Often it is necessary to produce a method, constructor (as well as the 
+   streaming counterparts) with some value.  Raft provides a way to provide 
+   input to a function and provide placeholder values for the rest to 
+   produce a partially evaluated function.  
+</p>
+<p>
+
+<pre>
+<span class="lnr">1 </span><span class="Type">Raft.Function</span> X( test( <span class="Constant">#</span> , <span class="Constant">100</span> ) );
+</pre>
+Or equivalently, the auto keyword will take on the return type of the partial
+evaluation operator:
 <pre>
 <span class="lnr">1 </span><span class="Type">auto</span> X( test( <span class="Constant">#</span> , <span class="Constant">100</span> ) );
 </pre>
@@ -191,24 +219,14 @@ body {
 	<!-- end #mainContent -->
   </div>
   <div id="footer">
-	<p>
-    <center><cite>If you have any other suggestions, please let me know.  I'm always looking for new cool tips!!</cite></center></p>
-  <!-- end #footer --></div>
-<!-- end #container --></div>
+  <!-- end #footer -->
+  </div>
+<!-- end #container -->
+</div>
+<h3>Mathematical Operators</h3>
+<p>
+Raft supports almost all of the C style operators, specifically:</br>
 
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'flexandbisoncplusplus'; // required: replace example with your forum shortname
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.type = 'text/javascript';
-        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
-    </script>
-        
-
+</p>
 </body>
 </html>
