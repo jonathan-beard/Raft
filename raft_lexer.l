@@ -213,6 +213,11 @@ O[0-7]+          {
 			                           TOKEN(FLOAT_TOKEN);		
                                }
 
+"\'"[.]"\'"                    {
+                                    /* should be the val between the ticks */
+                                    yylval->cval = yytext[1];
+                               }
+
 {IDENT}			                { 
 			                          STOKEN( IDENTIFIER ); 		
                                }

@@ -70,6 +70,7 @@
    bool                 bval;
    uintmax_t            uint_val;
    long double          dval;
+   char                 cval;
    /* begin node types */
    Node::NodeAbstract   *node;
 }
@@ -150,6 +151,7 @@
 %token       HAT  
 %token       COMMA  
 %token       BOOLEAN  
+%token       CHAR
 %token       INT8T  
 %token       INT16T  
 %token       INT32T  

@@ -1,15 +1,15 @@
 class Foo{
 @public:
    int32 a( 0 );
-
+   int32 foo( 0 );
 
    /**
     * Foo - example of a constructor, will be called once
     * at instantiation but no more.
     */
-   Foo( int32 a) : foo(3)
+   Foo( int32 a )
    {
-
+      self.a = a;
    }
    
    /**

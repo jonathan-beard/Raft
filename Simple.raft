@@ -46,7 +46,7 @@ class Foo< class Type, int32 array[2](1) > : extends Kernel{
    {
       
       int32 test_array[]( new int32[ 100 ], 0 );
-      auto array_output( foo( $ ) @/ (bar( $ ) @/ test_array ) );
+      int32 array_output[]( Sum( $[1], $[2] ) @/ test_array );
       bar();
 
       auto X( test( # , 100 ) );
