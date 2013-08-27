@@ -16,7 +16,7 @@ class Foo{
     * Foo - example of a streaming kernel with
     * a self named streaming function
     */
-   streams [[ int64 a ]] Foo [[ void ]]
+   streams [[ int64 a ]] xoo [[ void ]]
    {
       /* do something */
    }
