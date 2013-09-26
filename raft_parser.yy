@@ -1,9 +1,9 @@
 %skeleton "lalr1.cc"
-%require  "2.5"
+%require  "3.0"
 %debug
 %defines
-%define   namespace           "Raft"
-%define   parser_class_name   "Parser"
+%define   api.namespace       {Raft}
+%define   parser_class_name   {Parser}
 
 /* pre-declare classes that are needed for the parser here */
 %code requires{
@@ -277,9 +277,9 @@
 %type    <node>    StreamInitializer
 %type    <node>    StreamingMethodConstructor
 %type    <node>    StreamDeclarator
+
+
 %%
-
-
 CompilationUnit   :     END
                   |     T
                         {
@@ -2846,8 +2846,7 @@ AnonymousArrayAccess :  DOLLAR
 %%
 
 void 
-Raft::Parser::error( const Raft::Parser::location_type &l,
-                     const std::string &err_message )
+Raft::Parser::error( const std::string &err_message )
 {
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
