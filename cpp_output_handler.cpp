@@ -57,13 +57,11 @@ CPP_OutputHandler::AddUpdate( int64_t     lineno,
       case( SYSTEM ):
       {
          /* unimplemented, I don't think we'll need this one */
-         assert( false );
       }
       break;
       case( EXTERN ):
       {
          /* unimplemented, I don't think we'll need this one */
-         assert( false );
       }
       break;
       default:

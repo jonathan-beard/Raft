@@ -335,11 +335,12 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        $2 /* line # */,
                                        *$3 /* name */,
                                        $4 /* flags */ );
-                           $$->set_name( *$3 );
                            Node::Filename *f( nullptr );
                            f = new Node::Filename( *$3 );
                            assert( f != nullptr );
                            f->SetOrigin( data );
+                           f->set_name( *$3 );
+                           
                            $$ = f;
                            /* get rid of allocated string */
                            delete( $3 );
