@@ -1664,12 +1664,12 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
+                              BooleanType *id( nullptr );
+                              id = new BooleanType();
                               assert( id != nullptr );
                               id->set_name( *$1 );
                               delete( $1 );
-
+                              /** TODO come back here **/
                               $$ = new NodeAbstract();
                               $$->set_name( "BoolInitializer" );
 
