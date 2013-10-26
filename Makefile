@@ -1,5 +1,5 @@
-CC   = clang
-CXX  = clang++
+CC   = gcc
+CXX  = g++
 
 ifeq ($(shell uname -s),Darwin)
 DARWIN = -stdlib=libc++

@@ -1669,14 +1669,23 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               assert( id != nullptr );
                               id->set_name( *$1 );
                               delete( $1 );
+                              
+                              Initializer *init( nullptr );
+                              init = id->Initializer();
+                             
                               /** TODO come back here **/
-                              $$ = new NodeAbstract();
-                              $$->set_name( "BoolInitializer" );
 
-                              id->MakeSibling( $2 );
-                              id->MakeSibling( $4 );
-
-                              $$->AdoptChildren( id );
+                              id->AdoptChildren( $2 );
+                              id->AdoptChildren( init );
+                              
+                              /* check value */
+                              if( id->IsType( $4 ) )
+                                 id->AdoptChildren( $4 );
+                              else
+                              {
+                                   
+                              }
+                              $$ = id;
                            }
                     /*     | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
@@ -2418,7 +2427,7 @@ MultiplicativeExpression   :  CastExpression
                            {
                               $$ = $1;
                            }
-                       |   MultiplicativeExpression   ASTERICK CastExpression
+                    |   MultiplicativeExpression   ASTERICK CastExpression
                            {
                               NodeAbstract *ast( nullptr );
                               ast = new NodeAbstract();
@@ -2428,12 +2437,12 @@ MultiplicativeExpression   :  CastExpression
                               ast->AdoptChildren( $3 );
                               $$ = ast;
                            }
-                       |   MultiplicativeExpression   FORWARDSLASH   CastExpression
+              |   MultiplicativeExpression   FORWARDSLASH   CastExpression
                            {
                               NodeAbstract *slash( nullptr );
                               slash = new NodeAbstract();
                               assert( slash != nullptr );
-                              slash->set_name( "MultiplicativeExpression - /" );
+                         slash->set_name( "MultiplicativeExpression - /" );
                               slash->AdoptChildren( $1 );
                               slash->AdoptChildren( $3 );
                               $$ = slash;
