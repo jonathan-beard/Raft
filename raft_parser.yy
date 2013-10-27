@@ -14,10 +14,12 @@
    }
    namespace Node {
       class NodeAbstract;
+      class BooleanType;
       class Source;
       class Declaring;
       class DeclaringList;
       class Filename;
+      class Initializer;
    }
 }
 
@@ -51,6 +53,8 @@
    #include "Declaring.hpp"
    #include "DeclaringList.hpp"
    #include "Filename.hpp"
+   #include "BooleanType.hpp"
+   #include "Initializer.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -270,7 +274,7 @@
 %type    <node>    LogicalUnaryOperator
 %type    <node>    Literal
 %type    <node>    Number
-%type    <node>    Boolean
+%type    <sval>    Boolean
 %type    <node>    AnonymousArrayAccess
 %type    <node>    Block
 %type    <node>    StreamInitializers
@@ -1680,7 +1684,9 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               
                               /* check value */
                               if( id->IsType( $4 ) )
+                              {
                                  id->AdoptChildren( $4 );
+                              }
                               else
                               {
                                    
@@ -2135,12 +2141,7 @@ AllowedGenericInstTypes : IDENTIFIER
                           }
                         | Boolean
                           {
-                              NodeAbstract *all( nullptr );
-                              all = new NodeAbstract();
-                              assert( all != nullptr );
-                              all->set_name( "Allowed -> Boolean" );
-                              all->AdoptChildren( $1 );
-                              $$ = all;
+                              $$ = $1;
                           }
                         ;
 
@@ -2823,13 +2824,11 @@ Number   :  INT_TOKEN
 
 Boolean  :  TRUE
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "True" );
+               $$ = new std::string( "true" );
             }
          |  FALSE
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "False" );
+               $$ = new std::string( "false" );
             }
          ;
 

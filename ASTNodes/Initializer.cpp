@@ -115,3 +115,48 @@ Initializer::GetValueBool()
    assert( set_type == BOOL );
    return( bool_value );
 }
+
+bool
+Initializer::AcceptNewValue( std::string &value )
+{
+
+   return( false );
+}
+
+bool
+Initializer::AcceptNewValue( intmax_t value )
+{
+   switch( set_type )
+   {
+      case( BOOL ):
+      {
+
+      }
+      break;
+      case( UINT ):
+      {
+
+      }
+      break;
+      case( INT ):
+      {
+
+      }
+      break;
+      default:
+         return( false );
+   }
+   return( false );
+}
+
+bool
+Initializer::AcceptNewValue( uintmax_t value )
+{
+   return( false );
+}
+
+bool
+Initializer::AcceptNewValue( bool value )
+{
+   return( false );
+}

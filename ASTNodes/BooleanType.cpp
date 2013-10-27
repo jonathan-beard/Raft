@@ -15,7 +15,6 @@ BooleanType::BooleanType() : Type("BooleanType")
 
 BooleanType::~BooleanType()
 {
-   Type::~Type();
 }
 
 bool

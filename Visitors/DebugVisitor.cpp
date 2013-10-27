@@ -17,9 +17,9 @@ DebugVisitor::DebugVisitor( Raft::Data &data ) :
    /* nothing really to do here */
 }
 
-DebugVisitor::~DebugVisitor(){
-   /* nothing really to do here either */
-   DefaultVisitor::~DefaultVisitor();
+DebugVisitor::~DebugVisitor()
+{
+
 }
 
 void
