@@ -10,12 +10,6 @@
 
 using namespace Node;
 
-Initializer::Initializer()
-{
-   /* shouldn't be here, this is just here to fool you */
-   assert( false );
-}
-
 Initializer::Initializer( std::string v ) :
          string_value( v ),
          int_value( 0 ),

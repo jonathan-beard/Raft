@@ -13,26 +13,6 @@
 #include "NodeAbstract.hpp"
 
 namespace Node{
-/*
-class ConversionException : public exception
-{
-public:
-   ConversionException( std::string type, 
-                        std::string value ) : T( type ),
-                                              V( value )
-   {}
-
-std::ostream& print( std::ostream &stream )
-   {
-      stream << "Error converting \"" << V << "\" to " <<
-         "\"" << T << "\"";
-   }
-private:
-   std::string T;
-   std::string V;
-
-} ConvException;
-*/
 class Initializer : public NodeAbstract{
 public:
    Initializer( std::string v );

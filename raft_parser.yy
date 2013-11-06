@@ -1675,7 +1675,7 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               delete( $1 );
                               
                               Initializer *init( nullptr );
-                              init = id->Initializer();
+                              init = id->GetDefaultInitializer();
                              
                               /** TODO come back here **/
 
