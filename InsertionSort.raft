@@ -1,0 +1,25 @@
+class InsertionSort< class T >{
+@public:
+   streams [[T out]] RunSort( T in )
+   {
+      out.push( 
+         join<auto>( $ ) @/ (sort($) @/ (<auto>split($) @/ in) ) );
+   }
+
+@private:
+   fork streams [[T out, ...]] split( T in )
+   {
+
+   }
+
+   streams [[ T out ]] sort ( T in )
+   {
+
+   }
+
+   gather streams [[ T out ]] join( T in, ... )
+   {
+
+   }
+}
+

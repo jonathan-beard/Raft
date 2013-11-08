@@ -124,7 +124,10 @@ Initializer::AcceptNewValue( intmax_t value )
    {
       case( BOOL ):
       {
-
+         if( value == 1 )
+         {
+            
+         }
       }
       break;
       case( UINT ):
