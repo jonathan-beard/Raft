@@ -46,7 +46,7 @@ public:
     * @param   value - std::string*
     * @return  bool
     */
-   virtual bool IsType( std::string *value );
+   virtual bool IsType( std::string value );
    
    
    /**

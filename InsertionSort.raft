@@ -9,7 +9,8 @@ class InsertionSort< class T >{
 @private:
    fork streams [[T out, ...]] split( T in )
    {
-
+      T split = T.MAX / split.OutputPortCount();
+      
    }
 
    streams [[ T out ]] sort ( T in )
@@ -17,7 +18,7 @@ class InsertionSort< class T >{
 
    }
 
-   gather streams [[ T out ]] join( T in, ... )
+   converge streams [[ T out ]] join( T in, ... )
    {
 
    }

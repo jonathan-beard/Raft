@@ -25,10 +25,9 @@ BooleanType::IsType( uintmax_t value )
 }
 
 bool
-BooleanType::IsType( std::string *value )
+BooleanType::IsType( std::string value )
 {
-   assert( value != nullptr );
-   if( *value == "true"  || *value == "false" )
+   if( value.compare( "true" ) == 1  || value.compare("false") == 1 )
    {
       return( true );
    }

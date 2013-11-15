@@ -22,7 +22,7 @@ public:
     * for IsType
     */
    virtual  bool IsType( uintmax_t value );
-   virtual  bool IsType( std::string *value );
+   virtual  bool IsType( std::string value );
    
    virtual Initializer* GetDefaultInitializer();
 };

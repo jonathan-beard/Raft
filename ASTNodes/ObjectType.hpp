@@ -13,7 +13,14 @@ class Initializer;
 
 class ObjectType : public Type {
 public:
-   ObjectType();
+   /**
+    * ObjectType - node to represent an object,
+    * the name should be associated with a type 
+    * or class somewhere within the associated program
+    * or in an external library 
+    * @param name - std::string 
+    */
+   ObjectType( std::string name );
    virtual ~ObjectType();
 
    /**
@@ -21,10 +28,10 @@ public:
     * might define more behavior later, but this
     * seems like the only reasonable choice at the 
     * moment.
-    * @param   value - std::string ptr
+    * @param   value - std::string 
     * @return  bool - if value != nullptr
     */
-   virtual bool IsType( std::string *value );
+   virtual bool IsType( std::string value );
    
    virtual Initializer* GetDefaultInitializer();
 };

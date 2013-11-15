@@ -20,6 +20,23 @@
       class DeclaringList;
       class Filename;
       class Initializer;
+      class Value;
+      class Type;
+      class ObjectType;
+      class Int8Type;
+      class Int16Type;
+      class Int32Type;
+      class Int64Type;
+      class UInt8Type;
+      class UInt16Type;
+      class UInt32Type;
+      class UInt64Type;
+      class Float32Type;
+      class Float64Type;
+      class Float96Type;
+      class StringType;
+      class AutomaticType;
+      class VoidType;
    }
 }
 
@@ -55,12 +72,33 @@
    #include "Filename.hpp"
    #include "BooleanType.hpp"
    #include "Initializer.hpp"
+   #include "Value.hpp"
+   #include "Int8Type.hpp"
+   #include "Int16Type.hpp"
+   #include "Int32Type.hpp"
+   #include "Int64Type.hpp"
+   #include "UInt8Type.hpp"
+   #include "UInt16Type.hpp"
+   #include "UInt32Type.hpp"
+   #include "UInt64Type.hpp"
+   #include "Float32Type.hpp"
+   #include "Float64Type.hpp"
+   #include "Float96Type.hpp"
+   #include "StringType.hpp"
+   #include "ObjectType.hpp"
+   #include "Type.hpp"
+   #include "AutomaticType.hpp"
+   #include "VoidType.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
                     Raft::Scanner               &scanner,
                     Raft::Driver                &driver,
                     Raft::Data                  &data );
+
+   
+   static void compileError( const std::string message,
+                             Raft::Data  &data );
 
    using namespace Node;                    
 }
@@ -77,6 +115,8 @@
    char                 cval;
    /* begin node types */
    Node::NodeAbstract   *node;
+   Node::Value          *valnode;
+   Node::Type           *typenode;
 }
 
 %token       END     0     "end of file"
@@ -189,7 +229,7 @@
 %type    <node>    InlineStructInitList
 %type    <node>    InstantModifier
 %type    <node>    Body
-%type    <node>    Type
+%type    <typenode>    Type
 %type    <node>    TypeModifier
 %type    <node>    Initializer
 %type    <node>    Visibility
@@ -231,12 +271,12 @@
 %type    <node>    NumberInitializer
 %type    <node>    MultiStringInit
 %type    <node>    StrInitializer
-%type    <node>    AutoType
-%type    <node>    BoolType
-%type    <node>    IntType
-%type    <node>    FloatType
-%type    <node>    StringType
-%type    <node>    ObjectType
+%type    <typenode>    AutoType
+%type    <typenode>    BoolType
+%type    <typenode>    IntType
+%type    <typenode>    FloatType
+%type    <typenode>    StringType
+%type    <typenode>    ObjectType
 %type    <node>    GenericInstantiationList
 %type    <node>    AllowedGenericInstTypes
 %type    <node>    ArraySize
@@ -272,9 +312,9 @@
 %type    <node>    ArithmeticUnaryOperator
 %type    <node>    LogicalUnaryExpression
 %type    <node>    LogicalUnaryOperator
-%type    <node>    Literal
-%type    <node>    Number
-%type    <sval>    Boolean
+%type    <valnode>    Literal
+%type    <valnode>    Number
+%type    <valnode>    Boolean
 %type    <node>    AnonymousArrayAccess
 %type    <node>    Block
 %type    <node>    StreamInitializers
@@ -684,7 +724,7 @@ InlineStructInitList   :  COLON MultiObjectInit SEMI
                           }
                        ;
 
-FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
+FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             {
                               NodeAbstract *fieldvar( nullptr );
                               fieldvar = new NodeAbstract();
@@ -694,12 +734,11 @@ FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
 
                               $1->MakeSibling( $2 );
                               $1->MakeSibling( $3 );
-                              $1->MakeSibling( $4 );
 
                               fieldvar->AdoptChildren( $1 );
                               $$ = fieldvar;
                             }
-                          | StorageModifier Type TypeModifier Initializer DeclareAndAssignArray SEMI
+                          | StorageModifier Type Initializer DeclareAndAssignArray SEMI
                             {
                              NodeAbstract *fieldvar( nullptr );
                              fieldvar = new NodeAbstract();
@@ -710,12 +749,11 @@ FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
                              $1->MakeSibling( $2 );
                              $1->MakeSibling( $3 );
                              $1->MakeSibling( $4 );
-                             $1->MakeSibling( $5 );
 
                              fieldvar->AdoptChildren( $1 );
                              $$ = fieldvar;
                             }
-                          | Type TypeModifier Initializer SEMI
+                          | Type Initializer SEMI
                             {
                              NodeAbstract *fieldvar( nullptr );
                              fieldvar = new NodeAbstract();
@@ -724,12 +762,11 @@ FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
                              fieldvar->set_name( "FieldVariableDeclaration" );
 
                              $1->MakeSibling( $2 );
-                             $1->MakeSibling( $3 );
 
                              fieldvar->AdoptChildren( $1 );
                              $$ = fieldvar;
                             }
-                          | Type TypeModifier Initializer DeclareAndAssignArray SEMI
+                          | Type Initializer DeclareAndAssignArray SEMI
                             {
                               NodeAbstract *fieldvar( nullptr );
                               fieldvar = new NodeAbstract();
@@ -739,7 +776,6 @@ FieldVariableDeclaration  : StorageModifier Type TypeModifier Initializer SEMI
                               
                               $1->MakeSibling( $2 );
                               $1->MakeSibling( $3 );
-                              $1->MakeSibling( $4 );
 
                               fieldvar->AdoptChildren( $1 );
 
@@ -1388,6 +1424,10 @@ Expression  :  AssignmentExpression
                {
                   $$ = $1;   
                }
+            |  Boolean
+               {
+                  $$ = $1;
+               }
             ;
 
 
@@ -1606,15 +1646,7 @@ StreamInitializers   :  VOID
 
 Initializer :  MultiBoolInit
                {
-                  NodeAbstract *ini( nullptr );
-                  ini = new NodeAbstract();
-                  assert( ini != nullptr );
-
-                  ini->set_name( "BoolInitializers" );
-
-                  ini->AdoptChildren( $1 );
-
-                  $$ = ini;
+                  $$ = $1;
                }
             |  MultiNumberInit
                {
@@ -1677,19 +1709,25 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               Initializer *init( nullptr );
                               init = id->GetDefaultInitializer();
                              
-                              /** TODO come back here **/
 
                               id->AdoptChildren( $2 );
                               id->AdoptChildren( init );
                               
                               /* check value */
-                              if( id->IsType( $4 ) )
+                              std::string bool_value( $4->get_value() );
+                              if( id->IsType( $4->get_value() ) )
                               {
-                                 id->AdoptChildren( $4 );
+                                 init->AcceptNewValue( bool_value );
+                                 /* discard value object */
+                                 delete( $4 );
                               }
                               else
                               {
-                                   
+                                 std::stringstream msg;
+                                 msg << "Cannot assign (" << $4->get_value() << 
+                                    ") to a bool.";
+                                 compileError( msg.str(), data );
+                                 delete( $4 );
                               }
                               $$ = id;
                            }
@@ -1932,95 +1970,79 @@ Type  :  BoolType
          }
       |  VOID
          {
-            $$ = new NodeAbstract();
-            $$->set_name("Void");
+            $$ = new VoidType();
          }
       ;
 
 AutoType          :     AUTO
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "INT32" );
+                           $$ = new Node::AutomaticType();
                         }
                   ;
 
 BoolType          :     BOOLEAN
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "BOOL" );
+                           $$ = new BooleanType();
                         }
                   ;
 
 
 IntType           :     INT8T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "INT8" );
+                           $$ = new Int8Type();
                         }
                   |     INT16T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "INT16" );
+                           $$ = new Int16Type();
                         }
                   |     INT32T
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "INT32" );
+                           $$ = new Int32Type();
                         }
                   |     INT64T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "INT64" );
+                           $$ = new Int64Type();
                         }
                   |     UINT8T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "UINT8" );
+                           $$ = new UInt8Type();
                         }
                   |     UINT16T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "UINT16" );
+                           $$ = new UInt16Type();
                         }
                   |     UINT32T
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "UINT32" );
+                           $$ = new UInt32Type();
                         }
                   |     UINT64T
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "UINT64" );
+                           $$ = new UInt64Type();
                         }
                         ;
 FloatType         :     FLOAT32
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Float32" );
+                           $$ = new Float32Type();
                         }
                   |     FLOAT64
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Float64" );
+                           $$ = new Float64Type();
                         }
                   |     FLOAT96
                         { 
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Float96" );
+                           $$ = new Float96Type();
                         }
                   ;
 
 StringType        :     STRING
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "StringType" );
+                           $$ = new StringType();
                         }
                   ;
 
 ObjectType        :     IDENTIFIER
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( *$1 );
+                           $$ = new ObjectType( *$1 );
                            delete( $1 );
                         }
                   ;
@@ -2800,35 +2822,32 @@ LogicalUnaryOperator :  BANG
 
 Literal  :  STR_TOKEN
             {
-               $$ = new NodeAbstract();
-               $$->set_name( *$1 ); 
+               $$ = new Value( *$1 );
                delete( $1 );
             }
          ;
 
 Number   :  INT_TOKEN
             {
-               $$ = new NodeAbstract();
                std::stringstream ss;
                ss << $1;
-               $$->set_name( ss.str() ); 
+               $$ = new Value( ss.str() );
             }
          |  FLOAT_TOKEN
             {
-               $$ = new NodeAbstract();
                std::stringstream ss;
                ss << $1;
-               $$->set_name( ss.str() ); 
+               $$ = new Value( ss.str() ); 
             }
          ;
 
 Boolean  :  TRUE
             {
-               $$ = new std::string( "true" );
+               $$ = new Value( "true" );
             }
          |  FALSE
             {
-               $$ = new std::string( "false" );
+               $$ = new Value( "false" );
             }
          ;
 
@@ -2873,6 +2892,31 @@ Raft::Parser::error( const std::string &err_message )
       data.get_rf_errorstream() << ".\n";
    }
    data.get_rf_errorstream() << "Error is somewhere in the line:\n" <<
+   data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
+   data.reset_rf_parsestream();
+}
+
+static void
+compileError( std::string message,
+              Raft::Data   &data )
+{
+   std::string str( data.get_cpp_handler().PeekHead() );
+   const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
+   data.get_rf_errorstream() << "Compile error, in file with " << 
+   str << " with input \"" 
+      << data.get_rf_parsestream().str() << "\"";
+   if( is_included_file )
+   {
+      std::string str_included( data.get_cpp_handler().PeekBelowHead() );
+      data.get_rf_errorstream() << ",\n" <<
+      "in included from file with " << str_included << ".\n";
+   }
+   else
+   {
+      data.get_rf_errorstream() << ".\n";
+   }
+   data.get_rf_errorstream() << message << "\n";
+   data.get_rf_errorstream() << "Error in the line:\n" <<
    data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
    data.reset_rf_parsestream();
 }

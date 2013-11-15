@@ -2,6 +2,7 @@ class Foo{
 @public:
    int32 a( 0 );
    int32 foo( 0 );
+   bool  f( 0 );
 
    /**
     * Foo - example of a constructor, will be called once

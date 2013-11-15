@@ -9,7 +9,7 @@
 
 using namespace Node;
 
-ObjectType::ObjectType() : Type( "ObjectType" )
+ObjectType::ObjectType( std::string name) : Type( name )
 {
    /* nothing to do here */
 }
@@ -20,14 +20,14 @@ ObjectType::~ObjectType()
 }
 
 bool
-ObjectType::IsType( std::string *value )
+ObjectType::IsType( std::string value )
 {
-   
-   if( value != nullptr ){
-      name = *value;
-      return( true );
-   }
-   return( false );
+   /** not much we can do about this here,
+    *  wait for verification once the entry
+    *  of the object type is in the symbol
+    *  table 
+    */
+   return( true );
 }
 
 Initializer*

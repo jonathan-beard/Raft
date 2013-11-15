@@ -19,10 +19,9 @@ StringType::~StringType()
 }
 
 bool
-StringType::IsType( std::string *value )
+StringType::IsType( std::string value )
 {
-   if( value != nullptr ) return( true );
-   return( false );
+   return( true );
 }
 
 

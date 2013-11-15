@@ -43,7 +43,7 @@ Type::IsType( long double value )
 }
 
 bool
-Type::IsType( std::string *value )
+Type::IsType( std::string value )
 {
    return( false );
 }
