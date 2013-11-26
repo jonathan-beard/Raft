@@ -1424,10 +1424,6 @@ Expression  :  AssignmentExpression
                {
                   $$ = $1;   
                }
-            |  Boolean
-               {
-                  $$ = $1;
-               }
             ;
 
 
