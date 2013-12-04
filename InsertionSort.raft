@@ -1,24 +1,24 @@
 class InsertionSort< class T >{
 @public:
-   streams [[T out]] RunSort( T in )
+   streams [[T out]] RunSort [[ T in ]]
    {
       out.push( 
          join<auto>( $ ) @/ (sort($) @/ (<auto>split($) @/ in) ) );
    }
 
 @private:
-   fork streams [[T out, ...]] split( T in )
+   fork streams [[T out, ...]] split [[ T in ]]
    {
       T split = T.MAX / split.OutputPortCount();
       
    }
 
-   streams [[ T out ]] sort ( T in )
+   streams [[ T out ]] sort [[ T in ]]
    {
 
    }
 
-   converge streams [[ T out ]] join( T in, ... )
+   converge streams [[ T out ]] join [[ T in, ... ]]
    {
 
    }

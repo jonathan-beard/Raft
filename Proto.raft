@@ -2,7 +2,7 @@ class Foo<int8 f>{
 @public:
    int32 a( 0 );
    int32 foo( 0 );
-   bool  f[4]( false );
+   bool  f[4]( 1 == 100 );
 
    /**
     * Foo - example of a constructor, will be called once
