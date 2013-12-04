@@ -321,7 +321,7 @@
 %type    <node>    StreamInitializer
 %type    <node>    StreamingMethodConstructor
 %type    <node>    StreamDeclarator
-
+%type    <node>    StreamReturnDecl
 
 %%
 CompilationUnit   :     END
@@ -408,11 +408,11 @@ TypeDeclaration   :     ClassDeclaration
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
+                           std::cerr << "Class Decl\n";
                            NodeAbstract *cls( nullptr );
                            cls = new NodeAbstract();
                            assert( cls != nullptr );
                            cls->set_name( "ClassDecl" );
-
                            NodeAbstract *id( nullptr );
                            id = new NodeAbstract();
                            assert( id != nullptr );
@@ -482,6 +482,14 @@ GenericList :  CLASS IDENTIFIER
                   delete( $2 );
                   cl->AdoptChildren( $1 );
                   cl->AdoptChildren( $3 );
+                  $$ = cl;
+               }
+            |  Type IDENTIFIER
+               {
+                  NodeAbstract *cl = new NodeAbstract();
+                  cl->set_name( *$2 );
+                  cl->AdoptChildren( $1 );
+                  delete( $2 );
                   $$ = cl;
                }
             |  Type  Initializer
@@ -669,6 +677,7 @@ Body              :     Visibility
 
 Visibility        :     ATPUBLIC
                         {
+                           std::cerr << "AtPublic Decl\n";
                            $$ = new NodeAbstract();
                            $$->set_name( "public" );
                         }
@@ -686,6 +695,7 @@ Visibility        :     ATPUBLIC
 
 FieldDeclaration  :     FieldVariableDeclaration
                         {
+                           std::cerr << "FieldVar Decl\n";
                            $$ = new NodeAbstract();
                            $$->set_name("FieldDeclaration");
                            $$->AdoptChildren( $1 );
@@ -755,6 +765,7 @@ FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             }
                           | Type Initializer SEMI
                             {
+                             std::cerr << "TypeInitSemi\n";
                              NodeAbstract *fieldvar( nullptr );
                              fieldvar = new NodeAbstract();
                              assert( fieldvar != nullptr );
@@ -1130,6 +1141,7 @@ Parameter                : Type  DeclaratorName
 
 DeclaratorName           : IDENTIFIER
                            {
+                              std::cerr << "DeclNameID\n";
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
                               assert( id != nullptr );
@@ -1599,53 +1611,34 @@ StreamInitializers   :  VOID
                         v->set_name("NoStream");
                         $$ = v;
                      }
-                     | Type TypeModifier IDENTIFIER
+                     | StreamReturnDecl
                      {
-                        NodeAbstract *ini( nullptr );
-                        ini = new NodeAbstract();
-                        assert( ini != nullptr );
-                        ini->set_name( "Stream" );
-
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        id->set_name( *$3 );
-                        delete( $3 );
-                        ini->MakeSibling( id );
-                        ini->MakeSibling( $1 );
-                        ini->MakeSibling( $2 );
-
-                        $$ = ini;
-                     }
-                  |  StreamInitializers COMMA Type TypeModifier IDENTIFIER
-                     {
-                        NodeAbstract *ini( nullptr );
-                        ini = new NodeAbstract();
-                        assert( ini != nullptr );
-                        ini->set_name( "Stream" );
-                        
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        id->set_name( *$5 );
-                        delete( $5 );
-                        
-                        ini->MakeSibling( id );
-                        ini->MakeSibling( $3 );
-                        ini->MakeSibling( $4 );
-               
-                        $1->MakeSibling( ini );
                         $$ = $1;
+                     }
+                  |  StreamInitializers COMMA StreamReturnDecl
+                     {
+                        $$->MakeSibling( $3 );
                      }
                   ;
 
+StreamReturnDecl : Type TypeModifier IDENTIFIER
+                   {
+                     $$ = new NodeAbstract();
+                   }
+                 | Type IDENTIFIER
+                   {
+                     $$ = new NodeAbstract();
+                   }
+                 ;
 
 Initializer :  MultiBoolInit
                {
+                  std::cerr << "MultiBoolInit\n";
                   $$ = $1;
                }
             |  MultiNumberInit
                {
+                  std::cerr << "MultiNumInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
@@ -1658,10 +1651,11 @@ Initializer :  MultiBoolInit
                }
             |  MultiStringInit
                {
+                  std::cerr << "MultiStringInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
-
+                  
                   ini->set_name( "StringInitializers" );
 
                   ini->AdoptChildren( $1 );
@@ -1670,6 +1664,7 @@ Initializer :  MultiBoolInit
                }
             |  MultiObjectInit
                {
+                  std::cerr << "MultiObjectInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
@@ -1690,44 +1685,80 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
                            }
                          | BoolInitializer
                            {
+                              std::cerr << "MulitBoolInitializer\n";
                               $$ = $1;
                            }
                          ;
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
+                              std::cerr << "BoolInitializer\n";
                               BooleanType *id( nullptr );
                               id = new BooleanType();
                               assert( id != nullptr );
                               id->set_name( *$1 );
                               delete( $1 );
                               
-                              Initializer *init( nullptr );
-                              init = id->GetDefaultInitializer();
+//                              Initializer *init( nullptr );
+//                              init = id->GetDefaultInitializer();
                              
 
-                              id->AdoptChildren( $2 );
-                              id->AdoptChildren( init );
+//                              id->AdoptChildren( $2 );
+//                              id->AdoptChildren( init );
                               
                               /* check value */
-                              std::string bool_value( $4->get_value() );
-                              if( id->IsType( $4->get_value() ) )
-                              {
-                                 init->AcceptNewValue( bool_value );
-                                 /* discard value object */
-                                 delete( $4 );
-                              }
-                              else
-                              {
-                                 std::stringstream msg;
-                                 msg << "Cannot assign (" << $4->get_value() << 
-                                    ") to a bool.";
-                                 compileError( msg.str(), data );
-                                 delete( $4 );
-                              }
+//                              std::string bool_value( $3->get_value() );
+//                              if( id->IsType( $3->get_value() ) )
+//                              {
+//                                 init->AcceptNewValue( bool_value );
+//                                 /* discard value object */
+//                                 delete( $3 );
+//                              }
+//                              else
+//                              {
+//                                 std::stringstream msg;
+//                                 msg << "Cannot assign (" << $3->get_value() << 
+//                                    ") to a bool.";
+//                                 compileError( msg.str(), data );
+//                                 delete( $3 );
+//                              }
                               $$ = id;
                            }
-                    /*     | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
+                         | IDENTIFIER LPAREN Boolean RPAREN
+                           {
+                              std::cerr << "BoolInitializer\n";
+                              BooleanType *id( nullptr );
+                              id = new BooleanType();
+                              assert( id != nullptr );
+                              id->set_name( *$1 );
+                              delete( $1 );
+                              
+//                              Initializer *init( nullptr );
+//                              init = id->GetDefaultInitializer();
+                             
+
+//                              id->AdoptChildren( $2 );
+//                              id->AdoptChildren( init );
+                              
+                              /* check value */
+//                              std::string bool_value( $3->get_value() );
+//                              if( id->IsType( $3->get_value() ) )
+//                              {
+//                                 init->AcceptNewValue( bool_value );
+//                                 /* discard value object */
+//                                 delete( $3 );
+//                              }
+//                              else
+//                              {
+//                                 std::stringstream msg;
+//                                 msg << "Cannot assign (" << $3->get_value() << 
+//                                    ") to a bool.";
+//                                 compileError( msg.str(), data );
+//                                 delete( $3 );
+//                              }
+                              $$ = id;
+                           }
+                       | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
@@ -1743,39 +1774,8 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
 
                               $$->AdoptChildren( id );
                            }
-                         | IDENTIFIER LPAREN LogicalUnaryExpression RPAREN
-                           {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-
-                              $$ = new NodeAbstract();
-                              $$->set_name( "BoolInitializer" );
-
-                              id->MakeSibling( $3 );
-
-                              $$->AdoptChildren( id );
-                           }
-                         | IDENTIFIER LPAREN Boolean RPAREN
-                           {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-
-                              $$ = new NodeAbstract();
-                              $$->set_name( "BoolInitializer" );
-
-                              id->MakeSibling( $3 );
-
-                              $$->AdoptChildren( id );
-                           }
                          ;
 
-                        */
 MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
                            {
                               $1->MakeSibling( $3 );
@@ -1942,6 +1942,7 @@ InstantModifier   :     FINAL SYSTEM
 
 Type  :  BoolType
          {
+            std::cerr << "TypeBoolType\n";
             $$ = $1;
          }
       |  IntType
@@ -1978,6 +1979,7 @@ AutoType          :     AUTO
 
 BoolType          :     BOOLEAN
                         { 
+                           std::cerr << "Boolean\n";
                            $$ = new BooleanType();
                         }
                   ;
@@ -2072,11 +2074,6 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                            $$ = new NodeAbstract();
                            $$->set_name( "TypeModifier->GenericDynamicArray" );
                            $$->AdoptChildren( $2 );
-                        }
-                  |
-                        {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "NoTypeModifier" );
                         }
                   ;
 
@@ -2733,6 +2730,7 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
 
 QualifiedName  :  IDENTIFIER
                   {
+                     std::cerr << "QualifiedName\n";
                      $$ = new NodeAbstract();
                      $$->set_name( *$1 );
                      delete( $1 );
@@ -2769,12 +2767,14 @@ SpecialName     : NILL
 
 ArgumentList   :  Expression
                   {
+                     std::cerr << "ArgumentList->Exp\n";
                      $$ = new NodeAbstract();
                      $$->set_name( "ArgumentList" );
                      $$->AdoptChildren( $1 );
                   }
                |  ArgumentList COMMA Expression
                   {
+                     std::cerr << "ArgList,Exp\n";
                      $1->AdoptChildren( $3 );
                   }   
                ;
