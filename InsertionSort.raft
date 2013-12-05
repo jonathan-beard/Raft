@@ -3,7 +3,7 @@ class InsertionSort< class T >{
    streams [[T out]] RunSort [[ T in ]]
    {
       out.push( 
-         join<auto>( $ ) @/ (sort($) @/ (<auto>split($) @/ in) ) );
+         join[[ $ ]] @/ (sort[[ $ ]] @/ ( split[[ $ ]] @/ in) ) );
    }
 
 @private:
