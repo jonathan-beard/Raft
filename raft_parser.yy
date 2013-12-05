@@ -322,6 +322,7 @@
 %type    <node>    StreamingMethodConstructor
 %type    <node>    StreamDeclarator
 %type    <node>    StreamReturnDecl
+%type    <node>    AnonymousExpression
 
 %%
 CompilationUnit   :     END
@@ -1435,6 +1436,10 @@ Expression  :  AssignmentExpression
             |  MapExpression
                {
                   $$ = $1;   
+               }
+            |  AnonymousExpression
+               {
+                  $$ = $1;
                }
             ;
 
@@ -2847,6 +2852,12 @@ Boolean  :  TRUE
             }
          ;
 
+AnonymousExpression : DOLLAR
+                      {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "AnonymousExpression" );
+                      } 
+                      ;
 
 AnonymousArrayAccess :  DOLLAR
                         {
