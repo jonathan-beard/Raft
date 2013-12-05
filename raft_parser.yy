@@ -315,15 +315,13 @@
 %type    <valnode>    Literal
 %type    <valnode>    Number
 %type    <valnode>    Boolean
-%type    <node>    AnonymousArrayAccess
 %type    <node>    Block
 %type    <node>    StreamInitializers
 %type    <node>    StreamInitializer
 %type    <node>    StreamingMethodConstructor
 %type    <node>    StreamDeclarator
 %type    <node>    StreamReturnDecl
-%type    <node>    AnonymousExpression
-
+%type    <node>    DelayedName
 %%
 CompilationUnit   :     END
                   |     T
@@ -1425,21 +1423,20 @@ EmptyStatement :  SEMI
 
 ExpressionStatement  :  Expression
                         {
+                           std::cerr << "Expression\n";
                            $$ = $1;
                         }
                      ;
 
 Expression  :  AssignmentExpression
                {
+                  std::cerr << "AssignmentExpression\n";
                   $$ = $1;
                }
             |  MapExpression
                {
+                  std::cerr << "MapExpression\n";
                   $$ = $1;   
-               }
-            |  AnonymousExpression
-               {
-                  $$ = $1;
                }
             ;
 
@@ -2535,6 +2532,12 @@ PrimaryExpression :  QualifiedName
                         $$->set_name( "PrimaryExpression" );
                         $$->AdoptChildren( $1 );
                      }
+                  |  DelayedName
+                     {
+                        $$ = new NodeAbstract();
+                        $$->set_name( "DelayedName" );
+                        $$->AdoptChildren( $1 );
+                     }
                   ;
 
 
@@ -2647,12 +2650,6 @@ ComplexPrimaryNoParenthesis : Literal
                                  $$->set_name( "ComplexPrimaryNoParenthesis" );
                                  $$->AdoptChildren( $1 );
                               }
-                            | AnonymousArrayAccess
-                              {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
-                              }
                             | ArrayAccess
                               {
                                  $$ = new NodeAbstract();
@@ -2684,6 +2681,13 @@ ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
                {
                   $$ = new NodeAbstract();
                   $$->set_name( "ArrayAccess" );
+                  $$->MakeSibling( $1 );
+                  $$->MakeSibling( $3 );
+               }
+            |  DelayedName LBRACKET ArraySize RBRACKET
+               {
+                  $$ = new NodeAbstract();
+                  $$->set_name( "DelayedName" );
                   $$->MakeSibling( $1 );
                   $$->MakeSibling( $3 );
                }
@@ -2732,6 +2736,14 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
                $$->MakeSibling( $3 );
              }
            ;
+
+DelayedName    :  DOLLAR
+                  {
+                     std::cerr << "DelayedName\n";
+                     $$ = new NodeAbstract();
+                     $$->set_name( "DelayedName" );
+                  }
+               ;
 
 QualifiedName  :  IDENTIFIER
                   {
@@ -2851,32 +2863,6 @@ Boolean  :  TRUE
                $$ = new Value( "false" );
             }
          ;
-
-AnonymousExpression : DOLLAR
-                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "AnonymousExpression" );
-                      } 
-                      ;
-
-AnonymousArrayAccess :  DOLLAR
-                        {
-                           NodeAbstract *d( nullptr );
-                           d = new NodeAbstract();
-                           assert( d != nullptr );
-                           d->set_name( "#" );
-                           $$ = d;
-                        }
-                     |  DOLLAR LBRACKET   ArraySize   RBRACKET
-                        {
-                           NodeAbstract *d( nullptr );
-                           d = new NodeAbstract();
-                           assert( d != nullptr );
-                           d->set_name( "#" );
-                           d->AdoptChildren( $3 );
-                           $$ = d;
-                        }
-                     ;
                         
 %%
 
