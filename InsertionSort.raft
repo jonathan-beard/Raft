@@ -7,11 +7,18 @@ class InsertionSort< class T >{
    }
 
 
-   void main( String Args[] )
+   void main( String[] Args )
    {
 
    }
+
 @private:
+   /**
+    * Note: x is now a synchronized variable shared across all 
+    * instantiations of InsertionSort
+    */
+   static int8 x(0);
+
    fork streams [[T out]] split [[ T in ]]
    {
       T split( T.MAX / split.OutputPortCount() );

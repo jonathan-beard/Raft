@@ -1179,6 +1179,17 @@ Parameter                : Type  DeclaratorName
                               param->MakeSibling( $2 );
                               $$ = param;
                            }
+
+                         | Type LBRACKET RBRACKET DeclaratorName
+                           {
+                              NodeAbstract *param_arr( nullptr );
+                              param_arr = new NodeAbstract();
+                              assert( param_arr != nullptr );
+                              param_arr->set_name( "ParamArray" );
+                              param_arr->MakeSibling( $1 );
+                              param_arr->MakeSibling( $4 );
+                              $$ = param_arr;
+                           }
                          ;
 
 DeclaratorName           : IDENTIFIER
@@ -2083,10 +2094,11 @@ StringType        :     STRING
                         }
                   ;
 
-ObjectType        :     IDENTIFIER
+ObjectType        :     QualifiedName
                         {
-                           $$ = new ObjectType( *$1 );
-                           delete( $1 );
+                           NodeAbstract *ot = new NodeAbstract();
+                           ot->set_name( "ObjectType" );
+                           ot->AdoptChildren( $1 );
                         }
                   ;
 
