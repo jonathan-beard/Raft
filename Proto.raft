@@ -10,7 +10,8 @@ class Foo<int8 f>{
     */
    Foo( int32 a )
    {
-      self.a = a;
+      self.a = xoo( a );
+      a = xoo [[ a ]];
    }
    
    /**

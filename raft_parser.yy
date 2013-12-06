@@ -322,6 +322,8 @@
 %type    <node>    StreamDeclarator
 %type    <node>    StreamReturnDecl
 %type    <node>    DelayedName
+%type    <node>    StreamCall
+
 %%
 CompilationUnit   :     END
                   |     T
@@ -977,6 +979,19 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
 
                               $$ = method;
                            }
+                         | Type MethodDeclarator MethodBody
+                           {
+                              NodeAbstract *method( nullptr );
+                              method = new NodeAbstract();
+                              assert( method != nullptr );
+                              method->set_name( "MethodDeclaration" );
+                              $$ = method;
+                              
+                              $1->MakeSibling( $2 );
+                              $1->MakeSibling( $3 );
+                              method->AdoptChildren( $1 );
+
+                           }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
                               NodeAbstract *method( nullptr );
@@ -1093,7 +1108,7 @@ MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                            {
                               NodeAbstract *methodd( nullptr );
                               methodd = new NodeAbstract();
-                              assert( methodd );
+                              assert( methodd != nullptr );
                               methodd->set_name( "MethodDecl" );
 
                               methodd->AdoptChildren( $3 );
@@ -1103,7 +1118,7 @@ MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                            {
                               NodeAbstract *methodd( nullptr );
                               methodd = new NodeAbstract();
-                              assert( methodd );
+                              assert( methodd != nullptr );
                               methodd->set_name( "MethodDecl" );
                               
                               NodeAbstract *noparams( nullptr );
@@ -2197,7 +2212,7 @@ AssignmentExpression :  ConditionalExpression
                         {
                            $$ = new NodeAbstract();
                            $$->set_name( "AssignmentExpression - Op" );
-                           $2->AdoptChildren( $1 );
+                           $2->MakeSibling( $1 );
                            $$->AdoptChildren( $2 );
                         }
                      |  UnaryExpression INCREMENT
@@ -2242,8 +2257,7 @@ AssignmentOperator   :  EQUALS
 
 ConditionalExpression   :  ConditionalOrExpression
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "ConditionalExpression" );
+                              $$ = $1;
                            }
        |  ConditionalOrExpression QUESTION Expression COLON Expression
           {
@@ -2502,13 +2516,13 @@ CastExpression :  UnaryExpression
 UnaryExpression   :  LogicalUnaryExpression
                      {
                         $$ = new NodeAbstract();
-                        $$->set_name( "UnaryExpression" );
+                        $$->set_name( "UnaryExpression 1" );
                         $$->AdoptChildren( $1 );
                      }
                   |  ArithmeticUnaryOperator CastExpression
                      {
                         $$ = new NodeAbstract();
-                        $$->set_name( "UnaryExpression" );
+                        $$->set_name( "UnaryExpression 2" );
                         $1->MakeSibling( $2 );
                         $$->AdoptChildren( $1 );
                      }
@@ -2522,21 +2536,15 @@ PostfixExpression :  PrimaryExpression
 
 PrimaryExpression :  QualifiedName
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "PrimaryExpression" );
-                        $$->AdoptChildren( $1 );
+                        $$ = $1;
                      }
                   |  NotJustName
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "PrimaryExpression" );
-                        $$->AdoptChildren( $1 );
+                        $$ = $1; 
                      }
                   |  DelayedName
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "DelayedName" );
-                        $$->AdoptChildren( $1 );
+                        $$ = $1;
                      }
                   ;
 
@@ -2628,39 +2636,32 @@ ComplexPrimary :  LPAREN Expression RPAREN
 
 ComplexPrimaryNoParenthesis : Literal
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
                               }
                             | Number
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
                               }
                             | FieldAccess
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
                               }
                             | MethodCall
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
+                              }
+                            | StreamCall
+                              {
+                                 std::cerr << "StreamCall\n";
+                                 $$ = $1;
                               }
                             | ArrayAccess
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
                               }
                             | Placeholder
                               {
-                                 $$ = new NodeAbstract();
-                                 $$->set_name( "ComplexPrimaryNoParenthesis" );
-                                 $$->AdoptChildren( $1 );
+                                 $$ = $1;
                               }
                             ;
 Placeholder  : POUND
@@ -2737,6 +2738,38 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              }
            ;
 
+StreamCall : QualifiedName DLBRACKET ArgumentList DRBRACKET
+            {
+               $$ = new NodeAbstract();
+               std::cerr << "Qname1\n";
+               $$->set_name( "StreamCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+            }
+           | QualifiedName DLBRACKET DRBRACKET
+            {
+               $$ = new NodeAbstract();
+               std::cerr << "Qname2\n";
+               $$->set_name( "StreamCall" );
+               $$->MakeSibling( $1 );
+            }
+     | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( "StreamCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+               $$->MakeSibling( $5 );
+            }
+           | SpecialName PERIOD QualifiedName DLBRACKET DRBRACKET
+            {
+               $$ = new NodeAbstract();
+               $$->set_name( "StreamCall" );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
+            }
+           ;
+
 DelayedName    :  DOLLAR
                   {
                      std::cerr << "DelayedName\n";
@@ -2750,6 +2783,7 @@ QualifiedName  :  IDENTIFIER
                      std::cerr << "QualifiedName\n";
                      $$ = new NodeAbstract();
                      $$->set_name( *$1 );
+                     std::cerr << "Name: " << *$1 << "\n";
                      delete( $1 );
                   }
                |  QualifiedName PERIOD IDENTIFIER

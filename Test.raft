@@ -1,0 +1,9 @@
+class Foo{
+@public:
+      int8 a( 9 );
+   void whooo()
+   {
+      a = whoo[[ ]];
+      return;
+   }
+}
