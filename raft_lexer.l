@@ -90,6 +90,8 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
 "autogen"               { TOKEN( AUTOGEN );   } /* automagically generate get/set functions */
+"fork"                  { TOKEN( FORK );      } /* streaming kernel that forks */
+"converge"              { TOKEN( CONVERGE );  } /* streaming kernel designed to converge streams */
 "auto"                  { TOKEN( AUTO );      } /* infer return type and set LHS type to match */
 "final"                 { TOKEN( FINAL );     } /* no extending this class or method */
 "class"                 { TOKEN( CLASS );     } /* class */

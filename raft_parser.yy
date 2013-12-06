@@ -209,6 +209,8 @@
 %token       FLOAT96  
 %token       POUND
 %token       STRING  
+%token       FORK
+%token       CONVERGE
 %token   <bval>      TRUE
 %token   <bval>      FALSE
 %token   <sval>      STR_TOKEN 
@@ -323,7 +325,7 @@
 %type    <node>    StreamReturnDecl
 %type    <node>    DelayedName
 %type    <node>    StreamCall
-
+%type    <node>    StreamModifiers
 %%
 CompilationUnit   :     END
                   |     T
@@ -906,17 +908,43 @@ ConstructorDeclaration   : MethodDeclarator Block
                            }
                          ;
 
-StreamingMethodConstructor :  STREAMS StreamInitializer StreamDeclarator Block
+StreamingMethodConstructor :  StreamModifiers STREAMS StreamInitializer StreamDeclarator Block
                               {
                                  NodeAbstract *cons( nullptr );
                                  cons = new NodeAbstract();
                                  assert( cons != nullptr );
 
                                  cons->set_name( "StreamingConstructorDeclaration" );
-                                 $2->MakeSibling( $3 );
-                                 $2->MakeSibling( $4 );
-                                 cons->AdoptChildren( $2 );
+                                 $3->MakeSibling( $4 );
+                                 $3->MakeSibling( $5 );
+                                 cons->AdoptChildren( $3 );
                                  $$ = cons;  
+                              }
+                           ;
+
+StreamModifiers            : FORK
+                             {
+                                 NodeAbstract *fork( nullptr );
+                                 fork = new NodeAbstract();
+                                 assert( fork != nullptr );
+                                 fork->set_name( "Fork" );
+                                 $$ = fork;
+                             }
+                           | CONVERGE
+                             {
+                                 NodeAbstract *converge( nullptr );
+                                 converge = new NodeAbstract();
+                                 assert( converge != nullptr );
+                                 converge->set_name( "Converge" );
+                                 $$ = converge;
+                             }
+                           |
+                              {
+                                 NodeAbstract *nomods( nullptr );
+                                 nomods = new NodeAbstract();
+                                 assert( nomods != nullptr );
+                                 nomods->set_name( "NoStreamModifiers" );
+                                 $$ = nomods;
                               }
                            ;
 
