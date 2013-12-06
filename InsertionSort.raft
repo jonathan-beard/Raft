@@ -3,7 +3,7 @@ class InsertionSort< class T >{
    streams [[T out]] RunSort [[ T in, int8 f ]]
    {
       out.push( 
-         join[[ $ ]] @/ (sort[[ $ ]] @/ ( split[[ $ ]] @/ in) ) );
+         join<...>[[ $ ]] @/ (sort[[ $ ]] @/ ( split[[ $ ]] @/ in) ) );
    }
 
 
@@ -19,7 +19,7 @@ class InsertionSort< class T >{
     */
    static int8 x(0);
 
-   fork streams [[T out]] split [[ T in ]]
+   fork streams [[T out, ... ]] split [[ T in ]]
    {
       T split( T.MAX / split.OutputPortCount() );
       
@@ -30,7 +30,7 @@ class InsertionSort< class T >{
 
    }
 
-   converge streams [[ T out ]] join [[ T in ]]
+   converge streams [[ T out ]] join [[ T in, ... ]]
    {
 
    }

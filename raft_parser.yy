@@ -193,6 +193,7 @@
 %token       TILDE  
 %token       PERIOD  
 %token       HAT  
+%token       THREEDOTS
 %token       COMMA  
 %token       BOOLEAN  
 %token       CHAR
@@ -320,12 +321,14 @@
 %type    <node>    Block
 %type    <node>    StreamInitializers
 %type    <node>    StreamInitializer
+%type    <node>    StreamInitializersB
 %type    <node>    StreamingMethodConstructor
 %type    <node>    StreamDeclarator
 %type    <node>    StreamReturnDecl
 %type    <node>    DelayedName
 %type    <node>    StreamCall
 %type    <node>    StreamModifiers
+%type    <node>    VariableStreams
 %%
 CompilationUnit   :     END
                   |     T
@@ -1667,15 +1670,30 @@ StreamInitializers   :  VOID
                         v->set_name("NoStream");
                         $$ = v;
                      }
-                     | StreamReturnDecl
+                     |  StreamInitializersB
                      {
                         $$ = $1;
                      }
-                  |  StreamInitializers COMMA StreamReturnDecl
+                  ;
+
+StreamInitializersB  : StreamReturnDecl
+                     {
+                        $$ = $1;
+                     }
+                     | StreamInitializers COMMA THREEDOTS
+                     {
+                        NodeAbstract *varargs( nullptr );
+                        varargs = new NodeAbstract();
+                        varargs->set_name( "ThreeDots" );
+                        varargs->AdoptChildren( $1 );
+                        $$ = varargs;
+                     }
+                     |  StreamInitializers COMMA StreamReturnDecl
                      {
                         $$->MakeSibling( $3 );
                      }
-                  ;
+                     ;
+
 
 StreamReturnDecl : Type TypeModifier IDENTIFIER
                    {
@@ -2778,15 +2796,15 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              }
            ;
 
-StreamCall : QualifiedName DLBRACKET ArgumentList DRBRACKET
+StreamCall : VariableStreams QualifiedName VariableStreams DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new NodeAbstract();
                std::cerr << "Qname1\n";
                $$->set_name( "StreamCall" );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
+               $$->MakeSibling( $2 );
+               $$->MakeSibling( $5 );
             }
-           | QualifiedName DLBRACKET DRBRACKET
+           | VariableStreams QualifiedName VariableStreams DLBRACKET DRBRACKET
             {
                $$ = new NodeAbstract();
                std::cerr << "Qname2\n";
@@ -2809,6 +2827,24 @@ StreamCall : QualifiedName DLBRACKET ArgumentList DRBRACKET
                $$->MakeSibling( $3 );
             }
            ;
+
+VariableStreams   : LCARROT THREEDOTS RCARROT
+                     {
+                        NodeAbstract *vs( nullptr );
+                        vs = new NodeAbstract();
+                        assert( vs != nullptr );
+                        vs->set_name( "VariableStream" );
+                        $$ = vs;
+                     }
+                  | 
+                    {
+                        NodeAbstract *vs( nullptr );
+                        vs = new NodeAbstract();
+                        assert( vs != nullptr );
+                        vs->set_name( "NonVariableStream" );
+                        $$ = vs;
+                    }
+                  ;
 
 DelayedName    :  DOLLAR
                   {
