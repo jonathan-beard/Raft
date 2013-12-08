@@ -327,6 +327,7 @@
 %type    <node>    StreamReturnDecl
 %type    <node>    DelayedName
 %type    <node>    StreamCall
+%type    <node>    StreamCallPrefixA
 %type    <node>    StreamModifiers
 %type    <node>    VariableStreams
 %%
@@ -2796,18 +2797,16 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              }
            ;
 
-StreamCall : VariableStreams QualifiedName VariableStreams DLBRACKET ArgumentList DRBRACKET
+StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new NodeAbstract();
-               std::cerr << "Qname1\n";
                $$->set_name( "StreamCall" );
-               $$->MakeSibling( $2 );
-               $$->MakeSibling( $5 );
+               $$->MakeSibling( $1 );
+               $$->MakeSibling( $3 );
             }
-           | VariableStreams QualifiedName VariableStreams DLBRACKET DRBRACKET
+           | StreamCallPrefixA DLBRACKET DRBRACKET
             {
                $$ = new NodeAbstract();
-               std::cerr << "Qname2\n";
                $$->set_name( "StreamCall" );
                $$->MakeSibling( $1 );
             }
@@ -2828,6 +2827,24 @@ StreamCall : VariableStreams QualifiedName VariableStreams DLBRACKET ArgumentLis
             }
            ;
 
+StreamCallPrefixA : VariableStreams QualifiedName VariableStreams
+                    {
+
+                    }
+                  | QualifiedName VariableStreams
+                    {
+
+                    }
+                  | VariableStreams QualifiedName
+                    {
+
+                    }
+                  | QualifiedName
+                    {
+
+                    }
+                  ;
+
 VariableStreams   : LCARROT THREEDOTS RCARROT
                      {
                         NodeAbstract *vs( nullptr );
@@ -2836,14 +2853,6 @@ VariableStreams   : LCARROT THREEDOTS RCARROT
                         vs->set_name( "VariableStream" );
                         $$ = vs;
                      }
-                  | 
-                    {
-                        NodeAbstract *vs( nullptr );
-                        vs = new NodeAbstract();
-                        assert( vs != nullptr );
-                        vs->set_name( "NonVariableStream" );
-                        $$ = vs;
-                    }
                   ;
 
 DelayedName    :  DOLLAR

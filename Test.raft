@@ -4,6 +4,8 @@ class Foo{
    void whooo()
    {
       a = whoo[[ ]];
+      a = <...>whoo[[ ]];
+      a = whoo<...>[[ ]];
       return;
    }
 }
