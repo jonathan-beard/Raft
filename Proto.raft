@@ -1,4 +1,4 @@
-class Foo<int8 f>{
+class Foo<int8 f(8)>{
 @public:
    int32 a( 0 );
    int32 foo( 0 );

@@ -329,7 +329,12 @@
 %type    <node>    StreamCall
 %type    <node>    StreamCallPrefixA
 %type    <node>    StreamModifiers
-%type    <node>    VariableStreams
+%type    <node>    StreamProperties
+%type    <node>    StreamPropertyOptions
+%type    <node>    StreamPropertyList
+%type    <node>    StreamOption
+
+
 %%
 CompilationUnit   :     END
                   |     T
@@ -2827,15 +2832,15 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
             }
            ;
 
-StreamCallPrefixA : VariableStreams QualifiedName VariableStreams
+StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                     {
 
                     }
-                  | QualifiedName VariableStreams
+                  | QualifiedName StreamProperties
                     {
 
                     }
-                  | VariableStreams QualifiedName
+                  | StreamProperties QualifiedName
                     {
 
                     }
@@ -2845,7 +2850,7 @@ StreamCallPrefixA : VariableStreams QualifiedName VariableStreams
                     }
                   ;
 
-VariableStreams   : LCARROT THREEDOTS RCARROT
+StreamProperties   : LCARROT StreamPropertyOptions RCARROT
                      {
                         NodeAbstract *vs( nullptr );
                         vs = new NodeAbstract();
@@ -2854,6 +2859,21 @@ VariableStreams   : LCARROT THREEDOTS RCARROT
                         $$ = vs;
                      }
                   ;
+
+StreamPropertyOptions :  THREEDOTS
+                      |  StreamPropertyList
+                     |  IDENTIFIER  EQUALS Number
+                      |  THREEDOTS COMMA StreamPropertyList
+                      ;
+
+StreamPropertyList   : StreamOption
+                     | StreamPropertyList COMMA StreamOption
+                     ;
+
+StreamOption         :  IDENTIFIER  EQUALS Literal
+                     |  IDENTIFIER  EQUALS Number
+                     |  IDENTIFIER  EQUALS Boolean
+                     ;
 
 DelayedName    :  DOLLAR
                   {

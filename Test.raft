@@ -5,7 +5,13 @@ class Foo{
    {
       a = whoo[[ ]];
       a = <...>whoo[[ ]];
+      a = <..., ordered = "false" >whoo[[ ]];
+      a = <..., ordered = false >whoo[[ ]];
+      a = <..., ordered = 300 >whoo[[ ]];
       a = whoo<...>[[ ]];
+      a = whoo<..., ordered = "true" >[[ ]];
+      a = whoo<..., ordered = true >[[ ]];
+      a = whoo<..., ordered = 4.0e5 >[[ ]];
       return;
    }
 }
