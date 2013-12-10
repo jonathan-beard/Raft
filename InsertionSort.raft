@@ -3,7 +3,7 @@ class InsertionSort< class T >{
    streams [[T out]] RunSort [[ T in, int8 f ]]
    {
       out.push( 
-         join<...>[[ $ ]] @/ (sort[[ $ ]] @/ ( split[[ $ ]] @/ in) ) );
+         join<...>[[ $ ]] @/ (sort[[ $ ]] @/ ( <..., edges = "cputofpga" >split[[ $ ]] @/ in) ) );
    }
 
 
