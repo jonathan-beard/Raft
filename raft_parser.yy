@@ -20,7 +20,6 @@
       class DeclaringList;
       class Filename;
       class Initializer;
-      class Value;
       class Type;
       class ObjectType;
       class Int8Type;
@@ -37,6 +36,7 @@
       class StringType;
       class AutomaticType;
       class VoidType;
+      class ValueBase;
    }
 }
 
@@ -57,7 +57,7 @@
    #include <cstdint>
    #include <cinttypes>
    #include <cstring>
-
+   #include <typeinfo>
    /* include for all driver functions */
    #include "driver.hpp"
    #include "data.hpp"
@@ -72,7 +72,8 @@
    #include "Filename.hpp"
    #include "BooleanType.hpp"
    #include "Initializer.hpp"
-   #include "Value.hpp"
+   #include "Value.tcc"
+   #include "ValueBase.hpp"
    #include "Int8Type.hpp"
    #include "Int16Type.hpp"
    #include "Int32Type.hpp"
@@ -115,7 +116,7 @@
    char                 cval;
    /* begin node types */
    Node::NodeAbstract   *node;
-   Node::Value          *valnode;
+   Node::ValueBase      *valnode;
    Node::Type           *typenode;
 }
 
@@ -2963,7 +2964,7 @@ LogicalUnaryExpression  :  PostfixExpression
 LogicalUnaryOperator :  BANG
                         {
                            $$ = new NodeAbstract();
-                           $$->set_name("Tilde");
+                           $$->set_name("Bang");
                         }
                      |  TILDE
                         {
@@ -2974,32 +2975,38 @@ LogicalUnaryOperator :  BANG
 
 Literal  :  STR_TOKEN
             {
-               $$ = new Value( *$1 );
+               ValueBase *value = new Value<std::string>( *$1 );
+               assert( value != nullptr );
+               $$ = value;
                delete( $1 );
             }
          ;
 
 Number   :  INT_TOKEN
             {
-               std::stringstream ss;
-               ss << $1;
-               $$ = new Value( ss.str() );
+               ValueBase *value = new Value<uintmax_t>( $1 );
+               assert( value != nullptr );
+               $$ = value;
             }
          |  FLOAT_TOKEN
             {
-               std::stringstream ss;
-               ss << $1;
-               $$ = new Value( ss.str() ); 
+               ValueBase *value = new Value<long double>( $1 );
+               assert( value != nullptr );
+               $$ = value;
             }
          ;
 
 Boolean  :  TRUE
             {
-               $$ = new Value( "true" );
+               ValueBase *value = new Value<bool>( true );
+               assert( value != nullptr );
+               $$ = value;
             }
          |  FALSE
             {
-               $$ = new Value( "false" );
+               ValueBase *value = new Value<bool>( false );
+               assert( value != nullptr );
+               $$ = value;
             }
          ;
                         
