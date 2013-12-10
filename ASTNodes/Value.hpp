@@ -8,14 +8,14 @@
 #include "NodeAbstract.hpp"
 
 namespace Node {
-class Value : public NodeAbstract {
+class Value<class T> : public NodeAbstract {
 public:
-   Value( std::string value );
+   Value( T input_value );
    virtual ~Value() = default;
 
-   std::string get_value(); 
+   bool get_value( ); 
 private:
-   std::string value;
+   T value;
 };
 
 } /* end namespace Node */

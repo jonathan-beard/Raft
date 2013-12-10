@@ -4,6 +4,8 @@
  * @version: Thu Nov  7 07:35:26 2013
  */
 #include "Value.hpp"
+#include <cstring>
+#include <cassert>
 
 using namespace Node;
 
@@ -11,15 +13,26 @@ using namespace Node;
  * basic constructor, set this object's value
  * to the param string
  */
-Value::Value( std::string value ) : NodeAbstract(),
-                                    value( value )
+Value::Value( T value ) : NodeAbstract(),
+                          value( value )
 {
    //Nothing more to do here
+   TODO: test this feature
+   set_name( std::to_string( value ) );
 }
 
 
-std::string
-Value::get_value()
+bool
+Value::get_value( Value::TYPE type, void *ptr )
 {
-   return( value );
+   if( this.type == type )
+   {
+      assert( ptr != nullptr );
+      memcpy( ptr, &value, sizeof( T ) );
+      return( true );
+   }
+   else
+   {
+      return( false );
+   }
 }
