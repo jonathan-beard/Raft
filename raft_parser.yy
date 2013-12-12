@@ -2023,7 +2023,6 @@ InstantModifier   :     FINAL SYSTEM
 
 Type  :  BoolType
          {
-            std::cerr << "TypeBoolType\n";
             $$ = $1;
          }
       |  IntType
@@ -2060,7 +2059,6 @@ AutoType          :     AUTO
 
 BoolType          :     BOOLEAN
                         { 
-                           std::cerr << "Boolean\n";
                            $$ = new BooleanType();
                         }
                   ;
