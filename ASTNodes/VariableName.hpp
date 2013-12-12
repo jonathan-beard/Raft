@@ -26,7 +26,7 @@ public:
    std::string get_var_name();
 
 private:
-
+   const std::string varname;
 };
 
 } /* end namespace Node */

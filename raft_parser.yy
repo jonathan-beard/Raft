@@ -37,6 +37,7 @@
       class AutomaticType;
       class VoidType;
       class ValueBase;
+      class VariableName;
    }
 }
 
@@ -66,6 +67,7 @@
    
    /* nodes */
    #include "NodeAbstract.hpp"
+   #include "VariableName.hpp"
    #include "Source.hpp"
    #include "Declaring.hpp"
    #include "DeclaringList.hpp"
@@ -1773,36 +1775,36 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
-                              std::cerr << "BoolInitializer\n";
+                              VariableName *v( new VariableName( *$1 ) );
+                              assert( v != nullptr );
+
                               BooleanType *id( nullptr );
                               id = new BooleanType();
                               assert( id != nullptr );
                               id->set_name( *$1 );
                               delete( $1 );
                               
-//                              Initializer *init( nullptr );
-//                              init = id->GetDefaultInitializer();
-                             
+                              Initializer *init( nullptr );
+                              init = id->GetDefaultInitializer();
+                           
 
-//                              id->AdoptChildren( $2 );
-//                              id->AdoptChildren( init );
-                              
+                            
                               /* check value */
-//                              std::string bool_value( $3->get_value() );
-//                              if( id->IsType( $3->get_value() ) )
-//                              {
-//                                 init->AcceptNewValue( bool_value );
-//                                 /* discard value object */
-//                                 delete( $3 );
-//                              }
-//                              else
-//                              {
-//                                 std::stringstream msg;
-//                                 msg << "Cannot assign (" << $3->get_value() << 
-//                                    ") to a bool.";
-//                                 compileError( msg.str(), data );
-//                                 delete( $3 );
-//                              }
+                              std::string bool_value( $3->get_value() );
+                              if( id->IsType( $3->get_value() ) )
+                              {
+                                 init->AcceptNewValue( bool_value );
+                                 /* discard value object */
+                                 delete( $3 );
+                              }
+                              else
+                              {
+                                 std::stringstream msg;
+                                 msg << "Cannot assign (" << $3->get_value() << 
+                                    ") to a bool.";
+                                 compileError( msg.str(), data );
+                                 delete( $3 );
+                              }
                               $$ = id;
                            }
                          | IDENTIFIER LPAREN Boolean RPAREN
