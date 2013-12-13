@@ -3,7 +3,7 @@ class Foo<int8 f(8)>{
    int32 a( 0 );
    int32 foo( 0 );
    bool  f[4]( 1 == 100 );
-
+   Foo f( new Foo() );
    /**
     * Foo - example of a constructor, will be called once
     * at instantiation but no more.

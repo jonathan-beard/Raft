@@ -1777,85 +1777,51 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
                               VariableName *v( new VariableName( *$1 ) );
                               assert( v != nullptr );
+                              delete( $1 );
 
                               BooleanType *id( nullptr );
                               id = new BooleanType();
                               assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
+                              id->set_name( "BoolDeclaration" );
                               
-                              Initializer *init( nullptr );
-                              init = id->GetDefaultInitializer();
-                           
+                              
 
-                            
-                              /* check value */
-                              std::string bool_value( $3->get_value() );
-                              if( id->IsType( $3->get_value() ) )
-                              {
-                                 init->AcceptNewValue( bool_value );
-                                 /* discard value object */
-                                 delete( $3 );
-                              }
-                              else
-                              {
-                                 std::stringstream msg;
-                                 msg << "Cannot assign (" << $3->get_value() << 
-                                    ") to a bool.";
-                                 compileError( msg.str(), data );
-                                 delete( $3 );
-                              }
+                              id->AdoptChildren( v );
+                              id->AdoptChildren( $2 );
+                              id->AdoptChildren( $4 );
                               $$ = id;
                            }
                          | IDENTIFIER LPAREN Boolean RPAREN
                            {
-                              std::cerr << "BoolInitializer\n";
+                              VariableName *v( new VariableName( *$1 ) );
+                              assert( v != nullptr );
+                              delete( $1 );
+
                               BooleanType *id( nullptr );
                               id = new BooleanType();
                               assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-                              
-//                              Initializer *init( nullptr );
-//                              init = id->GetDefaultInitializer();
-                             
+                              id->set_name( "BoolDeclaration" );
+                               
 
-//                              id->AdoptChildren( $2 );
-//                              id->AdoptChildren( init );
-                              
-                              /* check value */
-//                              std::string bool_value( $3->get_value() );
-//                              if( id->IsType( $3->get_value() ) )
-//                              {
-//                                 init->AcceptNewValue( bool_value );
-//                                 /* discard value object */
-//                                 delete( $3 );
-//                              }
-//                              else
-//                              {
-//                                 std::stringstream msg;
-//                                 msg << "Cannot assign (" << $3->get_value() << 
-//                                    ") to a bool.";
-//                                 compileError( msg.str(), data );
-//                                 delete( $3 );
-//                              }
+                              id->AdoptChildren( v );
+                              id->AdoptChildren( $3 );
                               $$ = id;
                            }
                        | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
+                              VariableName *v( new VariableName( *$1 ) );
+                              assert( v != nullptr );
                               delete( $1 );
 
-                              $$ = new NodeAbstract();
-                              $$->set_name( "BoolInitializer" );
-
-                              id->MakeSibling( $2 );
-                              id->MakeSibling( $4 );
-
-                              $$->AdoptChildren( id );
+                              BooleanType *id( nullptr );
+                              id = new BooleanType();
+                              assert( id != nullptr );
+                              id->set_name( "BoolDeclaration" );
+                               
+                              //TODO come back here 
+                              id->AdoptChildren( v );
+                              id->AdoptChildren( $3 );
+                              $$ = id;
                            }
                          ;
 
@@ -2863,7 +2829,6 @@ StreamProperties   : LCARROT StreamPropertyOptions RCARROT
 
 StreamPropertyOptions :  THREEDOTS
                       |  StreamPropertyList
-                     |  IDENTIFIER  EQUALS Number
                       |  THREEDOTS COMMA StreamPropertyList
                       ;
 
