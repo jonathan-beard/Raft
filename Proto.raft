@@ -31,5 +31,9 @@ class Foo<int8 f(8)>{
 }
 
 class Bar{
-
+@public:
+   void main( String[] args )
+   {
+      Foo f( new Foo() );
+   }
 }
