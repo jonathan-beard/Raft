@@ -12,6 +12,7 @@ class Foo<int8 f(8)>{
    {
       self.a = xoo( a );
       a = xoo [[ a ]];
+      a = 1+1 * (float32) 32.00 + (1 << 12);
    }
    
    /**

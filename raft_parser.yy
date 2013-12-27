@@ -1818,9 +1818,8 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               assert( id != nullptr );
                               id->set_name( "BoolDeclaration" );
                                
-                              //TODO come back here 
                               id->AdoptChildren( v );
-                              id->AdoptChildren( $3 );
+                              id->AdoptChildren( $4 );
                               $$ = id;
                            }
                          ;
@@ -2520,6 +2519,8 @@ MultiplicativeExpression   :  CastExpression
                               percent->AdoptChildren( $3 );
                               $$ = percent;
                            }
+                        | MultiplicativeExpression DLCARROT CastExpression
+                        | MultiplicativeExpression DRCARROT CastExpression
                        ;
 
 CastExpression :  UnaryExpression
