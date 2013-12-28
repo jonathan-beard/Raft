@@ -6,11 +6,11 @@
 #ifndef _VALUEBASE_HPP_
 #define _VALUEBASE_HPP_  1
 
-#include "NodeAbstract.hpp"
+#include "Returns.hpp"
 namespace Node{
-class ValueBase : public NodeAbstract {
+class ValueBase : public Returns {
 public:
-   ValueBase() = default;
+   ValueBase();
    virtual ~ValueBase() = default;
    
    /**

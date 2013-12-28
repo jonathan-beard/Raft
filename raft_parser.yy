@@ -38,6 +38,17 @@
       class VoidType;
       class ValueBase;
       class VariableName;
+      class Bang;
+      class Tilde;
+      class Allocation;
+      class Returns;
+      class UnaryMinus;
+      class UnaryPlus;
+      class Super;
+      class Nill;
+      class This;
+      class QualifiedName;
+      class DelayedName;
    }
 }
 
@@ -92,6 +103,18 @@
    #include "Type.hpp"
    #include "AutomaticType.hpp"
    #include "VoidType.hpp"
+   #include "Bang.hpp"
+   #include "Tilde.hpp"
+   #include "Allocation.hpp"
+   #include "New.hpp"
+   #include "Returns.hpp"
+   #include "UnaryPlus.hpp"
+   #include "UnaryMinus.hpp"
+   #include "Super.hpp"
+   #include "Nill.hpp"
+   #include "This.hpp"
+   #include "QualifiedName.hpp"
+   #include "DelayedName.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -100,8 +123,6 @@
                     Raft::Data                  &data );
 
    
-   static void compileError( const std::string message,
-                             Raft::Data  &data );
 
    using namespace Node;                    
 }
@@ -2584,43 +2605,37 @@ PrimaryExpression :  QualifiedName
 
 AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "AllocationExpression" );
-                           $2->MakeSibling( $4 );
+                           $$ = new Allocation();
                            $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $4 );
                         }
                      |  ALLOC Type LBRACKET Expression RBRACKET
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "AllocationExpression" );
-                           $2->MakeSibling( $4 );
+                           $$ = new Allocation();
                            $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $4 );
                         }
                      |  ALLOC Type LPAREN  RPAREN
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "AllocationExpression" );
+                           $$ = new Allocation();
                            $$->AdoptChildren( $2 );
                         }
                      |  NEW Type LPAREN ArgumentList RPAREN
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "NewExpression" );
-                           $2->MakeSibling( $4 );
+                           $$ = new New();
                            $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $4 );
                         }
                      |  NEW Type LPAREN RPAREN
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "NewExpression" );
+                           $$ = new New();
                            $$->AdoptChildren( $2 );
                         }
                      |  NEW Type LBRACKET Expression RBRACKET
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "NewExpression" );
-                           $2->MakeSibling( $4 );
+                           $$ = new New();
                            $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $4 );
                         }
                      ;
 
@@ -2844,61 +2859,51 @@ StreamOption         :  IDENTIFIER  EQUALS Literal
 
 DelayedName    :  DOLLAR
                   {
-                     std::cerr << "DelayedName\n";
-                     $$ = new NodeAbstract();
-                     $$->set_name( "DelayedName" );
+                     $$ = new DelayedName();
+                     assert( $$ != nullptr );
                   }
                ;
 
 QualifiedName  :  IDENTIFIER
                   {
-                     std::cerr << "QualifiedName\n";
-                     $$ = new NodeAbstract();
-                     $$->set_name( *$1 );
-                     std::cerr << "Name: " << *$1 << "\n";
+                     $$ = new QualifiedName( *$1 );
+                     assert( $$ != nullptr );
                      delete( $1 );
                   }
                |  QualifiedName PERIOD IDENTIFIER
                   {
-                     NodeAbstract *node( nullptr );
-                     node = new NodeAbstract( );
-                     assert( node != nullptr );
-                     node->set_name( *$3 );
-                     $$->MakeSibling( node );
+                     QualifiedName *qn = new QualifiedName( *$3 );
+                     assert( qn != nullptr );
                      delete( $3 );
+                     $1->MakeSibling( qn );
+                     $$ = $1;
                   }
                ;
 
 
 SpecialName     : NILL
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "Nill" );
+                     $$ = new Nill();
                   }
                 | THIS
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "This" );
+                     $$ = new This();
                   }
                 | SUPER
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "Super" );
+                     $$ = new Super();
                   }
                 ;
 
 
 ArgumentList   :  Expression
                   {
-                     std::cerr << "ArgumentList->Exp\n";
-                     $$ = new NodeAbstract();
-                     $$->set_name( "ArgumentList" );
-                     $$->AdoptChildren( $1 );
+                     $$ = $1;
                   }
                |  ArgumentList COMMA Expression
                   {
-                     std::cerr << "ArgList,Exp\n";
-                     $1->AdoptChildren( $3 );
+                     $1->MakeSibling( $3 );
+                     $$ = $1;
                   }   
                ;
 
@@ -2906,13 +2911,11 @@ ArgumentList   :  Expression
 
 ArithmeticUnaryOperator :  PLUS
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "Plus" );
+                              $$ = new UnaryPlus();
                            }
                         |  MINUS
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "Minus" );
+                              $$ = new UnaryMinus();
                            }
                         ;
 
@@ -2929,13 +2932,11 @@ LogicalUnaryExpression  :  PostfixExpression
 
 LogicalUnaryOperator :  BANG
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name("Bang");
+                           $$ = new Bang();
                         }
                      |  TILDE
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name("Tilde");
+                           $$ = new Tilde();
                         }
                      ;
 
@@ -2997,31 +2998,6 @@ Raft::Parser::error( const std::string &err_message )
       data.get_rf_errorstream() << ".\n";
    }
    data.get_rf_errorstream() << "Error is somewhere in the line:\n" <<
-   data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
-   data.reset_rf_parsestream();
-}
-
-static void
-compileError( std::string message,
-              Raft::Data   &data )
-{
-   std::string str( data.get_cpp_handler().PeekHead() );
-   const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
-   data.get_rf_errorstream() << "Compile error, in file with " << 
-   str << " with input \"" 
-      << data.get_rf_parsestream().str() << "\"";
-   if( is_included_file )
-   {
-      std::string str_included( data.get_cpp_handler().PeekBelowHead() );
-      data.get_rf_errorstream() << ",\n" <<
-      "in included from file with " << str_included << ".\n";
-   }
-   else
-   {
-      data.get_rf_errorstream() << ".\n";
-   }
-   data.get_rf_errorstream() << message << "\n";
-   data.get_rf_errorstream() << "Error in the line:\n" <<
    data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
    data.reset_rf_parsestream();
 }
