@@ -2798,7 +2798,7 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
                $$->MakeSibling( $3 );
              }
            ;
-
+//HERE
 StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new NodeAbstract();
