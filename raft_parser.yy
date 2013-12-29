@@ -49,6 +49,13 @@
       class This;
       class QualifiedName;
       class DelayedName;
+      class StreamOption;
+      class StreamPropertyList;
+      class VariableStreams;
+      class Referencing;
+      class StreamReferencing;
+      class VariableReferencing;
+      class MethodReferencing;
    }
 }
 
@@ -115,6 +122,13 @@
    #include "This.hpp"
    #include "QualifiedName.hpp"
    #include "DelayedName.hpp"
+   #include "StreamOption.hpp"
+   #include "StreamPropertyList.hpp"
+   #include "VariableStreams.hpp"
+   #include "Referencing.hpp"
+   #include "VariableReferencing.hpp"
+   #include "MethodReferencing.hpp"
+   #include "StreamReferencing.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -2800,16 +2814,16 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
             }
      | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "StreamCall" );
+               $$ = new StreamReferencing();
+               assert( $$ != nullptr );
                $$->MakeSibling( $1 );
                $$->MakeSibling( $3 );
                $$->MakeSibling( $5 );
             }
            | SpecialName PERIOD QualifiedName DLBRACKET DRBRACKET
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "StreamCall" );
+               $$ = new StreamReferencing();
+               assert( $$ != nullptr );
                $$->MakeSibling( $1 );
                $$->MakeSibling( $3 );
             }
@@ -2817,44 +2831,94 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
 
 StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                     {
-
+                       $$ = new StreamReferencing();
+                       assert( $$ != nullptr );
+                       $$->AdoptChildren( $1 );
+                       $$->AdoptChildren( $2 );
+                       $$->AdoptChildren( $3 );
                     }
                   | QualifiedName StreamProperties
                     {
-
+                       $$ = new StreamReferencing();
+                       assert( $$ != nullptr );
+                       $$->AdoptChildren( $1 );
+                       $$->AdoptChildren( $2 );
                     }
                   | StreamProperties QualifiedName
                     {
-
+                       $$ = new StreamReferencing();
+                       assert( $$ != nullptr );
+                       $$->AdoptChildren( $1 );
+                       $$->AdoptChildren( $2 );
                     }
                   | QualifiedName
                     {
-
+                        $$ = new StreamReferencing();
+                        assert( $$ != nullptr );
+                        $$->AdoptChildren( $1 );
                     }
                   ;
 
 StreamProperties   : LCARROT StreamPropertyOptions RCARROT
                      {
-                        NodeAbstract *vs( nullptr );
-                        vs = new NodeAbstract();
+                        StreamPropertyList *vs( nullptr );
+                        vs = new StreamPropertyList();
                         assert( vs != nullptr );
-                        vs->set_name( "VariableStream" );
+                        vs->AdoptChildren( $2 );
                         $$ = vs;
                      }
                   ;
 
 StreamPropertyOptions :  THREEDOTS
+                         {
+                           VariableStreams *vs = new 
+                                          VariableStreams();
+                           assert( vs != nullptr );
+                           $$ = vs;
+                         }
                       |  StreamPropertyList
+                         {
+                           $$ = $1;
+                         }
                       |  THREEDOTS COMMA StreamPropertyList
+                         {
+                           VariableStreams *vs = new 
+                                          VariableStreams();
+                           assert( vs != nullptr );
+                           vs->MakeSibling( $3 );
+                           $$ = vs;
+                         }
                       ;
 
 StreamPropertyList   : StreamOption
+                       {
+                           $$ = $1;
+                       }
                      | StreamPropertyList COMMA StreamOption
+                       {
+                           $1->MakeSibling( $3 );
+                           $$ = $1;
+                       }
                      ;
 
-StreamOption         :  IDENTIFIER  EQUALS Literal
-                     |  IDENTIFIER  EQUALS Number
-                     |  IDENTIFIER  EQUALS Boolean
+StreamOption         :  QualifiedName  EQUALS Literal
+                        {
+                           $$ = new StreamOption();
+                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $3 );
+                        }
+                     |  QualifiedName  EQUALS Number
+                        {
+                           $$ = new StreamOption();
+                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $3 );
+                        }
+                     |  QualifiedName  EQUALS Boolean
+                        {
+                           $$ = new StreamOption();
+                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $3 );
+                        }
                      ;
 
 DelayedName    :  DOLLAR

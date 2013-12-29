@@ -9,7 +9,9 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             SDFTypeModifier Source Declaring DeclaringList Filename\
             ValueBase VoidType AutomaticType VariableName Tilde Bang \
             Allocation New Returns UnaryPlus UnaryMinus Super Nill This \
-            QualifiedName DelayedName
+            QualifiedName DelayedName StreamOption StreamPropertyList \
+            VariableStreams Referencing MethodReferencing \
+            StreamReferencing VariableReferencing
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
