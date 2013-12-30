@@ -11,7 +11,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             Allocation New Returns UnaryPlus UnaryMinus Super Nill This \
             QualifiedName DelayedName StreamOption StreamPropertyList \
             VariableStreams Referencing MethodReferencing \
-            StreamReferencing VariableReferencing
+            StreamReferencing VariableReferencing ArgumentList \
+            MethodArgumentList StreamArgumentList
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

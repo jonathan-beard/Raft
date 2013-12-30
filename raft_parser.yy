@@ -56,6 +56,9 @@
       class StreamReferencing;
       class VariableReferencing;
       class MethodReferencing;
+      class ArgumentList;
+      class StreamArgumentList;
+      class MethodArgumentList;
    }
 }
 
@@ -129,6 +132,9 @@
    #include "VariableReferencing.hpp"
    #include "MethodReferencing.hpp"
    #include "StreamReferencing.hpp"
+   #include "ArgumentList.hpp"
+   #include "StreamArgumentList.hpp"
+   #include "MethodArgumentList.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -2757,6 +2763,7 @@ ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
 
 FieldAccess :  NotJustName PERIOD IDENTIFIER
                {
+                  //TODO start here, 29 Dec 2013
                   $$ = new NodeAbstract();
                   $$->set_name( "FieldAccess" );
                   $$->MakeSibling( $1 );
@@ -2771,61 +2778,73 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
 
 MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              {
-               $$ = new NodeAbstract();
-               $$->set_name( "MethodCall" );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
+               $$ = new MethodReferencing();
+               ArgumentList *al = new MethodArgumentList();
+               al->AdoptChildren( $3 );
+               $$->AdoptChildren( $1 );
+               $$->AdoptChildren( al );
              }
            | QualifiedName LPAREN  RPAREN
              {
-               $$ = new NodeAbstract();
-               $$->set_name( "MethodCall" );
-               $$->MakeSibling( $1 );
+               $$ = new MethodReferencing();
+               ArgumentList *al = new MethodArgumentList();
+               $$->AdoptChildren( $1 );
+               $$->AdoptChildren( al );
              }
            | SpecialName PERIOD QualifiedName LPAREN ArgumentList RPAREN
              {
-               $$ = new NodeAbstract();
-               $$->set_name( "MethodCall" );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
-               $$->MakeSibling( $5 );
+               $$ = new MethodReferencing();
+               $1->MakeSibling( $3 );
+               ArgumentList *al = new MethodArgumentList();
+               al->AdoptChildren( $5 );
+               $$->AdoptChildren( $1 );
+               $$->AdoptChildren( al );
              }
            | SpecialName PERIOD QualifiedName LPAREN RPAREN
              {
-               $$ = new NodeAbstract();
-               $$->set_name( "MethodCall" );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
+               $$ = new MethodReferencing();
+               $1->MakeSibling( $3 );
+               ArgumentList *al = new MethodArgumentList();
+               $$->AdoptChildren( $1 );
+               $$->AdoptChildren( al );
              }
            ;
-//HERE
+
+
 StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "StreamCall" );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
+               $$ = new StreamReferencing();
+               $$->AdoptChildren( $1 );
+               ArgumentList *al = new StreamArgumentList();
+               al->AdoptChildren( $3 );
+               $$->AdoptChildren( al );
             }
            | StreamCallPrefixA DLBRACKET DRBRACKET
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "StreamCall" );
-               $$->MakeSibling( $1 );
+               $$ = new StreamReferencing();
+               $$->AdoptChildren( $1 );
+               ArgumentList *al = new StreamArgumentList();
+               $$->AdoptChildren( al );
             }
      | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new StreamReferencing();
                assert( $$ != nullptr );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
-               $$->MakeSibling( $5 );
+               $1->MakeSibling( $3 );
+               ArgumentList *al = new StreamArgumentList();
+               assert( al != nullptr );
+               al->AdoptChildren( $5 );
+               al->AdoptChildren( $1 );
+               $$->MakeSibling( al );
             }
            | SpecialName PERIOD QualifiedName DLBRACKET DRBRACKET
             {
                $$ = new StreamReferencing();
                assert( $$ != nullptr );
-               $$->MakeSibling( $1 );
-               $$->MakeSibling( $3 );
+               ArgumentList *al = new StreamArgumentList();
+               $1->MakeSibling( $3 );
+               $$->AdoptChildren( $1 );
+               $$->AdoptChildren( al );
             }
            ;
 
