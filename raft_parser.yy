@@ -719,12 +719,21 @@ Body              :     Visibility
                         {
                            $$ = $1;
                         }
+                  |     TypeDeclaration
+                        {
+                           $$ = $1;
+                        }
                   |     Body Visibility
                         {
                            $1->MakeSibling( $2 );
                            $$ = $1;
                         }
                   |     Body FieldDeclaration
+                        {
+                           $1->MakeSibling( $2 );
+                           $$ = $1;
+                        }
+                  |     Body TypeDeclaration
                         {
                            $1->MakeSibling( $2 );
                            $$ = $1;

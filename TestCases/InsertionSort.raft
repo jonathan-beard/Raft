@@ -1,0 +1,38 @@
+class InsertionSort< class T >{
+@public:
+   streams [[T out]] RunSort [[ T in, int8 f ]]
+   {
+      out.push( 
+         join<...>[[ $ ]] @/ (sort[[ $ ]] @/ ( <..., edges = "cputofpga" >split[[ $ ]] @/ in) ) );
+   }
+
+
+   void main( String[] Args )
+   {
+
+   }
+
+@private:
+   /**
+    * Note: x is now a synchronized variable shared across all 
+    * instantiations of InsertionSort
+    */
+   static int8 x(0);
+
+   fork streams [[T out, ... ]] split [[ T in ]]
+   {
+      T split( T.MAX / split.OutputPortCount() );
+      
+   }
+
+   streams [[ T out ]] sort [[ T in ]]
+   {
+
+   }
+
+   converge streams [[ T out ]] join [[ T in, ... ]]
+   {
+
+   }
+}
+

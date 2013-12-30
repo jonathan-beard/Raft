@@ -1,0 +1,4 @@
+int32 test_array[]( new int32[100] /* dynamic allocation */, 
+                    0 /* initialization */ );
+
+int32 output_array[]( foo( $ ) @/ test_array );                    

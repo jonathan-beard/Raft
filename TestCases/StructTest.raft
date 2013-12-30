@@ -1,0 +1,12 @@
+class StructTest{
+@public:
+   StructTest(){
+
+   }
+
+   static struct AStruct {
+      int8 a;
+      int8 b;
+   }; 
+
+}

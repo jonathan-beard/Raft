@@ -1,0 +1,7 @@
+class ExpInit{
+@public:
+   int8 foo(){
+      int8 a( 1 + 3 );
+      return( a );
+   }
+}

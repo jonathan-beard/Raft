@@ -1,0 +1,56 @@
+struct  too{
+
+} : a(),b(),c(); 
+
+class Foo< class Type, int32 array[2](1) > : extends Kernel{
+@public:
+   String a("foobar");
+   int8 a(100);
+   int64 b(3);
+   float32 c[32,32](3.0);
+   // dynamically allocated array
+   int32 aa[]( nill );
+
+   
+   streams [[int64 a]] Foo( int64 x( 0 ), int32 a[100](0) ) 
+   {
+      int32 a( 100 );
+      aa = alloc int32[ 100 ];
+      c[0,0] = 4;
+   }
+
+   streams 
+   [[ String a ]]
+   ToString( int64 x )
+   {
+      
+   }
+
+   void
+   bar( int32 a )
+   {
+      if( a < 4 )
+      {
+
+      }
+   }
+
+   void 
+   test( int32 a, int64 t )
+   {
+      OS.out.println( "Vars: %d %d", a, t );
+   }
+
+   void Main(  String args[]( nill ) )
+   {
+      
+      int32 test_array[]( new int32[ 100 ], 0 );
+      int32 array_output[]( Sum( $[1], $[2] ) @/ test_array );
+      bar();
+
+      auto X( test( # , 100 ) );
+   }
+@private:
+   int8 bar(0);
+@protected:
+}
