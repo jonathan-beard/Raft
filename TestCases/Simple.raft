@@ -35,7 +35,7 @@ class Foo< class Type, int32 array[2](1) > : extends Kernel{
       OS.out.println( "Vars: %d %d", a, t );
    }
 
-   void main( String args[1] )
+   void main( String args[](nill) )
    {
       
       int32 test_array[]( new int32[ 100 ], 0 );

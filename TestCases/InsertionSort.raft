@@ -7,7 +7,7 @@ class InsertionSort< class T >{
    }
 
 
-   void main( String[] Args )
+   void main( String Args[](nill) )
    {
 
    }
