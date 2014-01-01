@@ -269,11 +269,9 @@
 %type    <node>    Filename
 %type    <node>    InterfaceDeclaration
 %type    <node>    ClassDeclaration
-%type    <node>    StructDeclaration
 %type    <node>    Generic
 %type    <node>    GenericList
 %type    <node>    Inherit
-%type    <node>    InlineStructInitList
 %type    <node>    InstantModifier
 %type    <node>    Body
 %type    <typenode>    Type
@@ -455,11 +453,6 @@ TypeDeclaration   :     ClassDeclaration
                         {
                            $$ = $1;
                         }
-                  |     StructDeclaration InlineStructInitList
-                        {
-                           $1->AdoptChildren( $2 );
-                           $$ = $1;
-                        }
                   ;
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
@@ -593,54 +586,6 @@ GenericList :  CLASS IDENTIFIER
                }
             ;
 
-StructDeclaration :  STRUCT IDENTIFIER Inherit LBRACE Body RBRACE
-                     {
-                        NodeAbstract *str( nullptr );
-                        str = new NodeAbstract();
-                        assert( str != nullptr );
-                        str->set_name( "StructDeclaration" );
-                        
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        id->set_name( *$2 );
-                        delete( $2 );
-
-                        id->MakeSibling( $3 );
-                        id->MakeSibling( $5 );
-
-                        str->AdoptChildren( id );
-
-                        $$ = str;
-                     }
-                  |  STRUCT IDENTIFIER Inherit LBRACE RBRACE
-                     {
-                        NodeAbstract *str( nullptr );
-                        str = new NodeAbstract();
-                        assert( str != nullptr );
-                        str->set_name( "StructDeclaration" );
-                        
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        id->set_name( *$2 );
-                        delete( $2 );
-
-                        id->MakeSibling( $3 );
-
-                        NodeAbstract *empty( nullptr );
-                        empty = new NodeAbstract();
-                        assert( empty != nullptr );
-                        empty->set_name( "Empty Body" );
-
-                        id->MakeSibling( empty );
-
-                        str->AdoptChildren( id );
-
-                        $$ = str;
-                     }
-                  ;
-
 
 
 Inherit           :     COLON EXTENDS IDENTIFIER
@@ -719,10 +664,6 @@ Body              :     Visibility
                         {
                            $$ = $1;
                         }
-                  |     TypeDeclaration
-                        {
-                           $$ = $1;
-                        }
                   |     Body Visibility
                         {
                            $1->MakeSibling( $2 );
@@ -733,12 +674,8 @@ Body              :     Visibility
                            $1->MakeSibling( $2 );
                            $$ = $1;
                         }
-                  |     Body TypeDeclaration
-                        {
-                           $1->MakeSibling( $2 );
-                           $$ = $1;
-                        }
                   ;
+
 
 Visibility        :     ATPUBLIC
                         {
@@ -762,42 +699,29 @@ FieldDeclaration  :     FieldVariableDeclaration
                         {
                            std::cerr << "FieldVar Decl\n";
                            $$ = new NodeAbstract();
-                           $$->set_name("FieldDeclaration");
+                           $$->set_name("FieldVariableDeclaration");
                            $$->AdoptChildren( $1 );
                         }
                   |     MethodDeclaration
                         {
                            $$ = new NodeAbstract();
-                           $$->set_name("FieldDeclaration");
+                           $$->set_name("MethodDeclaration");
                            $$->AdoptChildren( $1 );
                         }
                   |     ConstructorDeclaration
                         {
                            $$ = new NodeAbstract();
-                           $$->set_name("FieldDeclaration");
+                           $$->set_name("ConstructorDeclaration");
                            $$->AdoptChildren( $1 );
                         }
-                  |     StructDeclaration InlineStructInitList
+                  |     StreamingMethodConstructor
                         {
                            $$ = new NodeAbstract();
-                           $$->set_name("FieldDeclaration");
-                           $1->MakeSibling( $2 );
+                           $$->set_name( "StreamingMethodDeclaration" );
                            $$->AdoptChildren( $1 );
                         }
                   ;
 
-InlineStructInitList   :  COLON MultiObjectInit SEMI
-                           {
-                              $$ = new NodeAbstract();
-                              $$->set_name("InlineInitializer");
-                              $$->AdoptChildren( $2 );
-                           }
-                       | 
-                          {
-                              $$ = new NodeAbstract();
-                              $$->set_name("NoInlineInitializer");
-                          }
-                       ;
 
 FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             {
@@ -1126,10 +1050,6 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
 
                               $$ = method;
                            }
-                         | StreamingMethodConstructor
-                           {
-                              $$ = $1;
-                           }
                          ;
 
 MethodBody  :  Block
@@ -1242,21 +1162,32 @@ Parameter                : Type  DeclaratorName
                               $$ = param;
                            }
 
-                         | Type LBRACKET RBRACKET DeclaratorName
+                         | Type  DeclaratorName LBRACKET RBRACKET
                            {
                               NodeAbstract *param_arr( nullptr );
                               param_arr = new NodeAbstract();
                               assert( param_arr != nullptr );
                               param_arr->set_name( "ParamArray" );
-                              param_arr->MakeSibling( $1 );
-                              param_arr->MakeSibling( $4 );
+                              param_arr->AdoptChildren( $1 );
+                              param_arr->AdoptChildren( $2 );
+                              $$ = param_arr;
+                           }
+                         | Type  DeclaratorName LBRACKET ArraySize RBRACKET
+                           {
+                              NodeAbstract *param_arr( nullptr );
+                              param_arr = new NodeAbstract();
+                              assert( param_arr != nullptr );
+                              param_arr->set_name( "ParamArray" );
+                              param_arr->AdoptChildren( $1 );
+                              param_arr->AdoptChildren( $2 );
+                              param_arr->AdoptChildren( $4 );
                               $$ = param_arr;
                            }
                          ;
 
 DeclaratorName           : IDENTIFIER
                            {
-                              std::cerr << "DeclNameID\n";
+                              std::cerr << "DeclNameID: " << *$1 << "\n";
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
                               assert( id != nullptr );
@@ -1322,10 +1253,6 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
                                            $$ = $1;
                                           }
                                        |  Statement
-                                          {
-                                           $$ = $1;
-                                          }
-                                       |  StructDeclaration
                                           {
                                            $$ = $1;
                                           }
@@ -1509,6 +1436,7 @@ Statement   :  EmptyStatement
                }
             |  SelectionStatementInit
                {
+                  std::cerr << "SelectionStatementInit\n";
                   $$ = $1;
                }
             |  IterationStatement
@@ -1556,10 +1484,10 @@ Expression  :  AssignmentExpression
                }
             ;
 
-
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
                         {
+                           std::cerr << "Here2\n";
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
@@ -1574,6 +1502,7 @@ SelectionStatementInit  :
                         }
                     |   IF LPAREN Expression RPAREN Statement
                         {
+                           std::cerr << "Here1\n";
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
@@ -1757,10 +1686,31 @@ StreamInitializersB  : StreamReturnDecl
 StreamReturnDecl : Type TypeModifier IDENTIFIER
                    {
                      $$ = new NodeAbstract();
+                     $$->set_name( *$3 );
+                     $$->AdoptChildren( $1 );
+                     $$->AdoptChildren( $2 );
+                     delete( $3 );
                    }
                  | Type IDENTIFIER
                    {
                      $$ = new NodeAbstract();
+                     $$->set_name( *$2 );
+                     delete( $2 );
+                   }
+                 | Type IDENTIFIER LBRACKET RBRACKET
+                   {
+                     $$ = new NodeAbstract();
+                     $$->set_name( *$2 );
+                     delete( $2 );
+                     $$->AdoptChildren( $1 );
+                   }
+                 | Type IDENTIFIER LBRACKET ArraySize RBRACKET
+                   {
+                     $$ = new NodeAbstract();
+                     $$->set_name( *$2 );
+                     delete( $2 );
+                     $$->AdoptChildren( $1 );
+                     $$->AdoptChildren( $4 );
                    }
                  ;
 
