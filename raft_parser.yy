@@ -59,6 +59,7 @@
       class ArgumentList;
       class StreamArgumentList;
       class MethodArgumentList;
+      class ClassDeclaration;
    }
 }
 
@@ -135,6 +136,7 @@
    #include "ArgumentList.hpp"
    #include "StreamArgumentList.hpp"
    #include "MethodArgumentList.hpp"
+   #include "ClassDeclaration.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -457,50 +459,29 @@ TypeDeclaration   :     ClassDeclaration
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
-                           std::cerr << "Class Decl\n";
                            NodeAbstract *cls( nullptr );
-                           cls = new NodeAbstract();
+                           cls = new ClassDeclaration( *$3 );
                            assert( cls != nullptr );
-                           cls->set_name( "ClassDecl" );
-                           NodeAbstract *id( nullptr );
-                           id = new NodeAbstract();
-                           assert( id != nullptr );
-                           id->set_name( *$3 );
                            delete( $3 );
+                           
+                           cls->AdoptChildren( $1 );
+                           cls->AdoptChildren( $4 );
+                           cls->AdoptChildren( $5 );
+                           cls->AdoptChildren( $7 );
 
-                           id->MakeSibling( $1 );
-                           id->MakeSibling( $4 );
-                           id->MakeSibling( $5 );
-                           id->MakeSibling( $7 );
-
-                           cls->AdoptChildren( id );
                            $$ = cls;
                         }
                   |     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE RBRACE
                         {
                            NodeAbstract *cls( nullptr );
-                           cls = new NodeAbstract();
+                           cls = new ClassDeclaration( *$3 );
                            assert( cls != nullptr );
-                           cls->set_name( "ClassDecl" );
-
-                           NodeAbstract *id( nullptr );
-                           id = new NodeAbstract();
-                           assert( id != nullptr );
-                           id->set_name( *$3 );
                            delete( $3 );
 
-                           id->MakeSibling( $1 );
-                           id->MakeSibling( $4 );
-                           id->MakeSibling( $5 );
+                           cls->AdoptChildren( $1 );
+                           cls->AdoptChildren( $4 );
+                           cls->AdoptChildren( $5 );
 
-                           NodeAbstract *empty( nullptr );
-                           empty = new NodeAbstract();
-                           assert( empty != nullptr );
-                           empty->set_name( "EmptyBody" );
-
-                           id->MakeSibling( empty );
-
-                           cls->AdoptChildren( id );
                            $$ = cls;
                         }
                   ;
@@ -509,9 +490,11 @@ Generic  :  LCARROT GenericList RCARROT
             { 
                $$ = $2;
             }
+
          |  {  $$ = new NodeAbstract();
                $$->set_name("EmptyGenericList"); }
          ;
+
 
 GenericList :  CLASS IDENTIFIER
                {
