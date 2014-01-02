@@ -152,6 +152,7 @@
 /* token types */
 %union{
    semantic_type() : sval( nullptr ){}
+   semantic_type() : node( nullptr ){}
 
    /* mostly basic types */
    std::string          *sval;
