@@ -60,6 +60,11 @@
       class StreamArgumentList;
       class MethodArgumentList;
       class ClassDeclaration;
+      class Generic;
+      class GenericTypeParam;
+      class GenericClassParam;
+      class GenericTypeMultiple;
+      class GenericList;
    }
 }
 
@@ -137,6 +142,11 @@
    #include "StreamArgumentList.hpp"
    #include "MethodArgumentList.hpp"
    #include "ClassDeclaration.hpp"
+   #include "Generic.hpp"
+   #include "GenericTypeParam.hpp"
+   #include "GenericClassParam.hpp"
+   #include "GenericTypeMultiple.hpp"
+   #include "GenericList.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -151,8 +161,10 @@
 
 /* token types */
 %union{
-   semantic_type() : sval( nullptr ){}
-   semantic_type() : node( nullptr ){}
+   semantic_type() : sval( nullptr )
+   {
+      
+   }
 
    /* mostly basic types */
    std::string          *sval;
@@ -274,6 +286,7 @@
 %type    <node>    ClassDeclaration
 %type    <node>    Generic
 %type    <node>    GenericList
+%type    <node>    GenericListA
 %type    <node>    Inherit
 %type    <node>    InstantModifier
 %type    <node>    Body
@@ -489,29 +502,40 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
 
 Generic  :  LCARROT GenericList RCARROT
             { 
-               $$ = $2;
+               NodeAbstract *gl = new GenericList();
+               $$ = gl;
+               $$->AdoptChildren( $2 );
             }
 
-         |  {  $$ = new NodeAbstract();
-               $$->set_name("EmptyGenericList"); }
+         |  {  
+               NodeAbstract *gl = new GenericList();
+               $$ = gl;
+            }
          ;
 
 
-GenericList :  CLASS IDENTIFIER
+GenericList :  GenericListA  
+               {
+                  $$ = $1;
+               }
+            |  GenericList COMMA GenericListA
+               {
+                  $1->MakeSibling( $3 );
+                  $$ = $1;
+               }
+            ;
+
+GenericListA : CLASS IDENTIFIER
                {
                   NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( *$2 );
+                  cl = new GenericClassParam( *$2 );
                   delete( $2 );
                   $$ = cl;
                }
             |  Type  IDENTIFIER  TypeModifier
                {
                   NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( *$2 );
+                  cl = new GenericTypeParam( *$2 );
                   delete( $2 );
                   cl->AdoptChildren( $1 );
                   cl->AdoptChildren( $3 );
@@ -519,8 +543,7 @@ GenericList :  CLASS IDENTIFIER
                }
             |  Type IDENTIFIER
                {
-                  NodeAbstract *cl = new NodeAbstract();
-                  cl->set_name( *$2 );
+                  GenericTypeParam *cl = new GenericTypeParam();
                   cl->AdoptChildren( $1 );
                   delete( $2 );
                   $$ = cl;
@@ -528,48 +551,12 @@ GenericList :  CLASS IDENTIFIER
             |  Type  Initializer
                {
                   NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( "TypeGeneric" );
+                  cl = new GenericTypeMultiple();
                   cl->AdoptChildren( $1 );
                   cl->AdoptChildren( $2 );
                   $$ = cl;
                }
-            |  GenericList COMMA CLASS IDENTIFIER
-               {
-                  NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( *$4 );
-                  delete( $4 );
-                  $1->MakeSibling( cl );
-                  $$ = $1;
-               }
-            |  GenericList COMMA Type IDENTIFIER TypeModifier 
-               {
-                  NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( *$4 );
-                  delete( $4 );
-                  cl->AdoptChildren( $3 );
-                  cl->AdoptChildren( $5 );
-                  $1->MakeSibling( cl );
-                  $$ = $1;
-               }
-            |  GenericList COMMA Type Initializer
-               {
-                  NodeAbstract *cl( nullptr );
-                  cl = new NodeAbstract();
-                  assert( cl != nullptr );
-                  cl->set_name( "TypeGeneric" );
-                  cl->AdoptChildren( $3 );
-                  cl->AdoptChildren( $4 );
-                  $1->MakeSibling( cl );
-                  $$ = $1;
-               }
             ;
-
 
 
 Inherit           :     COLON EXTENDS IDENTIFIER

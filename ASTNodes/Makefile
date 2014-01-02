@@ -12,7 +12,9 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             QualifiedName DelayedName StreamOption StreamPropertyList \
             VariableStreams Referencing MethodReferencing \
             StreamReferencing VariableReferencing ArgumentList \
-            MethodArgumentList StreamArgumentList ClassDeclaration
+            MethodArgumentList StreamArgumentList ClassDeclaration \
+            GenericList GenericTypeParam GenericClassParam Generic \
+            GenericTypeMultiple
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
