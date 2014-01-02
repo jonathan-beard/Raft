@@ -543,7 +543,7 @@ GenericListA : CLASS IDENTIFIER
                }
             |  Type IDENTIFIER
                {
-                  GenericTypeParam *cl = new GenericTypeParam();
+                  GenericTypeParam *cl = new GenericTypeParam( *$2 );
                   cl->AdoptChildren( $1 );
                   delete( $2 );
                   $$ = cl;
