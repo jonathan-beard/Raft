@@ -1,0 +1,6 @@
+class Foo< class Type, int32 array[2](1) >{
+@public:
+   void main( String args[](nill) )
+   {
+   }
+}

@@ -1,0 +1,7 @@
+class Foo{
+@public:
+   void main( String args[](nill) )
+   {
+      
+   }
+}

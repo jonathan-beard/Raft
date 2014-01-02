@@ -1,0 +1,6 @@
+class Foo : extends Kernel{
+@public:
+   void main( String args[](nill) )
+   {
+   }
+}
