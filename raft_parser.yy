@@ -562,7 +562,7 @@ GenericListA : CLASS IDENTIFIER
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
                            NodeAbstract *in( nullptr );
-                           in = new NodeAbstract();
+                           in = new Extends();
                            assert( in != nullptr );
                            std::stringstream ss;
                            ss << "Inherits from: " << *$3;

@@ -14,7 +14,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             StreamReferencing VariableReferencing ArgumentList \
             MethodArgumentList StreamArgumentList ClassDeclaration \
             GenericList GenericTypeParam GenericClassParam Generic \
-            GenericTypeMultiple
+            GenericTypeMultiple Inherit Implements Extends NoInherit
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
