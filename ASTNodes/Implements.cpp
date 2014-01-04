@@ -6,7 +6,7 @@
 #include "Implements.hpp"
 using namespace Node;
 
-Implements::Implements() : Inherit( "Implements" )
+Implements::Implements( const std::string name ) : Inherit( name )
 {
 
 }

@@ -5,11 +5,12 @@
  */
 #ifndef _IMPLEMENTS_HPP_
 #define _IMPLEMENTS_HPP_  1
-#include "Inherit.cpp"
+#include <string>
+#include "Inherit.hpp"
 namespace Node{
 class Implements : public Inherit {
 public:
-   Implements();
+   Implements( const std::string name );
    virtual ~Implements() = default;
 };
 } /** end namespace Node **/

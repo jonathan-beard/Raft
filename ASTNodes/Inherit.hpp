@@ -7,7 +7,7 @@
 #define _INHERIT_HPP_  1
 #include <string>
 #include "NodeAbstract.hpp"
-using namespace Node{
+namespace Node{
 class Inherit : public NodeAbstract {
 public:
    Inherit();

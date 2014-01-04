@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-Extends::Extends() : Inherit( "Extends" )
+Extends::Extends( const std::string name ) : Inherit( name )
 {
 
 }

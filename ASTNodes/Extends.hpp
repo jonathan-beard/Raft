@@ -5,11 +5,12 @@
  */
 #ifndef _EXTENDS_HPP_
 #define _EXTENDS_HPP_  1
-#include "Inherit.cpp"
+#include <string>
+#include "Inherit.hpp"
 namespace Node{
 class Extends : public Inherit {
 public:
-   Extends();
+   Extends( const std::string name );
    virtual ~Extends() = default;
 };
 } /** end namespace Node **/

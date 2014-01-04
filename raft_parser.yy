@@ -65,6 +65,13 @@
       class GenericClassParam;
       class GenericTypeMultiple;
       class GenericList;
+      class Inherit;
+      class Extends;
+      class Implements;
+      class NoInherit;
+      class Interface;
+      class Body;
+      class EmptyBody;
    }
 }
 
@@ -147,6 +154,13 @@
    #include "GenericClassParam.hpp"
    #include "GenericTypeMultiple.hpp"
    #include "GenericList.hpp"
+   #include "Inherit.hpp"
+   #include "NoInherit.hpp"
+   #include "Extends.hpp"
+   #include "Implements.hpp"
+   #include "Interface.hpp"
+   #include "Body.hpp"
+   #include "EmptyBody.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -513,8 +527,7 @@ Generic  :  LCARROT GenericList RCARROT
             }
          ;
 
-
-GenericList :  GenericListA  
+GenericList :  GenericListA
                {
                   $$ = $1;
                }
@@ -562,31 +575,21 @@ GenericListA : CLASS IDENTIFIER
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
                            NodeAbstract *in( nullptr );
-                           in = new Extends();
-                           assert( in != nullptr );
-                           std::stringstream ss;
-                           ss << "Inherits from: " << *$3;
-                           in->set_name( ss.str() );
+                           in = new Extends( *$3 );
                            delete( $3 );
                            $$ = in;
                         }
                   |     COLON IMPLEMENTS IDENTIFIER 
                         {
                            NodeAbstract *in( nullptr );
-                           in = new NodeAbstract();
-                           assert( in != nullptr );
-                           std::stringstream ss;
-                           ss << "Implements: " << *$3;
-                           in->set_name( ss.str() );
+                           in = new Implements( *$3 );
                            delete( $3 );
                            $$ = in;
                         }
                   |
                         {
                            NodeAbstract *empty( nullptr );
-                           empty = new NodeAbstract();
-                           assert( empty != nullptr );
-                           empty->set_name( "No Inherit" );
+                           empty = new NoInherit();
                            $$ = empty;
                         }
                   ;
@@ -594,35 +597,17 @@ Inherit           :     COLON EXTENDS IDENTIFIER
 InterfaceDeclaration :  INTERFACE IDENTIFIER LBRACE Body RBRACE
                         {
                            NodeAbstract *interface( nullptr );
-                           interface = new NodeAbstract();
-                           assert( interface != nullptr );
-                           interface->set_name( "Interface Delcaration" );
-
-                           NodeAbstract *name( nullptr );
-                           name = new NodeAbstract();
-                           name->set_name( *$2 );
+                           interface = new Interface( *$2 );
                            delete( $2 );
-
-                           name->MakeSibling( $4 );
-
-                           interface->AdoptChildren( name );
-
+                           interface->AdoptChildren( $4 );
                            $$ = interface;
                         }
                      |  INTERFACE IDENTIFIER LBRACE RBRACE
                         {
                            NodeAbstract *interface( nullptr );
-                           interface = new NodeAbstract();
-                           assert( interface != nullptr );
-                           interface->set_name( "Interface Delcaration" );
-
-                           NodeAbstract *name( nullptr );
-                           name = new NodeAbstract();
-                           name->set_name( *$2 );
+                           interface = new Interface( *$2 );
                            delete( $2 );
-
-                           interface->AdoptChildren( name );
-
+                           interface->AdoptChildren( new EmptyBody() );
                            $$ = interface;
                         }
                      ;
