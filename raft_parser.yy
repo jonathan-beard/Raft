@@ -72,6 +72,10 @@
       class Interface;
       class Body;
       class EmptyBody;
+      class Visibility;
+      class Public;
+      class Private;
+      class Protected;
    }
 }
 
@@ -161,6 +165,10 @@
    #include "Interface.hpp"
    #include "Body.hpp"
    #include "EmptyBody.hpp"
+   #include "Visibility.hpp"
+   #include "Public.hpp"
+   #include "Private.hpp"
+   #include "Protected.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -405,7 +413,7 @@
 %type    <node>    StreamPropertyOptions
 %type    <node>    StreamPropertyList
 %type    <node>    StreamOption
-
+%type    <node>    StorageModifierI
 
 %%
 CompilationUnit   :     END
@@ -635,46 +643,33 @@ Body              :     Visibility
 
 Visibility        :     ATPUBLIC
                         {
-                           std::cerr << "AtPublic Decl\n";
-                           $$ = new NodeAbstract();
-                           $$->set_name( "public" );
+                           $$ = new Public();
                         }
                   |     ATPROTECTED
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "protected" );
+                           $$ = new Protected();
                         }
                   |     ATPRIVATE
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "private" );
+                           $$ = new Private();
                         }
                   ;
 
 FieldDeclaration  :     FieldVariableDeclaration
                         {
-                           std::cerr << "FieldVar Decl\n";
-                           $$ = new NodeAbstract();
-                           $$->set_name("FieldVariableDeclaration");
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                   |     MethodDeclaration
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name("MethodDeclaration");
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                   |     ConstructorDeclaration
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name("ConstructorDeclaration");
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                   |     StreamingMethodConstructor
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "StreamingMethodDeclaration" );
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                   ;
 
@@ -739,77 +734,35 @@ FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             }
                           ;
 
-StorageModifier : CONST
+StorageModifier  : StorageModifierI
+                 {
+                   $$ = $1;
+                 }
+                 | StorageModifier StorageModifierI
+                 {
+                   $1->MakeSibling( $2 );
+                   $$ = $1;
+                 }
+
+StorageModifierI : CONST
                   {
                      NodeAbstract *sm( nullptr );
                      sm = new NodeAbstract();
                      assert( sm != nullptr );
-
                      sm->set_name("const");
                      $$ = sm;
                   }
-                | STATIC
+                 | STATIC
                   {
                      NodeAbstract *sm( nullptr );
                      sm = new NodeAbstract();
                      assert( sm != nullptr );
-
                      sm->set_name("static");
                      $$ = sm;
                   }
-                | STATIC ATOMIC
+                 | NONATOMIC
                   {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("static atomic");
-                     $$ = sm;
-                  }
-                | ATOMIC STATIC
-                  {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("atomic static");
-                     $$ = sm;
-                  }
-                | NONATOMIC STATIC
-                  {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("nonatomic static");
-                     $$ = sm;
-                  }
-                | STATIC NONATOMIC
-                  {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("static nonatomic");
-                     $$ = sm;
-                  }
-                | ATOMIC
-                  {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("atomic");
-                     $$ = sm;
-                  }
-                | NONATOMIC
-                  {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-
-                     sm->set_name("nonatomic");
-                     $$ = sm;
+                     
                   }
                 ;
 
@@ -2042,9 +1995,8 @@ StringType        :     STRING
 
 ObjectType        :     QualifiedName
                         {
-                           NodeAbstract *ot = new NodeAbstract();
-                           ot->set_name( "ObjectType" );
-                           ot->AdoptChildren( $1 );
+                           $$ = new ObjectType( "ObjectType" );
+                           $$->AdoptChildren( $1 );
                         }
                   ;
 
@@ -2634,7 +2586,6 @@ ComplexPrimaryNoParenthesis : Literal
                               }
                             | StreamCall
                               {
-                                 std::cerr << "StreamCall\n";
                                  $$ = $1;
                               }
                             | ArrayAccess
