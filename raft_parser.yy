@@ -76,6 +76,11 @@
       class Public;
       class Private;
       class Protected;
+      class Access;
+      class ArrayAccess;
+      class FieldAccess;
+      class Parameter;
+      class PlaceholderParameter;
    }
 }
 
@@ -169,6 +174,11 @@
    #include "Public.hpp"
    #include "Private.hpp"
    #include "Protected.hpp"
+   #include "Access.hpp"
+   #include "FieldAccess.hpp"
+   #include "ArrayAccess.hpp"
+   #include "Parameter.hpp"
+   #include "PlaceholderParameter.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -676,32 +686,18 @@ FieldDeclaration  :     FieldVariableDeclaration
 
 FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             {
-                              NodeAbstract *fieldvar( nullptr );
-                              fieldvar = new NodeAbstract();
-                              assert( fieldvar != nullptr );
-
-                              fieldvar->set_name( "FieldVariableDeclaration" );
-
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $3 );
-
-                              fieldvar->AdoptChildren( $1 );
-                              $$ = fieldvar;
+                              $$ = new FieldVarDecl();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
                             }
                           | StorageModifier Type Initializer DeclareAndAssignArray SEMI
                             {
-                             NodeAbstract *fieldvar( nullptr );
-                             fieldvar = new NodeAbstract();
-                             assert( fieldvar != nullptr );
-
-                             fieldvar->set_name( "FieldVariableDeclaration" );
-
-                             $1->MakeSibling( $2 );
-                             $1->MakeSibling( $3 );
-                             $1->MakeSibling( $4 );
-
-                             fieldvar->AdoptChildren( $1 );
-                             $$ = fieldvar;
+                              $$ = new FieldVarDecl();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
+                              $$->AdoptChildren( $4 );
                             }
                           | Type Initializer SEMI
                             {
@@ -2599,46 +2595,35 @@ ComplexPrimaryNoParenthesis : Literal
                             ;
 Placeholder  : POUND
                {
-                  $$ = new NodeAbstract();
-                  $$->set_name( "Placeholder" );
+                  $$ = new PlaceholderParameter();
                }
              ;
 
 ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
                {
-                  $$ = new NodeAbstract();
-                  $$->set_name( "ArrayAccess" );
-                  $$->MakeSibling( $1 );
-                  $$->MakeSibling( $3 );
+                  $$ = new ArrayAccess();
+                  $$->AdoptChildren( $1 );
+                  $$->AdoptChildren( $3 );
                }
             |  QualifiedName LBRACKET  ArraySize RBRACKET
                {
-                  $$ = new NodeAbstract();
-                  $$->set_name( "ArrayAccess" );
-                  $$->MakeSibling( $1 );
-                  $$->MakeSibling( $3 );
+                  $$ = new ArrayAccess();
+                  $$->AdoptChildren( $1 );
+                  $$->AdoptChildren( $3 );
                }
             |  DelayedName LBRACKET ArraySize RBRACKET
                {
-                  $$ = new NodeAbstract();
-                  $$->set_name( "DelayedName" );
-                  $$->MakeSibling( $1 );
-                  $$->MakeSibling( $3 );
+                  $$ = new ArrayAccess();
+                  $$->AdoptChildren( $1 );
+                  $$->AdoptChildren( $3 );
                }
             ;
 
 FieldAccess :  NotJustName PERIOD IDENTIFIER
                {
-                  //TODO start here, 29 Dec 2013
-                  $$ = new NodeAbstract();
-                  $$->set_name( "FieldAccess" );
-                  $$->MakeSibling( $1 );
-                  NodeAbstract *field_name( nullptr );
-                  field_name = new NodeAbstract( );
-                  assert( field_name != nullptr );
-                  field_name->set_name( *$3 );
+                  $$ = new FieldAccess( *$3 );
                   delete( $3 );
-                  $$->MakeSibling( field_name );
+                  $$->AdoptChildren( $1 );
                }
             ;
 
