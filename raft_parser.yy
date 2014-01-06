@@ -16,8 +16,6 @@
       class NodeAbstract;
       class BooleanType;
       class Source;
-      class Declaring;
-      class DeclaringList;
       class Filename;
       class Initializer;
       class Type;
@@ -81,6 +79,7 @@
       class FieldAccess;
       class Parameter;
       class PlaceholderParameter;
+      class FieldVarDecl;
    }
 }
 
@@ -112,8 +111,8 @@
    #include "NodeAbstract.hpp"
    #include "VariableName.hpp"
    #include "Source.hpp"
-   #include "Declaring.hpp"
-   #include "DeclaringList.hpp"
+   #include "Declaration.hpp"
+   #include "FieldVarDecl.hpp"
    #include "Filename.hpp"
    #include "BooleanType.hpp"
    #include "Initializer.hpp"
@@ -701,32 +700,16 @@ FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                             }
                           | Type Initializer SEMI
                             {
-                             std::cerr << "TypeInitSemi\n";
-                             NodeAbstract *fieldvar( nullptr );
-                             fieldvar = new NodeAbstract();
-                             assert( fieldvar != nullptr );
-
-                             fieldvar->set_name( "FieldVariableDeclaration" );
-
-                             $1->MakeSibling( $2 );
-
-                             fieldvar->AdoptChildren( $1 );
-                             $$ = fieldvar;
+                              $$ = new FieldVarDecl();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
                             }
                           | Type Initializer DeclareAndAssignArray SEMI
                             {
-                              NodeAbstract *fieldvar( nullptr );
-                              fieldvar = new NodeAbstract();
-                              assert( fieldvar != nullptr );
-
-                              fieldvar->set_name( "FieldVariableDeclaration" );
-                              
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $3 );
-
-                              fieldvar->AdoptChildren( $1 );
-
-                              $$ = fieldvar;
+                              $$ = new FieldVarDecl();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
                             }
                           ;
 
