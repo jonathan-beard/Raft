@@ -80,6 +80,10 @@
       class Parameter;
       class PlaceholderParameter;
       class FieldVarDecl;
+      class StorageModifier;
+      class Constant;
+      class Static;
+      class NonAtomic;
    }
 }
 
@@ -178,6 +182,10 @@
    #include "ArrayAccess.hpp"
    #include "Parameter.hpp"
    #include "PlaceholderParameter.hpp"
+   #include "StorageModifier.hpp"
+   #include "Constant.hpp"
+   #include "NonAtomic.hpp"
+   #include "Static.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -725,23 +733,15 @@ StorageModifier  : StorageModifierI
 
 StorageModifierI : CONST
                   {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-                     sm->set_name("const");
-                     $$ = sm;
+                     $$ = new Constant();
                   }
                  | STATIC
                   {
-                     NodeAbstract *sm( nullptr );
-                     sm = new NodeAbstract();
-                     assert( sm != nullptr );
-                     sm->set_name("static");
-                     $$ = sm;
+                     $$ = new Static();
                   }
                  | NONATOMIC
                   {
-                     
+                     $$ = new NonAtomic();
                   }
                 ;
 
