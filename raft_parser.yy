@@ -748,37 +748,30 @@ StorageModifierI : CONST
 
 ConstructorDeclaration   : MethodDeclarator Block
                            {
+                              //TODO come back here
                               NodeAbstract *cons( nullptr );
-                              cons = new NodeAbstract();
-                              assert( cons != nullptr );
-
-                              cons->set_name( "ConstructorDeclaration" );
-                              $1->MakeSibling( $2 );
+                              cons = new ConstructorDeclaration();
                               cons->AdoptChildren( $1 );
+                              cons->AdoptChildren( $2 );
                               $$ = cons;  
                            }
                          | MethodDeclarator COLON ClassInitializers SEMI
                            {
                               NodeAbstract *cons( nullptr );
-                              cons = new NodeAbstract();
-                              assert( cons != nullptr );
-
-                              cons->set_name( "ConstructorDeclaration" );
-                              $1->MakeSibling( $3 );
+                              cons = new ConstructorDeclaration();
                               cons->AdoptChildren( $1 );
-                              $$ = cons;
+                              cons->AdoptChildren( $3 );
+                              cons->AdoptChildren( new EmptyBody() );
+                              $$ = cons;  
                            }
                          | MethodDeclarator COLON ClassInitializers Block
                            {
                               NodeAbstract *cons( nullptr );
-                              cons = new NodeAbstract();
-                              assert( cons != nullptr );
-
-                              cons->set_name( "ConstructorDeclaration" );
-                              $1->MakeSibling( $3 );
-                              $1->MakeSibling( $4 );
+                              cons = new ConstructorDeclaration();
                               cons->AdoptChildren( $1 );
-                              $$ = cons;
+                              cons->AdoptChildren( $3 );
+                              cons->AdoptChildren( $4 );
+                              $$ = cons;  
                            }
                          ;
 
