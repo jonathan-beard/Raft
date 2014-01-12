@@ -17,7 +17,10 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             GenericTypeMultiple Inherit Implements Extends NoInherit \
             Body EmptyBody Interface Visibility Private Protected \
             Public Access FieldAccess ArrayAccess Parameter \
-            PlaceholderParameter StorageModifier Constant Static NonAtomic
+            PlaceholderParameter StorageModifier Constant Static NonAtomic \
+            ClassInitializers EmptyClassInitializers ConstructorDeclaration \
+            StreamModifier Modifier StreamingMethodDeclaration Converge \
+            Fork EmptyStreamModifier
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

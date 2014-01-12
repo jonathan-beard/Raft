@@ -7,12 +7,12 @@
 
 using namespace Node;
 
-StorageModifier::StorageModifier() : NodeAbstract()
+StorageModifier::StorageModifier() : Modifier()
 {
 }
 
 
-StorageModifier::StorageModifier( const std::string name ) : NodeAbstract( name )
+StorageModifier::StorageModifier( const std::string name ) : Modifier( name )
 {
 
 }

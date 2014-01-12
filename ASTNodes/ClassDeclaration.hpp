@@ -5,9 +5,9 @@
  */
 #ifndef _CLASSDECLARATION_HPP_
 #define _CLASSDECLARATION_HPP_  1
-#include "NodeAbstract.hpp"
+#include "Declaration.hpp"
 namespace Node{
-class ClassDeclaration : public NodeAbstract {
+class ClassDeclaration : public Declaration {
 public:
    ClassDeclaration( const std::string classname );
    virtual ~ClassDeclaration() = default;

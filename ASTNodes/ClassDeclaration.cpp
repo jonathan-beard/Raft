@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-ClassDeclaration::ClassDeclaration( const std::string classname ) : NodeAbstract( classname )
+ClassDeclaration::ClassDeclaration( const std::string classname ) : Declaration( classname )
 {
    /** nothing to do here **/
 }

@@ -6,9 +6,9 @@
 #ifndef _STORAGEMODIFIER_HPP_
 #define _STORAGEMODIFIER_HPP_  1
 #include <string>
-#include "NodeAbstract.hpp"
+#include "Modifier.hpp"
 namespace Node{
-class StorageModifier : public NodeAbstract {
+class StorageModifier : public Modifier {
 public:
    StorageModifier();
    virtual ~StorageModifier() = default;

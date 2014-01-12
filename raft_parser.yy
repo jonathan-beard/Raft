@@ -84,6 +84,13 @@
       class Constant;
       class Static;
       class NonAtomic;
+      class ClassInitializers;
+      class EmptyClassInitializers;
+      class ConstructorDeclaration;
+      class StreamingMethodDeclaration;
+      class Converge;
+      class Fork;
+      class EmptyStreamModifier;
    }
 }
 
@@ -186,6 +193,13 @@
    #include "Constant.hpp"
    #include "NonAtomic.hpp"
    #include "Static.hpp"
+   #include "ClassInitializers.hpp"
+   #include "EmptyClassInitializers.hpp"
+   #include "ConstructorDeclaration.hpp"
+   #include "StreamingMethodDeclaration.hpp"
+   #include "Converge.hpp"
+   #include "Fork.hpp"
+   #include "EmptyStreamModifier.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -748,10 +762,10 @@ StorageModifierI : CONST
 
 ConstructorDeclaration   : MethodDeclarator Block
                            {
-                              //TODO come back here
                               NodeAbstract *cons( nullptr );
                               cons = new ConstructorDeclaration();
                               cons->AdoptChildren( $1 );
+                              cons->AdoptChildren( new EmptyClassInitializers() );
                               cons->AdoptChildren( $2 );
                               $$ = cons;  
                            }
@@ -777,41 +791,25 @@ ConstructorDeclaration   : MethodDeclarator Block
 
 StreamingMethodConstructor :  StreamModifiers STREAMS StreamInitializer StreamDeclarator Block
                               {
-                                 NodeAbstract *cons( nullptr );
-                                 cons = new NodeAbstract();
-                                 assert( cons != nullptr );
-
-                                 cons->set_name( "StreamingConstructorDeclaration" );
-                                 $3->MakeSibling( $4 );
-                                 $3->MakeSibling( $5 );
-                                 cons->AdoptChildren( $3 );
-                                 $$ = cons;  
+                                 $$ = new StreamingMethodDeclaration();
+                                 $$->AdoptChildren( $1 );
+                                 $$->AdoptChildren( $3 );
+                                 $$->AdoptChildren( $4 );
+                                 $$->AdoptChildren( $5 );
                               }
                            ;
 
 StreamModifiers            : FORK
                              {
-                                 NodeAbstract *fork( nullptr );
-                                 fork = new NodeAbstract();
-                                 assert( fork != nullptr );
-                                 fork->set_name( "Fork" );
-                                 $$ = fork;
+                                 $$ = new Fork();
                              }
                            | CONVERGE
                              {
-                                 NodeAbstract *converge( nullptr );
-                                 converge = new NodeAbstract();
-                                 assert( converge != nullptr );
-                                 converge->set_name( "Converge" );
-                                 $$ = converge;
+                                 $$ = new Converge();
                              }
                            |
                               {
-                                 NodeAbstract *nomods( nullptr );
-                                 nomods = new NodeAbstract();
-                                 assert( nomods != nullptr );
-                                 nomods->set_name( "NoStreamModifiers" );
-                                 $$ = nomods;
+                                 $$ = new EmptyStreamModifier();
                               }
                            ;
 
