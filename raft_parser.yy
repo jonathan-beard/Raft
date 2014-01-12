@@ -815,6 +815,7 @@ StreamModifiers            : FORK
 
 ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            {
+                              //TODO here next
                               NodeAbstract *ini(nullptr);
                               ini = new NodeAbstract();
                               assert( ini != nullptr );
@@ -1066,7 +1067,6 @@ Parameter                : Type  DeclaratorName
 
 DeclaratorName           : IDENTIFIER
                            {
-                              std::cerr << "DeclNameID: " << *$1 << "\n";
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
                               assert( id != nullptr );
@@ -1315,7 +1315,6 @@ Statement   :  EmptyStatement
                }
             |  SelectionStatementInit
                {
-                  std::cerr << "SelectionStatementInit\n";
                   $$ = $1;
                }
             |  IterationStatement
@@ -1346,19 +1345,16 @@ EmptyStatement :  SEMI
 
 ExpressionStatement  :  Expression
                         {
-                           std::cerr << "Expression\n";
                            $$ = $1;
                         }
                      ;
 
 Expression  :  AssignmentExpression
                {
-                  std::cerr << "AssignmentExpression\n";
                   $$ = $1;
                }
             |  MapExpression
                {
-                  std::cerr << "MapExpression\n";
                   $$ = $1;   
                }
             ;
@@ -1366,7 +1362,6 @@ Expression  :  AssignmentExpression
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
                         {
-                           std::cerr << "Here2\n";
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
@@ -1381,7 +1376,6 @@ SelectionStatementInit  :
                         }
                     |   IF LPAREN Expression RPAREN Statement
                         {
-                           std::cerr << "Here1\n";
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
@@ -1595,12 +1589,10 @@ StreamReturnDecl : Type TypeModifier IDENTIFIER
 
 Initializer :  MultiBoolInit
                {
-                  std::cerr << "MultiBoolInit\n";
                   $$ = $1;
                }
             |  MultiNumberInit
                {
-                  std::cerr << "MultiNumInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
@@ -1613,7 +1605,6 @@ Initializer :  MultiBoolInit
                }
             |  MultiStringInit
                {
-                  std::cerr << "MultiStringInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
@@ -1626,7 +1617,6 @@ Initializer :  MultiBoolInit
                }
             |  MultiObjectInit
                {
-                  std::cerr << "MultiObjectInit\n";
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
                   assert( ini != nullptr );
@@ -1647,7 +1637,6 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
                            }
                          | BoolInitializer
                            {
-                              std::cerr << "MulitBoolInitializer\n";
                               $$ = $1;
                            }
                          ;
