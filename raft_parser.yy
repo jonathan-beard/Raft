@@ -815,45 +815,17 @@ StreamModifiers            : FORK
 
 ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            {
-                              //TODO here next
-                              NodeAbstract *ini(nullptr);
-                              ini = new NodeAbstract();
-                              assert( ini != nullptr );
-
-                              ini->set_name( "ClassInitializer" );
-
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
+                              $$ = new ClassInitializer( *$1 );
                               delete( $1 );
-
-                              id->MakeSibling( $3 );
-
-                              ini->AdoptChildren( id );
-
-                              $$ = ini;
+                              $$->AdoptChildren( $3 );
                            }
                          | ClassInitializers COMMA IDENTIFIER LPAREN Expression RPAREN
                            {
-                              NodeAbstract *ini(nullptr);
-                              ini = new NodeAbstract();
-                              assert( ini != nullptr );
-
-                              ini->set_name( "ClassInitializer" );
-
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$3 );
+                              NodeAbstract *node( new ClassInitializer( *$3 ) );
                               delete( $3 );
+                              node->AdoptChildren( $5 );
 
-                              id->MakeSibling( $5 );
-
-                              ini->AdoptChildren( id );
-                              
-                              $1->MakeSibling( ini );
-
+                              $1 -> AdoptSibling( node );
                               $$ = $1;
                            }
                          ;

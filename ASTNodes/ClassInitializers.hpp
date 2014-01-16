@@ -8,9 +8,9 @@
 #include <string>
 #include "NodeAbstract.hpp"
 namespace Node{
-class ClassInitializers : public NodeAbstract {
+class ClassInitializers : public Initializer {
 public:
-   ClassInitializers();
+   ClassInitializers( const std::string name);
    virtual ~ClassInitializers() = default;
 protected:
    ClassInitializers( const std::string name );

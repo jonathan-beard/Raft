@@ -7,12 +7,17 @@
 
 using namespace Node;
 
-ClassInitializers::ClassInitializers() : NodeAbstract( "ClassInitializers" )
+ClassInitializers::ClassInitializers( const std::string name ) : Initialzer( name )
+{
+
+}
+
+ClassInitializers::ClassInitializers() : Initializer( "ClassInitializers" )
 {
 
 }
 
 
-ClassInitializers::ClassInitializers( const std::string name ) : NodeAbstract( name )
+ClassInitializers::ClassInitializers( const std::string name ) : Initializer( name )
 {
 }
