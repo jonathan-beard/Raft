@@ -84,8 +84,8 @@
       class Constant;
       class Static;
       class NonAtomic;
-      class ClassInitializers;
-      class EmptyClassInitializers;
+      class ClassInitializer;
+      class EmptyClassInitializer;
       class ConstructorDeclaration;
       class StreamingMethodDeclaration;
       class Converge;
@@ -193,8 +193,8 @@
    #include "Constant.hpp"
    #include "NonAtomic.hpp"
    #include "Static.hpp"
-   #include "ClassInitializers.hpp"
-   #include "EmptyClassInitializers.hpp"
+   #include "ClassInitializer.hpp"
+   #include "EmptyClassInitializer.hpp"
    #include "ConstructorDeclaration.hpp"
    #include "StreamingMethodDeclaration.hpp"
    #include "Converge.hpp"

@@ -30,14 +30,3 @@ ObjectType::IsType( std::string value )
    return( true );
 }
 
-Initializer*
-ObjectType::GetDefaultInitializer()
-{
-   /* there's not really a better solution than this,
-    * just hope that the user really does define a decent
-    * initializer routine for their built objects, remember
-    * that all the primitives will at least be initialized
-    * properly
-    */
-   return( nullptr );
-}

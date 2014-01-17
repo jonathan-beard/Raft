@@ -12,7 +12,7 @@ namespace Node{
 class Initializer : public NodeAbstract{
 public:
    Initializer();
-   virtual ~Initializer();
+   virtual ~Initializer() = default;
 protected:
    Initializer( const std::string name );
 };

@@ -8,8 +8,7 @@
 using namespace Node;
 
 UInt8Type::UInt8Type() : UIntType(
-                         "UInt8Type",
-                         UINT8_MAX )
+                         "UInt8Type" )
 {
    /* nothing to do */
 }

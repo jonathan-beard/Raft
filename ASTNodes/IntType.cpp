@@ -5,40 +5,14 @@
  */
 
 #include "IntType.hpp"
-#include "Initializer.hpp"
 
 using namespace Node;
 
-IntType::IntType() : Type( "IntType" ),
-                     max( 0 ),
-                     min( 0 )
+IntType::IntType() : Type( "IntType" )
 {
-   /* nothing to do here */
-}
-
-IntType::IntType(const std::string n,
-                 uintmax_t minimum,
-                 intmax_t  maximum )
-{
-   /* nothing to do here */
 }
 
 
-IntType::~IntType()
+IntType::IntType( const std::string name ) : Type( name )
 {
-   /* nothing to do here either */
-}
-
-bool
-IntType::IsType( uintmax_t value )
-{
-   const intmax_t real_value( value );
-   if( real_value <= max && real_value >=min ) return( true );
-   return( false );
-}
-
-Initializer*
-IntType::GetDefaultInitializer()
-{
-   return( new Initializer( (intmax_t) 0 ) );
 }

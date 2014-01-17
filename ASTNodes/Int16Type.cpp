@@ -8,9 +8,7 @@
 using namespace Node;
 
 Int16Type::Int16Type() : IntType(
-                         "Int16Type",
-                         INT16_MAX,
-                         INT16_MIN )
+                         "Int16Type" )
 {
    /* nothing to do */
 }

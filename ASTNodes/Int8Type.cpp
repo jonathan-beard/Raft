@@ -9,9 +9,7 @@
 using namespace Node;
 
 Int8Type::Int8Type() : IntType( 
-                        "Int8Type",
-                         INT8_MAX ,
-                         INT8_MIN )
+                        "Int8Type")
 {
    /* nothing to do */
 }

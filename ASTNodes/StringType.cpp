@@ -13,20 +13,3 @@ StringType::StringType() : Type( "StringType" )
 
 }
 
-StringType::~StringType()
-{
-
-}
-
-bool
-StringType::IsType( std::string value )
-{
-   return( true );
-}
-
-
-Initializer*
-StringType::GetDefaultInitializer()
-{
-   return( new Initializer( (std::string) ""  ));
-}

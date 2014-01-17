@@ -8,9 +8,7 @@
 using namespace Node;
 
 Int64Type::Int64Type() : IntType(
-                         "Int64Type",
-                         INT64_MAX,
-                         INT64_MIN )
+                         "Int64Type" )
 {
    /* nothing to do here */
 }

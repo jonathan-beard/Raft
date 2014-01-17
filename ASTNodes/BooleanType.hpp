@@ -15,16 +15,8 @@ class Initializer;
 class BooleanType : public Type {
 public:
    BooleanType();
-   virtual ~BooleanType();
+   virtual ~BooleanType() = default;
    
-   /**
-    * IsType - overrides default bahavior
-    * for IsType
-    */
-   virtual  bool IsType( uintmax_t value );
-   virtual  bool IsType( std::string value );
-   
-   virtual Initializer* GetDefaultInitializer();
 };
 
 } /* end namespace Node */

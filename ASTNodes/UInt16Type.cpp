@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-UInt16Type::UInt16Type() : UIntType( "UInt16Type", UINT16_MAX )
+UInt16Type::UInt16Type() : UIntType( "UInt16Type")
 {
    /* nothing else to do here */
 }

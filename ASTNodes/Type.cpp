@@ -3,11 +3,11 @@
  * @author: Jonathan Beard
  * @version: Mon May 13 10:43:53 2013
  */
-#include "Initializer.hpp"
 #include "Type.hpp"
 #include "NodeAbstract.hpp"
 
 #include <cassert>
+
 using namespace Node;
 
 Type::Type() : NodeAbstract( "AbstractType" )
@@ -66,11 +66,3 @@ Type::ToString()
 {
    return( name );
 }  
-   
-Initializer* 
-Type::GetDefaultInitializer()
-{
-   /* die if this is the one beign called... */
-   assert( false );
-   return( nullptr );
-}

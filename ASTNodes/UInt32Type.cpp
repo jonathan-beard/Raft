@@ -8,8 +8,7 @@
 using namespace Node;
 
 UInt32Type::UInt32Type() : UIntType(
-                           "UInt32Type",
-                           UINT32_MAX )
+                           "UInt32Type" )
 {
    /* nothing to do here */
 }

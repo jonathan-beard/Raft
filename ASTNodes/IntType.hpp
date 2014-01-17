@@ -6,8 +6,6 @@
 #ifndef _INTTYPE_HPP_
 #define _INTTYPE_HPP_  1
 
-#include <cinttypes>
-#include <cstdint>
 #include <string>
 
 #include "Type.hpp"
@@ -18,18 +16,11 @@ class Initializer;
 class IntType : public Type {
 public:
    IntType();
-   virtual ~IntType();   
-   virtual bool IsType( uintmax_t value );
+   virtual ~IntType() = default; 
 
-   virtual Initializer* GetDefaultInitializer();
 protected:
 
-   IntType( const std::string name,
-            uintmax_t maximum,
-            intmax_t  minimum );
-
-   uintmax_t max;
-   intmax_t  min;
+   IntType( const std::string name );
 };
 
 } /* end namespace Node */

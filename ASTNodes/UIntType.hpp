@@ -6,8 +6,7 @@
 #ifndef _UINTTYPE_HPP_
 #define _UINTTYPE_HPP_  1
 
-#include <cstdint>
-#include <cinttypes>
+#include <string>
 #include "Type.hpp"
 
 namespace Node{
@@ -16,17 +15,9 @@ class Initializer;
 class UIntType : public Type {
 public:
    UIntType();
-   virtual ~UIntType();
-
-   virtual bool IsType( uintmax_t value );
-   virtual Initializer* GetDefaultInitializer();
+   virtual ~UIntType() = default;
 protected:
-
-   UIntType( const std::string n,
-             uintmax_t maximum );
-
-   uintmax_t max;
-   uintmax_t min;
+   UIntType( const std::string name );
 };
 
 } /* end namespace Node */

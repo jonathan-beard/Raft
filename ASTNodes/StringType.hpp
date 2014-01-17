@@ -26,8 +26,6 @@ public:
     * @return bool   - true if value != nullptr
     */
    virtual bool IsType( std::string value );
-
-   virtual Initializer* GetDefaultInitializer();
 };
 
 } /* end namespace Node */

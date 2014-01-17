@@ -8,9 +8,7 @@
 using namespace Node;
 
 Int32Type::Int32Type() : IntType(
-                         "Int32Type",
-                          INT32_MAX,
-                          INT32_MIN )
+                         "Int32Type" )
 {
    /* nothing to do here */
 }

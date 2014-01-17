@@ -10,7 +10,6 @@
 #include <string>
 #include <ostream>
 #include "NodeAbstract.hpp"
-#include "Initializer.hpp"
 
 namespace Node{
 
@@ -69,16 +68,6 @@ public:
    virtual std::ostream& print( std::ostream &stream );
 
    virtual std::string ToString();
-
-   /**
-    *  GetDefaultInitializer - must be overriden in sub-class,
-    *  I wanted to be able to instantiate this without the 
-    *  compiler complaining, however there is an assertion that
-    *  will prevent you from calling this particular version
-    *  of the virtual function
-    *  @return Initializer object
-    */
-   virtual Initializer* GetDefaultInitializer();
 protected:
    Type( const std::string n );
 };

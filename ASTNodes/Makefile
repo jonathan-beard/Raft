@@ -18,7 +18,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             Body EmptyBody Interface Visibility Private Protected \
             Public Access FieldAccess ArrayAccess Parameter \
             PlaceholderParameter StorageModifier Constant Static NonAtomic \
-            ClassInitializers EmptyClassInitializers ConstructorDeclaration \
+            ClassInitializer EmptyClassInitializer ConstructorDeclaration \
             StreamModifier Modifier StreamingMethodDeclaration Converge \
             Fork EmptyStreamModifier
 
