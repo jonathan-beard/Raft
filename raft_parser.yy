@@ -825,7 +825,7 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                               delete( $3 );
                               node->AdoptChildren( $5 );
 
-                              $1 -> AdoptSibling( node );
+                              $1 -> AdoptChildren( node );
                               $$ = $1;
                            }
                          ;
