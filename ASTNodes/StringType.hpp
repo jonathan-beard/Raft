@@ -16,16 +16,7 @@ class Initializer;
 class StringType : public Type{
 public:
    StringType();
-   virtual ~StringType();
-   
-   /* IsType - nothing special about this one, it'll
-    * return true if value is a non null string.  The 
-    * lexer should be able to tell if this is in fact
-    * a string.
-    * @param value - std::string ptr
-    * @return bool   - true if value != nullptr
-    */
-   virtual bool IsType( std::string value );
+   virtual ~StringType() = default;
 };
 
 } /* end namespace Node */
