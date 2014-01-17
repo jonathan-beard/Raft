@@ -765,7 +765,7 @@ ConstructorDeclaration   : MethodDeclarator Block
                               NodeAbstract *cons( nullptr );
                               cons = new ConstructorDeclaration();
                               cons->AdoptChildren( $1 );
-                              cons->AdoptChildren( new EmptyClassInitializers() );
+                              cons->AdoptChildren( new EmptyClassInitializer() );
                               cons->AdoptChildren( $2 );
                               $$ = cons;  
                            }
