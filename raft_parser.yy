@@ -832,31 +832,19 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
 
 MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            {
-                              NodeAbstract *method( nullptr );
-                              method = new NodeAbstract();
-                              assert( method != nullptr );
-                              method->set_name( "MethodDeclaration" );
-
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $3 );
-                              $1->MakeSibling( $4 );
-
-                              method->AdoptChildren( $1 );
-
-                              $$ = method;
+                              $$ = new MethodDeclaration();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
+                              $$->AdoptChildren( $4 );
                            }
                          | Type MethodDeclarator MethodBody
                            {
-                              NodeAbstract *method( nullptr );
-                              method = new NodeAbstract();
-                              assert( method != nullptr );
-                              method->set_name( "MethodDeclaration" );
-                              $$ = method;
-                              
-                              $1->MakeSibling( $2 );
-                              $1->MakeSibling( $3 );
-                              method->AdoptChildren( $1 );
-
+                              $$ = new MethodDeclaration();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( new EmptyTypeModifier() );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
                            }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {

@@ -5,5 +5,16 @@
  */
 #ifndef _METHODDECLARATION_HPP_
 #define _METHODDECLARATION_HPP_  1
-#include 
+#include <string>
+#include "Declaration.hpp"
+
+namespace Node {
+class MethodDeclaration : public Declaration {
+public:
+   MethodDeclaration();
+   virtual ~MethodDeclaration() = default;
+protected:
+   MethodDeclaration( const std::string name );
+};
+}
 #endif /* END _METHODDECLARATION_HPP_ */
