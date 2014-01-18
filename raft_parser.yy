@@ -848,25 +848,7 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
-                              NodeAbstract *method( nullptr );
-                              method = new NodeAbstract();
-                              assert( method != nullptr );
-                              method->set_name( "MethodDeclaration" );
-   
-                              NodeAbstract *impl( nullptr );
-                              impl = new NodeAbstract();
-                              assert( impl != nullptr );
-
-                              impl->set_name( "implements" );
-   
-                              impl->MakeSibling( $2 );
-                              impl->MakeSibling( $3 );
-                              impl->MakeSibling( $4 );
-                              impl->MakeSibling( $5 );
-
-                              method->AdoptChildren( impl );
-
-                              $$ = method;
+                              //TODO come back here 
                            }
                          | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
                            {
