@@ -14,13 +14,14 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             StreamReferencing VariableReferencing ArgumentList \
             MethodArgumentList StreamArgumentList ClassDeclaration \
             GenericList GenericTypeParam GenericClassParam Generic \
-            GenericTypeMultiple Inherit Implements Extends NoInherit \
+            GenericTypeMultiple Inherit ClassImplements ClassExtends ClassNoInherit \
             Body EmptyBody Interface Visibility Private Protected \
             Public Access FieldAccess ArrayAccess Parameter \
             PlaceholderParameter StorageModifier Constant Static NonAtomic \
             ClassInitializer EmptyClassInitializer ConstructorDeclaration \
             StreamModifier Modifier StreamingMethodDeclaration Converge \
-            Fork EmptyStreamModifier EmptyTypeModifier MethodDeclaration 
+            Fork EmptyStreamModifier EmptyTypeModifier MethodDeclaration \
+            ClassInherit MethodInherit
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

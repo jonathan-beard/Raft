@@ -852,7 +852,7 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
-                              //TODO come back here 
+                              $$->AdoptChildren( new 
                            }
                          | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
                            {
