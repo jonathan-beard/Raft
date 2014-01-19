@@ -91,6 +91,8 @@
       class Converge;
       class Fork;
       class EmptyStreamModifier;
+      class MethodDeclaration;
+      class EmptyTypeModifier;
    }
 }
 
@@ -200,6 +202,8 @@
    #include "Converge.hpp"
    #include "Fork.hpp"
    #include "EmptyStreamModifier.hpp"
+   #include "MethodDeclaration.hpp"
+   #include "EmptyTypeModifier.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,

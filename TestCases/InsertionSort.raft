@@ -27,7 +27,7 @@ class InsertionSort< class T >{
 
    streams [[ T out ]] sort [[ T in ]]
    {
-
+      
    }
 
    converge streams [[ T out ]] join [[ T in, ... ]]

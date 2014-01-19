@@ -4,3 +4,9 @@
  * @version: Fri Jan 17 14:36:37 2014
  */
 #include "EmptyTypeModifier.hpp"
+
+using namespace Node;
+
+EmptyTypeModifier::EmptyTypeModifier() : TypeModifier( "EmptyTypeModifier" )
+{
+}
