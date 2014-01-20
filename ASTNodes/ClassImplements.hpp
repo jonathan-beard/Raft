@@ -5,5 +5,13 @@
  */
 #ifndef _CLASSIMPLEMENTS_HPP_
 #define _CLASSIMPLEMENTS_HPP_  1
+#include "Inherit.hpp"
 
+namespace Node {
+class ClassImplements : public Inherit {
+public:
+   ClassImplements();
+   virtual ~ClassImplements() = default;
+};
+}
 #endif /* END _CLASSIMPLEMENTS_HPP_ */

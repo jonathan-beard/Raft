@@ -5,5 +5,13 @@
  */
 #ifndef _CLASSEXTENDS_HPP_
 #define _CLASSEXTENDS_HPP_  1
+#include "Inherit.hpp"
 
+namespace Node{
+class ClassExtends : public Inherit {
+public:
+   ClassExtends();
+   virtual ~ClassExtends() = default;
+};
+}
 #endif /* END _CLASSEXTENDS_HPP_ */

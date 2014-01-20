@@ -93,6 +93,12 @@
       class EmptyStreamModifier;
       class MethodDeclaration;
       class EmptyTypeModifier;
+      class MethodInherit;
+      class MethodImplements;
+      class MethodOverrides;
+      class MethodNoInherit;
+      class ClassInherit;
+      class 
    }
 }
 

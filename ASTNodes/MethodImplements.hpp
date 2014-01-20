@@ -5,5 +5,12 @@
  */
 #ifndef _METHODIMPLEMENTS_HPP_
 #define _METHODIMPLEMENTS_HPP_  1
-
+#include "MethodInherit.hpp"
+namespace Node {
+class MethodImplements {
+public:
+   MethodImplements();
+   virtual ~MethodImplements() = default;
+};
+}
 #endif /* END _METHODIMPLEMENTS_HPP_ */

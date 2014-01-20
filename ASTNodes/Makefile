@@ -21,7 +21,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             ClassInitializer EmptyClassInitializer ConstructorDeclaration \
             StreamModifier Modifier StreamingMethodDeclaration Converge \
             Fork EmptyStreamModifier EmptyTypeModifier MethodDeclaration \
-            ClassInherit MethodInherit
+            ClassInherit MethodInherit MethodImplements MethodOverrides \
+            MethodNoInherit
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

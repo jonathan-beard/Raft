@@ -5,5 +5,13 @@
  */
 #ifndef _METHODOVERRIDES_HPP_
 #define _METHODOVERRIDES_HPP_  1
+#include "Inherit.hpp"
 
+namespace Node {
+class MethodOverrides : public Inherit {
+public:
+   MethodOverrides();
+   virtual ~MethodOverrides() = default;
+};
+}
 #endif /* END _METHODOVERRIDES_HPP_ */
