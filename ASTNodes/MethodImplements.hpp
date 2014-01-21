@@ -7,7 +7,7 @@
 #define _METHODIMPLEMENTS_HPP_  1
 #include "MethodInherit.hpp"
 namespace Node {
-class MethodImplements {
+class MethodImplements : public MethodInherit {
 public:
    MethodImplements();
    virtual ~MethodImplements() = default;

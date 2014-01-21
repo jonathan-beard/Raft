@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-MethodOverrides::MethodOverrides() : Inherit( "MethodOverrides" )
+MethodOverrides::MethodOverrides() : MethodInherit( "MethodOverrides" )
 {
 }

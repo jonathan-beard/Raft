@@ -11,10 +11,8 @@
 namespace Node {
 class MethodDeclaration : public Declaration {
 public:
-   MethodDeclaration();
-   virtual ~MethodDeclaration() = default;
-protected:
    MethodDeclaration( const std::string name );
+   virtual ~MethodDeclaration() = default;
 };
 }
 #endif /* END _METHODDECLARATION_HPP_ */

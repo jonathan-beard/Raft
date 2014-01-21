@@ -11,3 +11,7 @@ ClassInherit::ClassInherit() : Inherit( "ClassInherit" )
 {
 
 }
+
+ClassInherit::ClassInherit( const std::string name ) : Inherit( name )
+{
+}

@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-MethodNoInherit::MethodNoInherit() : Inherit( "MethodNoInherit" )
+MethodNoInherit::MethodNoInherit() : MethodInherit( "MethodNoInherit" )
 {
 }

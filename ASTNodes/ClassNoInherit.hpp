@@ -5,13 +5,13 @@
  */
 #ifndef _CLASSNOINHERIT_HPP_
 #define _CLASSNOINHERIT_HPP_  1
-#include "Inherit.hpp"
+#include "ClassInherit.hpp"
 
 namespace Node {
-class ClassNoInherit : public Inherit {
+class ClassNoInherit : public ClassInherit {
 public:
-   ClassNoLoader();
-   virtual ~ClassNoLoader() = default;
+   ClassNoInherit();
+   virtual ~ClassNoInherit() = default;
 };
 }
 #endif /* END _CLASSNOINHERIT_HPP_ */

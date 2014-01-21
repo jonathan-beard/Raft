@@ -64,9 +64,6 @@
       class GenericTypeMultiple;
       class GenericList;
       class Inherit;
-      class Extends;
-      class Implements;
-      class NoInherit;
       class Interface;
       class Body;
       class EmptyBody;
@@ -98,7 +95,10 @@
       class MethodOverrides;
       class MethodNoInherit;
       class ClassInherit;
-      class 
+      class ClassExtends;
+      class ClassNoInherit;
+      class ClassImplements;
+      class NoParameter;
    }
 }
 
@@ -182,9 +182,6 @@
    #include "GenericTypeMultiple.hpp"
    #include "GenericList.hpp"
    #include "Inherit.hpp"
-   #include "NoInherit.hpp"
-   #include "Extends.hpp"
-   #include "Implements.hpp"
    #include "Interface.hpp"
    #include "Body.hpp"
    #include "EmptyBody.hpp"
@@ -210,6 +207,15 @@
    #include "EmptyStreamModifier.hpp"
    #include "MethodDeclaration.hpp"
    #include "EmptyTypeModifier.hpp"
+   #include "ClassInherit.hpp"
+   #include "ClassNoInherit.hpp"
+   #include "ClassExtends.hpp"
+   #include "ClassImplements.hpp"
+   #include "MethodInherit.hpp"
+   #include "MethodNoInherit.hpp"
+   #include "MethodOverrides.hpp"
+   #include "MethodImplements.hpp"
+   #include "NoParameter.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -624,21 +630,21 @@ GenericListA : CLASS IDENTIFIER
 Inherit           :     COLON EXTENDS IDENTIFIER
                         {
                            NodeAbstract *in( nullptr );
-                           in = new Extends( *$3 );
+                           in = new ClassExtends( *$3 );
                            delete( $3 );
                            $$ = in;
                         }
                   |     COLON IMPLEMENTS IDENTIFIER 
                         {
                            NodeAbstract *in( nullptr );
-                           in = new Implements( *$3 );
+                           in = new ClassImplements( *$3 );
                            delete( $3 );
                            $$ = in;
                         }
                   |
                         {
                            NodeAbstract *empty( nullptr );
-                           empty = new NoInherit();
+                           empty = new ClassNoInherit();
                            $$ = empty;
                         }
                   ;
@@ -843,44 +849,38 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
 MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            {
                               $$ = new MethodDeclaration();
-                              $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $3 );
-                              $$->AdoptChildren( $4 );
+                              $$->AdoptChildren( new MethodNoInherit() );
+                              $$->AdoptChildren( $1 /* type */ );
+                              $$->AdoptChildren( $2 /* modifier */ );
+                              $$->AdoptChildren( $3 /* decl */ );
+                              $$->AdoptChildren( $4 /* body */ );
                            }
                          | Type MethodDeclarator MethodBody
                            {
                               $$ = new MethodDeclaration();
-                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( new MethodNoInherit() );
+                              $$->AdoptChildren( $1 /* type */ );
                               $$->AdoptChildren( new EmptyTypeModifier() );
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $3 );
+                              $$->AdoptChildren( $2 /* decl */ );
+                              $$->AdoptChildren( $3 /* body */ );
                            }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
-                              $$->AdoptChildren( new 
+                              $$ = new MethodDeclaration();
+                              $$->AdoptChildren( new MethodImplements() );
+                              $$->AdoptChildren( $2 /* type */ );
+                              $$->AdoptChildren( $3 /* modifier */ );
+                              $$->AdoptChildren( $4 /* decl */ );
+                              $$->AdoptChildren( $5 /* body */ );
                            }
                          | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
                            {
-                              NodeAbstract *method( nullptr );
-                              method = new NodeAbstract();
-                              assert( method != nullptr );
-                              method->set_name( "MethodDeclaration" );
-   
-                              NodeAbstract *over( nullptr );
-                              over = new NodeAbstract();
-                              assert( over != nullptr );
-
-                              over->set_name( "overrides" );
-   
-                              over->MakeSibling( $2 );
-                              over->MakeSibling( $3 );
-                              over->MakeSibling( $4 );
-                              over->MakeSibling( $5 );
-
-                              method->AdoptChildren( over );
-
-                              $$ = method;
+                              $$ = new MethodDeclaration();
+                              $$->AdoptChildren( new MethodOverrides() );
+                              $$->AdoptChildren( $2 /* type */ );
+                              $$->AdoptChildren( $3 /* modifier */ );
+                              $$->AdoptChildren( $4 /* decl */ );
+                              $$->AdoptChildren( $5 /* body */ );
                            }
                          ;
 
@@ -948,27 +948,15 @@ StreamDeclarator  :  IDENTIFIER StreamInitializer
 
 MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                            {
-                              NodeAbstract *methodd( nullptr );
-                              methodd = new NodeAbstract();
-                              assert( methodd != nullptr );
-                              methodd->set_name( "MethodDecl" );
-
-                              methodd->AdoptChildren( $3 );
-                              $$ = methodd;
+                              $$ = new MethodDeclaration( *$1 );
+                              delete( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                          | IDENTIFIER LPAREN RPAREN
                            {
-                              NodeAbstract *methodd( nullptr );
-                              methodd = new NodeAbstract();
-                              assert( methodd != nullptr );
-                              methodd->set_name( "MethodDecl" );
-                              
-                              NodeAbstract *noparams( nullptr );
-                              noparams = new NodeAbstract();
-                              assert( noparams != nullptr );
-
-                              methodd->AdoptChildren( noparams );
-                              $$ = methodd;
+                              $$ = new MethodDeclaration( *$1 );
+                              delete( $1 );
+                              $$->AdoptChildren( new NoParameter() );
                            }
                          ;
 

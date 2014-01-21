@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-ClassImplements::ClassImplements() : Inherit( "ClassImplements" )
+ClassImplements::ClassImplements( const std::string name ) : ClassInherit( name )
 {
 }

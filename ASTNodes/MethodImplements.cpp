@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-MethodImplements::MethodImplements() : Inherit( "MethodImplements" )
+MethodImplements::MethodImplements() : MethodInherit( "MethodImplements" )
 {
 }

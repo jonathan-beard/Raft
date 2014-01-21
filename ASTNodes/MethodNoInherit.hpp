@@ -5,9 +5,9 @@
  */
 #ifndef _METHODNOINHERIT_HPP_
 #define _METHODNOINHERIT_HPP_  1
-#include "Inherit.hpp"
+#include "MethodInherit.hpp"
 namespace Node {
-class MethodNoInherit : public Inherit {
+class MethodNoInherit : public MethodInherit {
 public:
    MethodNoInherit();
    virtual ~MethodNoInherit() = default;

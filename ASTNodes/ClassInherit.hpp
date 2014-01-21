@@ -5,6 +5,7 @@
  */
 #ifndef _CLASSINHERIT_HPP_
 #define _CLASSINHERIT_HPP_  1
+#include <string>
 #include "Inherit.hpp"
 
 namespace Node {
@@ -12,6 +13,8 @@ class ClassInherit : public Inherit {
 public:
    ClassInherit();
    virtual ~ClassInherit() = default;
+protected:
+   ClassInherit( const std::string name );
 };
 }
 #endif /* END _CLASSINHERIT_HPP_ */

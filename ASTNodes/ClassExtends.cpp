@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-ClassExtends::ClassExtends() : Inherit( "ClassExtends" )
+ClassExtends::ClassExtends( const std::string name ) : ClassInherit( name )
 {
 }

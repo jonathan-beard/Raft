@@ -7,11 +7,6 @@
 
 using namespace Node;
 
-MethodDeclaration::MethodDeclaration()
-{
-
-}
-
 MethodDeclaration::MethodDeclaration( const std::string name ) : Declaration( name )
 {
 

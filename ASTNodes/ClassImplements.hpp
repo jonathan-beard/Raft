@@ -5,12 +5,13 @@
  */
 #ifndef _CLASSIMPLEMENTS_HPP_
 #define _CLASSIMPLEMENTS_HPP_  1
-#include "Inherit.hpp"
+#include <string>
+#include "ClassInherit.hpp"
 
 namespace Node {
-class ClassImplements : public Inherit {
+class ClassImplements : public ClassInherit {
 public:
-   ClassImplements();
+   ClassImplements(const std::string name );
    virtual ~ClassImplements() = default;
 };
 }

@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-ClassNoInherit::ClassNoInherit() : Inherit( "ClassNoInherit" )
+ClassNoInherit::ClassNoInherit() : ClassInherit( "ClassNoInherit" )
 {
 }

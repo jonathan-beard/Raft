@@ -5,12 +5,13 @@
  */
 #ifndef _CLASSEXTENDS_HPP_
 #define _CLASSEXTENDS_HPP_  1
-#include "Inherit.hpp"
+#include <string>
+#include "ClassInherit.hpp"
 
 namespace Node{
-class ClassExtends : public Inherit {
+class ClassExtends : public ClassInherit {
 public:
-   ClassExtends();
+   ClassExtends( const std::string name );
    virtual ~ClassExtends() = default;
 };
 }

@@ -10,3 +10,7 @@ using namespace Node;
 MethodInherit::MethodInherit() : Inherit( "MethodInherit" )
 {
 }
+
+MethodInherit::MethodInherit( const std::string name ) : Inherit( name )
+{
+}
