@@ -1,0 +1,11 @@
+#include <raft.raft>
+
+class Foo{
+@public:
+   void main( String args[](nill) )
+   {
+      int8 a( 2 ), b( 200 );
+      auto result( a + b );
+      System.println( result );
+   }
+}
