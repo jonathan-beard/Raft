@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-StreamingMethodDeclaration::StreamingMethodDeclaration() : Declaration( 
-                                          "StreamingMethodDeclaration" )
+StreamingMethodDeclaration::StreamingMethodDeclaration( const std::string name ) 
+         : Declaration( name ) 
 {
 }

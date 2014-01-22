@@ -100,6 +100,14 @@
       class ClassImplements;
       class NoParameter;
       class Block;
+      class EmptyBlock;
+      class StreamEdges;
+      class StreamInput;
+      class NoStreamInput;
+      class StreamOutput;
+      class NoStreamOutput;
+      class ParameterList;
+      class NoParameterList;
    }
 }
 
@@ -218,6 +226,14 @@
    #include "MethodImplements.hpp"
    #include "NoParameter.hpp"
    #include "Block.hpp"
+   #include "EmptyBlock.hpp"
+   #include "StreamEdges.hpp"
+   #include "StreamInput.hpp"
+   #include "StreamOutput.hpp"
+   #include "NoStreamInput.hpp"
+   #include "NoStreamOutput.hpp"
+   #include "ParameterList.hpp"
+   #include "NoParameterList.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -809,10 +825,9 @@ ConstructorDeclaration   : MethodDeclarator Block
 
 StreamingMethodConstructor :  StreamModifiers STREAMS StreamInitializer StreamDeclarator Block
                               {
-                                 $$ = new StreamingMethodDeclaration();
+                                 $$ = $4;
                                  $$->AdoptChildren( $1 );
                                  $$->AdoptChildren( $3 );
-                                 $$->AdoptChildren( $4 );
                                  $$->AdoptChildren( $5 );
                               }
                            ;
@@ -884,62 +899,24 @@ MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
 
 MethodBody  :  Block
                {
-                  NodeAbstract *method( nullptr );
-                  method = new NodeAbstract();
-                  assert( method != nullptr );
-
-                  method->set_name( "MethodBody" );
-
-                  method->AdoptChildren( $1 );
-
-                  $$ = method;
+                  $$ = $1;
                }
             ;
 
 StreamDeclarator  :  IDENTIFIER StreamInitializer
                      {
-                        NodeAbstract *streamdecl( nullptr );
-                        streamdecl = new NodeAbstract();
-                        assert( streamdecl != nullptr );
-                        streamdecl->set_name( "StreamDecl" );
-   
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        assert( $1 != nullptr );
-                        id->set_name( *$1 );
+                        $$ = new StreamingMethodDeclaration( *$1 );
                         delete( $1 );
-                       
-
-                        assert( $2 != nullptr );
-                        id->MakeSibling( $2 );
-
-                        streamdecl->AdoptChildren( id );
-
-                        $$ = streamdecl;
+                        NodeAbstract *temp = new StreamInput();
+                        temp->AdoptChildren( $2 );
+                        $$->AdoptChildren( temp );
                      }
                   |  IDENTIFIER DLBRACKET DRBRACKET
                      {
-                        NodeAbstract *streamdecl( nullptr );
-                        streamdecl = new NodeAbstract();
-                        assert( streamdecl != nullptr );
-                        streamdecl->set_name( "StreamDecl" );
-
-                        NodeAbstract *id( nullptr );
-                        id = new NodeAbstract();
-                        assert( id != nullptr );
-                        assert( $1 != nullptr );
-                        id->set_name( *$1 );
+                        $$ = new StreamingMethodDeclaration( *$1 );
                         delete( $1 );
-                        
-                        NodeAbstract *empty( nullptr );
-                        empty = new NodeAbstract();
-                        empty->set_name( "EmptyInitializerList" );
-                        
-                        id->MakeSibling( empty );
-                        streamdecl->AdoptChildren( id );
-
-                        $$ = streamdecl;
+                        NodeAbstract *temp = new NoStreamInput();
+                        $$->AdoptChildren( temp );
                      }
                   ;
 
@@ -948,13 +925,15 @@ MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                            {
                               $$ = new MethodDeclaration( *$1 );
                               delete( $1 );
-                              $$->AdoptChildren( $3 );
+                              NodeAbstract *temp = new ParameterList();
+                              temp->AdoptChildren( $3 );
+                              $$->AdoptChildren( temp );
                            }
                          | IDENTIFIER LPAREN RPAREN
                            {
                               $$ = new MethodDeclaration( *$1 );
                               delete( $1 );
-                              $$->AdoptChildren( new NoParameter() );
+                              $$->AdoptChildren( new NoParameterList() );
                            }
                          ;
 
@@ -1034,21 +1013,12 @@ DeclaratorName           : IDENTIFIER
 
 Block : LBRACE   RBRACE
         {
-          NodeAbstract *empty( nullptr );
-          empty = new NodeAbstract();
-          assert( empty != nullptr );
-          empty->set_name( "EmptyBlock" );
-          $$ = empty;
+            $$ = new EmptyBlock();
         }
       |  LBRACE   LocalVariableDeclarationsAndStatements RBRACE
          {
-            NodeAbstract *block( nullptr );
-            block = new NodeAbstract();
-            assert( block != nullptr );
-
-            block->set_name( "Block" );
-            block->AdoptChildren( $2 );
-            $$ = block;
+            $$ = new Block();
+            $$->AdoptChildren( $2 );
          }
       ;
 

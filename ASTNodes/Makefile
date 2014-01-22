@@ -22,8 +22,9 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             StreamModifier Modifier StreamingMethodDeclaration Converge \
             Fork EmptyStreamModifier EmptyTypeModifier MethodDeclaration \
             ClassInherit MethodInherit MethodImplements MethodOverrides \
-            MethodNoInherit NoParameter Block
-
+            MethodNoInherit NoParameter Block EmptyBlock \
+            StreamEdges StreamInput StreamOutput NoStreamInput NoStreamOutput \
+            ParameterList NoParameterList
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 

@@ -10,3 +10,7 @@ using namespace Node;
 Block::Block() : NodeAbstract( "Block" )
 {
 }
+
+Block::Block( const std::string name ) : NodeAbstract( name )
+{
+}

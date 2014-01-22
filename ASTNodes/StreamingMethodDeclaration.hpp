@@ -5,11 +5,12 @@
  */
 #ifndef _STREAMINGMETHODDECLARATION_HPP_
 #define _STREAMINGMETHODDECLARATION_HPP_  1
+#include <string>
 #include "Declaration.hpp"
 namespace Node {
 class StreamingMethodDeclaration : public Declaration {
 public:
-   StreamingMethodDeclaration();
+   StreamingMethodDeclaration( const std::string name );
    virtual ~StreamingMethodDeclaration() = default; 
 };
 }
