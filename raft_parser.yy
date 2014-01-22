@@ -99,6 +99,7 @@
       class ClassNoInherit;
       class ClassImplements;
       class NoParameter;
+      class Block;
    }
 }
 
@@ -216,6 +217,7 @@
    #include "MethodOverrides.hpp"
    #include "MethodImplements.hpp"
    #include "NoParameter.hpp"
+   #include "Block.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -848,38 +850,34 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
 
 MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
                            {
-                              $$ = new MethodDeclaration();
+                              $$ = $3; /* decl */
                               $$->AdoptChildren( new MethodNoInherit() );
                               $$->AdoptChildren( $1 /* type */ );
                               $$->AdoptChildren( $2 /* modifier */ );
-                              $$->AdoptChildren( $3 /* decl */ );
                               $$->AdoptChildren( $4 /* body */ );
                            }
                          | Type MethodDeclarator MethodBody
                            {
-                              $$ = new MethodDeclaration();
+                              $$ = $2; /* decl */
                               $$->AdoptChildren( new MethodNoInherit() );
                               $$->AdoptChildren( $1 /* type */ );
                               $$->AdoptChildren( new EmptyTypeModifier() );
-                              $$->AdoptChildren( $2 /* decl */ );
                               $$->AdoptChildren( $3 /* body */ );
                            }
                          | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
                            {
-                              $$ = new MethodDeclaration();
+                              $$ = $4; /* decl */
                               $$->AdoptChildren( new MethodImplements() );
                               $$->AdoptChildren( $2 /* type */ );
                               $$->AdoptChildren( $3 /* modifier */ );
-                              $$->AdoptChildren( $4 /* decl */ );
                               $$->AdoptChildren( $5 /* body */ );
                            }
                          | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
                            {
-                              $$ = new MethodDeclaration();
+                              $$ = $4; /* decl */
                               $$->AdoptChildren( new MethodOverrides() );
                               $$->AdoptChildren( $2 /* type */ );
                               $$->AdoptChildren( $3 /* modifier */ );
-                              $$->AdoptChildren( $4 /* decl */ );
                               $$->AdoptChildren( $5 /* body */ );
                            }
                          ;
