@@ -44,7 +44,7 @@ syn match   javaRepeat     "@/"
 syn keyword javaBoolean		true false
 syn keyword javaConstant	nill
 syn match javaConstant          "\$" 
-syn match javaConstant          "#"
+" syn match javaConstant          '\#'
 syn keyword javaTypedef		this super
 syn keyword javaOperator	new alloc free
 syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
