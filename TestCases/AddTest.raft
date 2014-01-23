@@ -1,5 +1,5 @@
 /** double check to make sure this works only if this is included **/
-#include "raft.system"
+#include "Raft.System"
 
 class Foo{
 @public:
@@ -7,6 +7,6 @@ class Foo{
    {
       int8 a( 2 ), b( 200 );
       auto result( a + b );
-      system.println( result );
+      System.println( result );
    }
 }
