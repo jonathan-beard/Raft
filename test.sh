@@ -1,1 +1,1 @@
-./raft -f Simple.ap
+./raft -f TestCases/Simple.ap
