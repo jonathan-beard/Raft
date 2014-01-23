@@ -108,6 +108,9 @@
       class NoStreamOutput;
       class ParameterList;
       class NoParameterList;
+      class SimpleParameter;
+      class ArrayParameter;
+      class SizedArrayParameter;
    }
 }
 
@@ -234,6 +237,9 @@
    #include "NoStreamOutput.hpp"
    #include "ParameterList.hpp"
    #include "NoParameterList.hpp"
+   #include "SimpleParameter.hpp";
+   #include "ArrayParameter.hpp";
+   #include "SizedArrayParameter.hpp";
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -950,48 +956,29 @@ ParameterList            : Parameter
 
 Parameter                : Type  DeclaratorName
                            {
-                              NodeAbstract *param( nullptr );
-                              param = new NodeAbstract();
-                              assert( param != nullptr );
-
-                              param->MakeSibling( $1 );
-                              param->MakeSibling( $2 );
-                              $$ = param;
+                              $$ = new SimpleParameter();
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $1 );
                            }
 
                          | Type  DeclaratorName LBRACKET RBRACKET
                            {
-                              NodeAbstract *param_arr( nullptr );
-                              param_arr = new NodeAbstract();
-                              assert( param_arr != nullptr );
-                              param_arr->set_name( "ParamArray" );
-                              param_arr->AdoptChildren( $1 );
-                              param_arr->AdoptChildren( $2 );
-                              $$ = param_arr;
+                              $$ = new ArrayParameter();
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $1 );
                            }
                          | Type  DeclaratorName LBRACKET ArraySize RBRACKET
                            {
-                              NodeAbstract *param_arr( nullptr );
-                              param_arr = new NodeAbstract();
-                              assert( param_arr != nullptr );
-                              param_arr->set_name( "ParamArray" );
-                              param_arr->AdoptChildren( $1 );
-                              param_arr->AdoptChildren( $2 );
-                              param_arr->AdoptChildren( $4 );
-                              $$ = param_arr;
+                              $$ = new SizedArrayParameter();
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $4 );
                            }
                          ;
 
 DeclaratorName           : IDENTIFIER
                            {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-
-                              id->set_name( *$1 );
-                              delete( $1 );
-                              
-                              $$ = id ;
+                              /* TODO Come back here */ 
                            }
                          | BoolInitializer 
                            {
