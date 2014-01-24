@@ -978,7 +978,8 @@ Parameter                : Type  DeclaratorName
 
 DeclaratorName           : IDENTIFIER
                            {
-                              /* TODO Come back here */ 
+                              $$ = new VariableDeclaration( *$1 )
+                              delete( $1 );
                            }
                          | BoolInitializer 
                            {
@@ -1538,53 +1539,24 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
-                              /** TODO come back here **/
-                              VariableName *v( new VariableName( *$1 ) );
-                              assert( v != nullptr );
+                              $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-
-                              BooleanType *id( nullptr );
-                              id = new BooleanType();
-                              assert( id != nullptr );
-                              id->set_name( "BoolDeclaration" );
-                              
-                              
-
-                              id->AdoptChildren( v );
-                              id->AdoptChildren( $2 );
-                              id->AdoptChildren( $4 );
-                              $$ = id;
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
                            }
                          | IDENTIFIER LPAREN Boolean RPAREN
                            {
-                              VariableName *v( new VariableName( *$1 ) );
-                              assert( v != nullptr );
+                              $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-
-                              BooleanType *id( nullptr );
-                              id = new BooleanType();
-                              assert( id != nullptr );
-                              id->set_name( "BoolDeclaration" );
-                               
-
-                              id->AdoptChildren( v );
-                              id->AdoptChildren( $3 );
-                              $$ = id;
+                              $$->AdoptChildren( new NoTypeModifier() );
+                              $$->AdoptChildren( $3 );
                            }
                        | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
-                              VariableName *v( new VariableName( *$1 ) );
-                              assert( v != nullptr );
+                              /** TODO here **/
+                              $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-
-                              BooleanType *id( nullptr );
-                              id = new BooleanType();
-                              assert( id != nullptr );
-                              id->set_name( "BoolDeclaration" );
-                               
-                              id->AdoptChildren( v );
-                              id->AdoptChildren( $4 );
-                              $$ = id;
+                              $$
                            }
                          ;
 
@@ -2413,9 +2385,7 @@ NotJustName :  SpecialName
 
 ComplexPrimary :  LPAREN Expression RPAREN
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "ComplexPrimary" );
-                     $$->AdoptChildren( $2 );
+                     $$ = $2;
                   }
                |  ComplexPrimaryNoParenthesis
                   {

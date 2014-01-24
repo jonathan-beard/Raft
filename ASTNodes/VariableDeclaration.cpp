@@ -4,3 +4,9 @@
  * @version: Thu Jan 23 13:56:33 2014
  */
 #include "VariableDeclaration.hpp"
+
+using namespace Node;
+
+VariableDeclaration::VariableDeclaration( const std::string name ) : Declaration( name )
+{
+}
