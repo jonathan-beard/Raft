@@ -12,6 +12,6 @@ class NoArgumentList : public ArgumentList {
 public:
    NoArgumentList();
    virtual ~NoArgumentList() = default;
-}
+};
 }
 #endif /* END _NOARGUMENTLIST_HPP_ */

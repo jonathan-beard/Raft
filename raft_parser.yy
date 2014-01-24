@@ -1581,7 +1581,11 @@ MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
                               $$ = $1;
                            }
                          ;
-
+/** TODO come back here and fix
+ ** -> I can't remember if these will get called by parameter lists
+ ** in function calls or not, if so then we might not want to have 
+ ** default initialization for all objects, numbers, etc. all the time
+ **/
 ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                            {
                               $$ = new VariableDeclaration( *$1 );
@@ -1623,34 +1627,9 @@ MultiNumberInit          : MultiNumberInit COMMA NumberInitializer
 
 NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                            {
-                              /** TODO come back here **/
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-
-                              $$ = new NodeAbstract();
-                              $$->set_name( "NumberInitializer" );
-                              
-                              id->MakeSibling( $2 );
-                              id->MakeSibling( $4 );
-
-                              $$->AdoptChildren( id );
                            }
                          | IDENTIFIER LPAREN Expression RPAREN
                            {
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-
-                              $$ = new NodeAbstract();
-                              $$->set_name( "NumberInitializer" );
-                              
-                              id->MakeSibling( $3 );
-                              $$->AdoptChildren( id );
                            }
                          ;
 
