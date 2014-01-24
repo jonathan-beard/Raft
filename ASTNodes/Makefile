@@ -7,7 +7,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
 				UInt32Type UInt64Type UInt8Type UIntType VectorType \
             Port DataFlowTypeModifier ASDFTypeModifier BASDFTypeModifier \
             SDFTypeModifier Source Filename FieldVarDecl\
-            ValueBase VoidType AutomaticType VariableName Tilde Bang \
+            ValueBase VoidType AutomaticType VariableDeclaration Tilde Bang \
             Allocation New Returns UnaryPlus UnaryMinus Super Nill This \
             QualifiedName DelayedName StreamOption StreamPropertyList \
             VariableStreams Referencing MethodReferencing \
@@ -25,7 +25,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             MethodNoInherit NoParameter Block EmptyBlock \
             StreamEdges StreamInput StreamOutput NoStreamInput NoStreamOutput \
             ParameterList NoParameterList SimpleParameter \
-            ArrayParameter SizedArrayParameter NoTypeModifier
+            ArrayParameter SizedArrayParameter NoTypeModifier NoArgumentList \
+
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 
