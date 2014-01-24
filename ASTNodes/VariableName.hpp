@@ -15,18 +15,6 @@ class VariableName : public NodeAbstract {
 public:
    VariableName( const std::string &name );
    virtual ~VariableName() = default;
-   
-   /**
-    * get_ver_name - distinct form the parent method
-    * get_name, the name of this node will still be
-    * VariableName, but now we have a way to set the 
-    * name of the var as well.
-    * @return  std::string
-    */
-   std::string get_var_name();
-
-private:
-   const std::string varname;
 };
 
 } /* end namespace Node */

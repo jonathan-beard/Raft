@@ -1538,6 +1538,7 @@ MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
 
 BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            {
+                              /** TODO come back here **/
                               VariableName *v( new VariableName( *$1 ) );
                               assert( v != nullptr );
                               delete( $1 );

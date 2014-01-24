@@ -7,14 +7,7 @@
 
 using namespace Node;
 
-VariableName::VariableName( const std::string &name ) : NodeAbstract( "VariableName" ),
-                                                        varname( name )
+VariableName::VariableName( const std::string name ) : NodeAbstract( name ),
 {
    /* nothing to do */
-}
-
-std::string
-VariableName::get_var_name()
-{
-   return( varname );
 }
