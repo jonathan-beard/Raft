@@ -35,7 +35,6 @@
       class AutomaticType;
       class VoidType;
       class ValueBase;
-      class VariableName;
       class Bang;
       class Tilde;
       class Allocation;
@@ -111,6 +110,8 @@
       class SimpleParameter;
       class ArrayParameter;
       class SizedArrayParameter;
+      class NoTypeModifier;
+      class VariableDeclaration;
    }
 }
 
@@ -140,7 +141,6 @@
    
    /* nodes */
    #include "NodeAbstract.hpp"
-   #include "VariableName.hpp"
    #include "Source.hpp"
    #include "Declaration.hpp"
    #include "FieldVarDecl.hpp"
@@ -237,9 +237,11 @@
    #include "NoStreamOutput.hpp"
    #include "ParameterList.hpp"
    #include "NoParameterList.hpp"
-   #include "SimpleParameter.hpp";
-   #include "ArrayParameter.hpp";
-   #include "SizedArrayParameter.hpp";
+   #include "SimpleParameter.hpp"
+   #include "ArrayParameter.hpp"
+   #include "SizedArrayParameter.hpp"
+   #include "VariableDeclaration.hpp"
+   #include "NoTypeModifier.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1553,10 +1555,18 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                            }
                        | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
-                              /** TODO here **/
                               $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-                              $$
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
+                           }
+                         
+                       | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
+                           {
+                              $$ = new VariableDeclaration( *$1 );
+                              delete( $1 );
+                              $$->AdoptChildren( new NoTypeModifier() );
+                              $$->AdoptChildren( $4 );
                            }
                          ;
 
@@ -1573,6 +1583,7 @@ MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
 
 ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                            {
+                              /** TODO come back here **/
                               NodeAbstract *id( nullptr );
                               id = new NodeAbstract();
                               assert( id != nullptr );
