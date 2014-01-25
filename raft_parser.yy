@@ -2223,16 +2223,12 @@ CastExpression :  UnaryExpression
 
 UnaryExpression   :  LogicalUnaryExpression
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "UnaryExpression 1" );
-                        $$->AdoptChildren( $1 );
+                        $$ = $1;
                      }
                   |  ArithmeticUnaryOperator CastExpression
                      {
-                        $$ = new NodeAbstract();
-                        $$->set_name( "UnaryExpression 2" );
-                        $1->MakeSibling( $2 );
-                        $$->AdoptChildren( $1 );
+                        $$ = $1;
+                        $$->AdoptChildren( $2 );
                      }
                   ;
 
