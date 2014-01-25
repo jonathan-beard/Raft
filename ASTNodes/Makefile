@@ -26,6 +26,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             StreamEdges StreamInput StreamOutput NoStreamInput NoStreamOutput \
             ParameterList NoParameterList SimpleParameter \
             ArrayParameter SizedArrayParameter NoTypeModifier NoArgumentList \
+            InstantiationModifier Final System Abstract NoInstantiationModifier \
 
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            

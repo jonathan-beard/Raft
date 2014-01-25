@@ -112,6 +112,11 @@
       class NoTypeModifier;
       class VariableDeclaration;
       class NoArgumentList;
+      class InstantiationModifier;
+      class System;
+      class Final;
+      class Abstract;
+      class NoInstantiationModifier;
    }
 }
 
@@ -243,6 +248,11 @@
    #include "VariableDeclaration.hpp"
    #include "NoTypeModifier.hpp"
    #include "NoArgumentList.hpp"
+   #include "NoInstantiationModifier.hpp"
+   #include "System.hpp"
+   #include "Final.hpp"
+   #include "Abstract.hpp"
+   #include "InstantiationModifier.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1581,11 +1591,7 @@ MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
                               $$ = $1;
                            }
                          ;
-/** TODO come back here and fix
- ** -> I can't remember if these will get called by parameter lists
- ** in function calls or not, if so then we might not want to have 
- ** default initialization for all objects, numbers, etc. all the time
- **/
+
 ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                            {
                               $$ = new VariableDeclaration( *$1 );
@@ -1599,18 +1605,6 @@ ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                               delete( $1 );
                               $$->AdoptChildren( new NoTypeModifier() );
                               $$->AdoptChildren( $3 );
-                           }
-                         | IDENTIFIER TypeModifier LPAREN RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( new NoArgumentList() );
-                           }
-                         | IDENTIFIER LPAREN RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( new NoArgumentList() );
                            }
                          ;
 
@@ -1627,9 +1621,17 @@ MultiNumberInit          : MultiNumberInit COMMA NumberInitializer
 
 NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                            {
+                              $$ = new VariableDeclaration( *$1 );
+                              delete( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
                            }
                          | IDENTIFIER LPAREN Expression RPAREN
                            {
+                              $$ = new VariableDeclaration( *$1 );
+                              delete( $1 );
+                              $$->AdoptChildren( new NoTypeModifier() );
+                              $$->AdoptChildren( $3 );
                            }
                          ;
 
@@ -1644,71 +1646,42 @@ MultiStringInit          : MultiStringInit COMMA StrInitializer
                            }
                          ;
 
-StrInitializer           : IDENTIFIER  TypeModifier LPAREN STR_TOKEN RPAREN
+StrInitializer           : IDENTIFIER  TypeModifier LPAREN Literal RPAREN
                            {
-                              $$ = new NodeAbstract();
-                              
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
+                              $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-
-                              NodeAbstract *value( nullptr );
-                              value = new NodeAbstract();
-                              assert( value != nullptr );
-                              value->set_name( *$4 );
-                              delete( $4 );
-
-                              $$->set_name( "StringInitializer" );
-                              id->MakeSibling( value );
-                              id->MakeSibling( $2 );
-                              $$->AdoptChildren( id );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
                            }
-                         | IDENTIFIER LPAREN STR_TOKEN RPAREN
+                         | IDENTIFIER LPAREN Literal RPAREN
                            {
-                              $$ = new NodeAbstract();
-                              
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
+                              $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
-
-                              NodeAbstract *value( nullptr );
-                              value = new NodeAbstract();
-                              assert( value != nullptr );
-                              value->set_name( *$3 );
-                              delete( $3 );
-
-                              $$->set_name( "StringInitializer" );
-                              id->MakeSibling( value );
-                              $$->AdoptChildren( id );
+                              $$->AdoptChildren( new NoTypeModifier() );
+                              $$->AdoptChildren( $3 );
                            }
                          ;
 
-
 InstantModifier   :     FINAL SYSTEM
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Final System" );
+                           $$ = new Final();
+                           $$->MakeSibling( new System() );
                         }
                   |     FINAL
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Final" );
+                           $$ = new Final();
                         }
                   |     ABSTRACT
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Abstract" );
+                           $$ = new Abstract();
                         }
                   |     
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "No Instantiation Modifier" );
+                           $$ = new NoInstantiationModifier();
                         }
                   ;
+
+
 
 Type  :  BoolType
          {
@@ -1815,14 +1788,13 @@ ObjectType        :     QualifiedName
 
 TypeModifier      :     LBRACKET ArraySize RBRACKET
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "TypeModifier" );
-                           $$->AdoptChildren( $2 );
+                           $$ = $2;
                         }
                   |     LBRACKET RBRACKET /* dynamic array */
                         {
+                           //TODO
+                           //$$ = new DynamicArray();
                            $$ = new NodeAbstract();
-                           $$->set_name( "DynamicArray" );
                         }
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET ArraySize RBRACKET
                         {
@@ -1888,39 +1860,22 @@ GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
                            }
                          ;
 
-AllowedGenericInstTypes : IDENTIFIER
+AllowedGenericInstTypes : QualifiedName
                           {
-                              NodeAbstract *all( nullptr );
-                              all = new NodeAbstract();
-                              assert( all != nullptr );
-                              all->set_name( "Allowed -> Object" );
-                              NodeAbstract *object( nullptr );
-                              object = new NodeAbstract();
-                              assert( object != nullptr );
-                              std::stringstream ss;
-                              ss << *$1;
-                              object->set_name( ss.str() );
-                              delete( $1 );
-                              all->AdoptChildren( object );
-                              $$ = all;
+                              /** 
+                               * qn allows instantiations like
+                               * a.b to reference fields within
+                               * other classes
+                               */
+                              $$ = $1;
                           }
                         | Literal
                           {
-                              NodeAbstract *all( nullptr );
-                              all = new NodeAbstract();
-                              assert( all != nullptr );
-                              all->set_name( "Allowed -> Literal" );
-                              all->AdoptChildren( $1 );
-                              $$ = all;
+                              $$ = $1;
                           }
                         | Number
                           {
-                              NodeAbstract *all( nullptr );
-                              all = new NodeAbstract();
-                              assert( all != nullptr );
-                              all->set_name( "Allowed -> Number" );
-                              all->AdoptChildren( $1 );
-                              $$ = all;
+                              $$ = $1;
                           }
                         | Boolean
                           {
