@@ -1788,32 +1788,37 @@ ObjectType        :     QualifiedName
 
 TypeModifier      :     LBRACKET ArraySize RBRACKET
                         {
-                           $$ = $2;
+                           $$ = new NoGenericInstantiation();
+                           NodeAbstract *n( new DynamicArray() );
+                           n->AdoptChildren( $2 );
+                           $$->MakeSibling( n );
                         }
                   |     LBRACKET RBRACKET /* dynamic array */
                         {
-                           //TODO
-                           //$$ = new DynamicArray();
-                           $$ = new NodeAbstract();
+                           $$ = new NoGenericInstantiation();
+                           NodeAbstract *n( new DynamicArray() );
+                           n->AdoptChildren( new NoSizeParameter() );
+                           $$->MakeSibling( n );
                         }
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET ArraySize RBRACKET
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "TypeModifier->GenericArray" );
-                           $$->AdoptChildren( $2 );
-                           $$->AdoptChildren( $5 );
+                           $$ = new GenericInstantiationList();
+                           NodeAbstract *n( new DynamicArray() );
+                           n->AdoptChildren( $5 );
+                           $$ -> AdoptChildren( n );
                         }
                   |     LCARROT GenericInstantiationList RCARROT
                         {  
-                           $$ = new NodeAbstract();
-                           $$->set_name( "TypeModifier->Generic" );
+                           $$ = new GenericInstantiationList();
+                           NodeAbstract *n( new NoDynamicArray() );
+                           n->AdoptChildren( new NoSizeParameter() );
                            $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( n );
                         }     
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET RBRACKET
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "TypeModifier->GenericDynamicArray" );
-                           $$->AdoptChildren( $2 );
+                           //TODO come back here
+                           $$ = new GenericInstantiationList();
                         }
                   ;
 
