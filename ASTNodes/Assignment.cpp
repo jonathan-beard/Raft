@@ -1,0 +1,6 @@
+/**
+ * Assignment.cpp - 
+ * @author: Jonathan Beard
+ * @version: Sat Feb  8 17:29:36 2014
+ */
+#include "Assignment.hpp"

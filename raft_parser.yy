@@ -508,6 +508,7 @@
 %type    <node>    StreamPropertyList
 %type    <node>    StreamOption
 %type    <node>    StorageModifierI
+%type    <node>    GenericInstantiation
 
 %%
 CompilationUnit   :     END
@@ -1834,49 +1835,24 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                         }
                   ;
 
-GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
+GenericInstantiationList : GenericInstantiation
                            {
-                              //TODO here
-                              $$ = new NodeAbstract();
-                              $$->set_name( "GenericInstantiation" );
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              id->set_name( *$1 );
-                              delete( $1 );
-
-                              NodeAbstract *eq( nullptr );
-                              eq = new NodeAbstract();
-                              assert( eq != nullptr );
-                              eq->set_name( "=" );
-                              eq->AdoptChildren( id );
-                              eq->AdoptChildren( $3 );
-                              $$->AdoptChildren( eq );
+                              $$ = $1;
                            }
-                         | GenericInstantiationList COMMA IDENTIFIER EQUALS AllowedGenericInstTypes
+                      | GenericInstantiationList COMMA GenericInstantiation
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "GenericInstantiationList" );
-                              
-                              NodeAbstract *id( nullptr );
-                              id = new NodeAbstract();
-                              assert( id != nullptr );
-                              
-                              id->set_name( *$3 );
-                              delete( $3 );
-
-                              NodeAbstract *eq( nullptr );
-                              eq = new NodeAbstract();
-                              assert( eq != nullptr );
-                              eq->set_name( "=" );
-
-                              eq->AdoptChildren( id );
-                              eq->AdoptChildren( $5 );
-
-                              $1->MakeSibling( eq );
-                              $$->AdoptChildren( $1 );
+                              $$ = $1;
+                              $$->MakeSibling( $3 );
                            }
                          ;
+
+GenericInstantiation : QualifiedName EQUALS AllowedGenericInstTypes
+                     {
+                        //TODO
+                        $$ = 
+                     }
+                     ;
+
 
 AllowedGenericInstTypes : QualifiedName
                           {
