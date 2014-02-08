@@ -5,6 +5,8 @@
  */
 #ifndef _NODYNAMICARRAY_HPP_
 #define _NODYNAMICARRAY_HPP_  1
+#include "TypeModifier.hpp"
+
 namespace Node {
 class NoDynamicArray : public TypeModifier {
 public:

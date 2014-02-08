@@ -5,5 +5,12 @@
  */
 #ifndef _NOGENERICINSTANTIATION_HPP_
 #define _NOGENERICINSTANTIATION_HPP_  1
-
+#include "GenericInstantiationList.hpp"
+namespace Node {
+class NoGenericInstantiation : public GenericInstantiationList {
+public:
+   NoGenericInstantiation();
+   virtual ~NoGenericInstantiation() = default;
+};
+}
 #endif /* END _NOGENERICINSTANTIATION_HPP_ */

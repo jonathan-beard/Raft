@@ -117,6 +117,11 @@
       class Final;
       class Abstract;
       class NoInstantiationModifier;
+      class DynamicArray;
+      class NoSizeParameter;
+      class NoDynamicArray;
+      class GenericInstantiationList;
+      class NoGenericInstantiation;
    }
 }
 
@@ -253,6 +258,11 @@
    #include "Final.hpp"
    #include "Abstract.hpp"
    #include "InstantiationModifier.hpp"
+   #include "DynamicArray.hpp"
+   #include "NoSizeParameter.hpp"
+   #include "NoDynamicArray.hpp"
+   #include "GenericInstantiationList.hpp"
+   #include "NoGenericInstantiation.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1817,13 +1827,16 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                         }     
                   |     LCARROT GenericInstantiationList RCARROT LBRACKET RBRACKET
                         {
-                           //TODO come back here
                            $$ = new GenericInstantiationList();
+                           NodeAbstract *n( new DynamicArray() );
+                           n->AdoptChildren( new NoSizeParameter() );
+                           $$ -> AdoptChildren( n );
                         }
                   ;
 
 GenericInstantiationList : IDENTIFIER EQUALS AllowedGenericInstTypes
                            {
+                              //TODO here
                               $$ = new NodeAbstract();
                               $$->set_name( "GenericInstantiation" );
                               NodeAbstract *id( nullptr );

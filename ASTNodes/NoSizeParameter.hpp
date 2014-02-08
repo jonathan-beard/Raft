@@ -5,6 +5,8 @@
  */
 #ifndef _NOSIZEPARAMETER_HPP_
 #define _NOSIZEPARAMETER_HPP_  1
+#include "Parameter.hpp"
+
 namespace Node{
 class NoSizeParameter : public Parameter {
 public:

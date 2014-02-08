@@ -4,3 +4,10 @@
  * @version: Sun Feb  2 17:07:26 2014
  */
 #include "NoGenericInstantiation.hpp"
+
+using namespace Node;
+
+NoGenericInstantiation::NoGenericInstantiation() : 
+            GenericInstantiationList( "NoGenericInstantiation" )
+{
+}
