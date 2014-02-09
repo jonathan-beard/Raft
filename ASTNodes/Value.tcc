@@ -7,6 +7,9 @@
 #define _VALUE_TCC_  1
 #include "ValueBase.hpp"
 #include <cstring>
+#include <sstream>
+#include <cassert>
+#include <typeinfo>
 
 namespace Node {
 

@@ -122,6 +122,10 @@
       class NoDynamicArray;
       class GenericInstantiationList;
       class NoGenericInstantiation;
+      class GenericInstantiation;
+      class Assignment;
+      class Equals;
+      class ArraySize;
    }
 }
 
@@ -263,6 +267,10 @@
    #include "NoDynamicArray.hpp"
    #include "GenericInstantiationList.hpp"
    #include "NoGenericInstantiation.hpp"
+   #include "GenericInstantiation.hpp"
+   #include "Assignment.hpp"
+   #include "Equals.hpp"
+   #include "ArraySize.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1848,12 +1856,13 @@ GenericInstantiationList : GenericInstantiation
 
 GenericInstantiation : QualifiedName EQUALS AllowedGenericInstTypes
                      {
-                        //TODO
-                        $$ = 
+                        $$ = new GenericInstantiation();
+                        NodeAbstract *eq( new Equals() );
+                        eq->AdoptChildren( $1 );
+                        eq->AdoptChildren( $3 );
+                        $$->AdoptChildren( eq );
                      }
                      ;
-
-
 AllowedGenericInstTypes : QualifiedName
                           {
                               /** 
@@ -1879,24 +1888,11 @@ AllowedGenericInstTypes : QualifiedName
 
 ArraySize         :     ArraySize COMMA INT_TOKEN
                         {
-                           NodeAbstract *size( nullptr );
-                           size = new NodeAbstract();
-                           assert( size != nullptr );
-                           std::stringstream ss;
-                           ss << $3;
-                           size->set_name( ss.str() );
-                           $1->MakeSibling( size );
-                           $$ = $1;
+                           $$->AdoptChildren( new ArraySize( $3 ) );
                         }
                   |     INT_TOKEN
                         {
-                           NodeAbstract *size( nullptr );
-                           size = new NodeAbstract();
-                           assert( size != nullptr );
-                           std::stringstream ss;
-                           ss << $1;
-                           size->set_name( ss.str() );
-                           $$ = size;
+                           $$ = new ArraySize( $1 );  
                         }
                   ;
 
@@ -1904,6 +1900,7 @@ ArraySize         :     ArraySize COMMA INT_TOKEN
 
 AssignmentExpression :  ConditionalExpression
                         {
+                           //TODO start back here
                            $$ = new NodeAbstract();
                            $$->set_name( "AssignmentExpression - Cond" );
                            $$->AdoptChildren( $1 );

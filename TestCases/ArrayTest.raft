@@ -1,0 +1,15 @@
+/** double check to make sure this works only if this is included **/
+#include "Raft.System"
+
+class Foo{
+@public:
+   void main( String args[](nill) )
+   {
+      /** static instantiation **/
+      int8 foo[8]( 0 );
+      /** dynamic declaration **/
+      int8 foo[]( new int[8] );
+      /** failed dynamic decl **/
+      int8[] foo( nill );
+   }
+}
