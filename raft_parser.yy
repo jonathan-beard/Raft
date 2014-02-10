@@ -128,6 +128,8 @@
       class ArraySize;
       class Increment;
       class Decrement;
+      class AssPlus;
+      class AssMinus;
    }
 }
 
@@ -275,6 +277,8 @@
    #include "ArraySize.hpp"
    #include "Increment.hpp"
    #include "Decrement.hpp"
+   #include "AssPlus.hpp"
+   #include "AssMinus.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1925,27 +1929,15 @@ AssignmentExpression :  ConditionalExpression
 
 AssignmentOperator   :  EQUALS
                         {
-                           NodeAbstract *equals( nullptr );
-                           equals = new NodeAbstract();
-                           assert( equals != nullptr );
-                           equals->set_name( "Ass_equals" );
-                           $$ = equals;
+                           $$ = new Equals();
                         }
                      |  ASS_PLUS
                         {
-                           NodeAbstract *plus( nullptr );
-                           plus = new NodeAbstract();
-                           assert( plus != nullptr );
-                           plus->set_name( "Ass_plus" );
-                           $$ = plus;
+                           $$ = new AssPlus();
                         }
                      |  ASS_MINUS
                         {
-                           NodeAbstract *minus( nullptr );
-                           minus = new NodeAbstract();
-                           assert( minus != nullptr );
-                           minus->set_name( "Ass_minus" );
-                           $$ = minus;
+                           $$ = new AssMinus();
                         }
                      ;
 
@@ -1967,6 +1959,7 @@ ConditionalOrExpression :  ConditionalAndExpression
                            }
                         |  ConditionalOrExpression OP_LOR ConditionalAndExpression
                            {
+                              //TODO come back here 
                               NodeAbstract *lor( nullptr );
                               lor = new NodeAbstract();
                               assert( lor != nullptr );

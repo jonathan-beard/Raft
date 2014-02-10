@@ -4,3 +4,9 @@
  * @version: Mon Feb 10 06:43:37 2014
  */
 #include "Decrement.hpp"
+
+using namespace Node;
+
+Decrement::Decrement() : Assignment( "Decrement" )
+{
+}
