@@ -30,7 +30,7 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             DynamicArray NoSizeParameter NoDynamicArray \
             GenericInstantiationList NoGenericInstantiation GenericInstantiation \
             Equals Assignment ArraySize Increment Decrement AssPlus \
-            AssMinus
+            AssMinus Plus Minus
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 

@@ -130,6 +130,8 @@
       class Decrement;
       class AssPlus;
       class AssMinus;
+      class Plus;
+      class Minus;
    }
 }
 
@@ -2110,9 +2112,7 @@ RelationalExpression    :  ShiftExpression
 
 ShiftExpression         :  AdditiveExpression
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "ShiftExpression" );
-                              $$->AdoptChildren( $1 );
+                              $$ = $1;
                            }
                         ;
 
@@ -2122,23 +2122,15 @@ AdditiveExpression      :  MultiplicativeExpression
                            }
                         |  AdditiveExpression   PLUS MultiplicativeExpression
                            {
-                              NodeAbstract *plus( nullptr );
-                              plus = new NodeAbstract();
-                              assert( plus != nullptr );
-                              plus->set_name( "AdditiveExpression - '-'" );
-                              plus->AdoptChildren( $1 );
-                              plus->AdoptChildren( $3 );
-                              $$ = plus;
+                              $$ = new Plus();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         |  AdditiveExpression   MINUS MultiplicativeExpression
                            {
-                              NodeAbstract *minus( nullptr );
-                              minus = new NodeAbstract();
-                              assert( minus != nullptr );
-                              minus->set_name( "AdditiveExpression - '-'" );
-                              minus->AdoptChildren( $1 );
-                              minus->AdoptChildren( $3 );
-                              $$ = minus;
+                              $$ = new Minus();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         ;
 
