@@ -126,6 +126,8 @@
       class Assignment;
       class Equals;
       class ArraySize;
+      class Increment;
+      class Decrement;
    }
 }
 
@@ -271,6 +273,8 @@
    #include "Assignment.hpp"
    #include "Equals.hpp"
    #include "ArraySize.hpp"
+   #include "Increment.hpp"
+   #include "Decrement.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1900,28 +1904,21 @@ ArraySize         :     ArraySize COMMA INT_TOKEN
 
 AssignmentExpression :  ConditionalExpression
                         {
-                           //TODO start back here
-                           $$ = new NodeAbstract();
-                           $$->set_name( "AssignmentExpression - Cond" );
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                      |  UnaryExpression AssignmentOperator
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "AssignmentExpression - Op" );
-                           $2->MakeSibling( $1 );
-                           $$->AdoptChildren( $2 );
+                           $$ = $2;
+                           $$->AdoptChildren( $1 );
                         }
                      |  UnaryExpression INCREMENT
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Increment" );
+                           $$ = new Increment();
                            $$->AdoptChildren( $1 );
                         }
                      |  UnaryExpression DECREMENT
                         {
-                           $$ = new NodeAbstract();
-                           $$->set_name( "Decrement" );
+                           $$ = new Decrement();
                            $$->AdoptChildren( $1 );
                         }
                      ;
