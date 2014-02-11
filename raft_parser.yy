@@ -132,6 +132,22 @@
       class AssMinus;
       class Plus;
       class Minus;
+      class CondOp;
+      class LOROp;
+      class LANDOp;
+      class OrOp;
+      class HatOp;
+      class AndOp;
+      class EqualityOp;
+      class EqualOp;
+      class NotEqualOp;
+      class GreaterThanOp;
+      class LessThanOp;
+      class LessEqualOp;
+      class GreaterEqualOp;
+      class MultOp;
+      class DivOp;
+      class ModOp;
    }
 }
 
@@ -281,6 +297,25 @@
    #include "Decrement.hpp"
    #include "AssPlus.hpp"
    #include "AssMinus.hpp"
+   #include "Plus.hpp"
+   #include "Minus.hpp"
+   #include  "CondOp.hpp"
+   #include  "LOROp.hpp"
+   #include  "LANDOp.hpp"
+   #include  "OrOp.hpp"
+   #include  "HatOp.hpp"
+   #include  "AndOp.hpp"
+   #include  "EqualityOp.hpp"
+   #include  "EqualOp.hpp"
+   #include  "NotEqualOp.hpp"
+   #include  "GreaterThanOp.hpp"
+   #include  "LessThanOp.hpp"
+   #include  "LessEqualOp.hpp"
+   #include  "GreaterEqualOp.hpp"
+   #include  "MultOp.hpp"
+   #include  "DivOp.hpp"
+   #include  "ModOp.hpp"
+
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
