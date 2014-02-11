@@ -1996,14 +1996,9 @@ ConditionalOrExpression :  ConditionalAndExpression
                            }
                         |  ConditionalOrExpression OP_LOR ConditionalAndExpression
                            {
-                              //TODO come back here 
-                              NodeAbstract *lor( nullptr );
-                              lor = new NodeAbstract();
-                              assert( lor != nullptr );
-                              lor->set_name( "OP_LOR" );
-                              lor->AdoptChildren( $1 );
-                              lor->AdoptChildren( $3 );
-                              $$ = lor;
+                              $$ = new LOROp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         ;
 
@@ -2013,13 +2008,9 @@ ConditionalAndExpression   :  InclusiveOrExpression
                               }
                           |  ConditionalAndExpression OP_LAND InclusiveOrExpression
                            {  
-                              NodeAbstract *land( nullptr );
-                              land = new NodeAbstract();
-                              assert( land != nullptr );
-                              land->set_name( "OP_LAND" );
-                              land->AdoptChildren( $1 );
-                              land->AdoptChildren( $3 );
-                              $$ = land;
+                              $$ = new LANDOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }  
                           ;
 
@@ -2029,13 +2020,9 @@ InclusiveOrExpression   :  ExclusiveOrExpression
                            }
                         |  InclusiveOrExpression OR ExclusiveOrExpression
                            {  
-                              NodeAbstract *node( nullptr );
-                              node = new NodeAbstract();
-                              assert( node != nullptr );
-                              node->set_name( "OR" );
-                              node->AdoptChildren( $1 );
-                              node->AdoptChildren( $3 );
-                              $$ = node;
+                              $$ = new OrOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }  
                         ;
 
@@ -2045,13 +2032,9 @@ ExclusiveOrExpression   :  AndExpression
                            }
                         |  ExclusiveOrExpression HAT AndExpression
                            {  
-                              NodeAbstract *hat( nullptr );
-                              hat = new NodeAbstract();
-                              assert( hat != nullptr );
-                              hat->set_name( "^" );
-                              hat->AdoptChildren( $1 );
-                              hat->AdoptChildren( $3 );
-                              $$ = hat;
+                              $$ = new HatOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }  
                         ;
 
@@ -2061,13 +2044,9 @@ AndExpression           :  EqualityExpression
                            }
                         |  AndExpression  AND   EqualityExpression
                            {
-                              NodeAbstract *node( nullptr );
-                              node = new NodeAbstract();
-                              assert( node != nullptr );
-                              node->set_name( "AND" );
-                              node->AdoptChildren( $1 );
-                              node->AdoptChildren( $3 );
-                              $$ = node;
+                              $$ = new AndOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         ;
 
@@ -2077,44 +2056,31 @@ EqualityExpression      :  RelationalExpression
                            }
                         |  EqualityExpression   OP_EQ RelationalExpression
                            {  
-                              NodeAbstract *eq( nullptr );
-                              eq = new NodeAbstract();
-                              assert( eq != nullptr );
-                              eq->set_name( "EqualityExpression ==" );
-                              eq->AdoptChildren( $1 );
-                              eq->AdoptChildren( $3 );
-                              $$ = eq;
+                              $$ = new EqualOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }  
                         |  EqualityExpression   OP_NE RelationalExpression
                            {  
-                              NodeAbstract *ne( nullptr );
-                              ne = new NodeAbstract();
-                              assert( ne != nullptr );
-                              ne->set_name( "EqualityExpression !=" );
-                              ne->AdoptChildren( $1 );
-                              ne->AdoptChildren( $3 );
-                              $$ = ne;
+                              $$ = new NotEqualOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }  
                         ;
 
 RelationalExpression    :  ShiftExpression
                            {
-                              $$ = new NodeAbstract();
-                              $$->set_name( "RelationalExpression" );
-                              $$->AdoptChildren( $1 );
+                              $$ = $1;
                            }
                         |  RelationalExpression RCARROT ShiftExpression
                            {
-                              NodeAbstract *carrot( nullptr );
-                              carrot = new NodeAbstract();
-                              assert( carrot != nullptr );
-                              carrot->set_name( "RelationalExpression - >" );
-                              carrot->AdoptChildren( $1 );
-                              carrot->AdoptChildren( $3 );
-                              $$ = carrot;
+                              $$ = new GreaterThanOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         |  RelationalExpression LCARROT ShiftExpression
                            {
+                              //TODO come back here
                               NodeAbstract *carrot( nullptr );
                               carrot = new NodeAbstract();
                               assert( carrot != nullptr );

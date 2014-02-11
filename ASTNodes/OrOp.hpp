@@ -5,5 +5,13 @@
  */
 #ifndef _OROP_HPP_
 #define _OROP_HPP_  1
+#include "BitOperation.hpp"
 
+namespace Node {
+class OrOp : public BitOperation {
+public:
+   OrOp();
+   virtual ~OrOp() = default;
+};
+}
 #endif /* END _OROP_HPP_ */

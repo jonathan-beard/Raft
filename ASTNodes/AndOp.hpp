@@ -5,5 +5,13 @@
  */
 #ifndef _ANDOP_HPP_
 #define _ANDOP_HPP_  1
+#include "BitOperation.hpp"
 
+namespace Node{
+class AndOp : public BitOperation {
+public:
+   AndOp();
+   virtual ~AndOp() = default;
+};
+}
 #endif /* END _ANDOP_HPP_ */

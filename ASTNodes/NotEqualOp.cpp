@@ -4,3 +4,9 @@
  * @version: Tue Feb 11 12:51:41 2014
  */
 #include "NotEqualOp.hpp"
+
+using namespace Node;
+
+NotEqualOp::NotEqualOp() : CondOp( "NotEqualOp" )
+{
+}
