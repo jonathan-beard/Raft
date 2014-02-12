@@ -151,6 +151,7 @@
       class LeftShiftOp;
       class RightShiftOp;
       class TypeCastExpression;
+      class Free;
    }
 }
 
@@ -321,6 +322,7 @@
    #include  "TypeCastExpression.hpp"
    #include  "LeftShiftOp.hpp"
    #include  "RightShiftOp.hpp"
+   #include  "Free.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -2175,11 +2177,11 @@ CastExpression :  UnaryExpression
                   }
                |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
                   {
-                     //TODO
-                     $$ = new NodeAbstract();
-                     $$->set_name( "CastExpression" );
-                     $2->MakeSibling( $4 );
+                     $$ = new CastExpression();
+                     /** eval left first **/
                      $$->AdoptChildren( $2 );
+                     /** then right **/
+                     $$->AdoptChildren( $4 );
                   }
                ;
 
@@ -2253,13 +2255,10 @@ AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
                      ;
 
 
-DeAllocationExpression : FREE LPAREN IDENTIFIER RPAREN
+DeAllocationExpression : FREE LPAREN QualifiedName RPAREN
                          {
-                           $$ = new NodeAbstract();
-                           std::stringstream ss;
-                           ss << "DeAllocationExpression - " << *$3;
-                           $$->set_name( ss.str() );
-                           delete( $3 );
+                           $$ = new Free();
+                           $$->AdoptChildren( $3 );
                          }
                        ;
 
