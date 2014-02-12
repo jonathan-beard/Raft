@@ -148,6 +148,9 @@
       class MultOp;
       class DivOp;
       class ModOp;
+      class LeftShiftOp;
+      class RightShiftOp;
+      class TypeCastExpression;
    }
 }
 
@@ -315,7 +318,9 @@
    #include  "MultOp.hpp"
    #include  "DivOp.hpp"
    #include  "ModOp.hpp"
-
+   #include  "TypeCastExpression.hpp"
+   #include  "LeftShiftOp.hpp"
+   #include  "RightShiftOp.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -2160,19 +2165,17 @@ MultiplicativeExpression   :  CastExpression
 
 CastExpression :  UnaryExpression
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "CastExpression" );
-                     $$->AdoptChildren( $1 );
+                     $$ = $1;
                   }
                |  LPAREN   Type  RPAREN   CastExpression
                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( "CastExpression" );
-                     $2->MakeSibling( $4 );
+                     $$ = new TypeCastExpression();
                      $$->AdoptChildren( $2 );
+                     $$->AdoptChildren( $4 );
                   }
                |  LPAREN   Expression  RPAREN   LogicalUnaryExpression
                   {
+                     //TODO
                      $$ = new NodeAbstract();
                      $$->set_name( "CastExpression" );
                      $2->MakeSibling( $4 );
