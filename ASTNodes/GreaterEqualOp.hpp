@@ -11,7 +11,7 @@ namespace Node{
 class GreaterEqualOp : public CondOp {
 public:
    GreaterEqualOp();
-   virtual ~GreaterEqualOP() = default;
+   virtual ~GreaterEqualOp() = default;
 };
 }
 #endif /* END _GREATEREQUALOP_HPP_ */
