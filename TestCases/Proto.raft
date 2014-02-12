@@ -2,7 +2,9 @@ class Foo<int8 f(8)>{
 @public:
    int32 a( 0 );
    int32 foo( 0 );
-   bool  f[4]( 0 );
+   /** TODO, get this syntax to work!! */
+   bool  f[4]( [1] = 0, [2] = 0 , [ ... ] =  0);
+
    Foo f( new Foo() );
    /**
     * Foo - example of a constructor, will be called once
