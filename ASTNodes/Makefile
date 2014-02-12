@@ -32,7 +32,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             Equals Assignment ArraySize Increment Decrement AssPlus \
             AssMinus Plus Minus MathOp Operation CondOp LOROp LANDOp \
             OrOp HatOp AndOp EqualityOp EqualOp NotEqualOp GreaterThanOp \
-            LessThanOp LessEqualOp GreaterEqualOp MultOp DivOp ModOp
+            LessThanOp LessEqualOp GreaterEqualOp MultOp DivOp ModOp \
+            LeftShiftOp RightShiftOp
 				
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 

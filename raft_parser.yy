@@ -2128,37 +2128,34 @@ MultiplicativeExpression   :  CastExpression
                            }
                     |   MultiplicativeExpression   ASTERICK CastExpression
                            {
-                              //TODO here
-                              NodeAbstract *ast( nullptr );
-                              ast = new NodeAbstract();
-                              assert( ast != nullptr );
-                              ast->set_name( "MultiplicativeExpression - *" );
-                              ast->AdoptChildren( $1 );
-                              ast->AdoptChildren( $3 );
-                              $$ = ast;
+                              $$ = new MultOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
               |   MultiplicativeExpression   FORWARDSLASH   CastExpression
                            {
-                              NodeAbstract *slash( nullptr );
-                              slash = new NodeAbstract();
-                              assert( slash != nullptr );
-                         slash->set_name( "MultiplicativeExpression - /" );
-                              slash->AdoptChildren( $1 );
-                              slash->AdoptChildren( $3 );
-                              $$ = slash;
+                              $$ = new DivOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                        |   MultiplicativeExpression   PERCENT   CastExpression
                            {
-                              NodeAbstract *percent( nullptr );
-                              percent = new NodeAbstract();
-                              assert( percent != nullptr );
-                              percent->set_name( "MultiplicativeExpression - %" );
-                              percent->AdoptChildren( $1 );
-                              percent->AdoptChildren( $3 );
-                              $$ = percent;
+                              $$->new ModOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         | MultiplicativeExpression DLCARROT CastExpression
+                           {
+                              $$ = new LeftShiftOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
+                           }
                         | MultiplicativeExpression DRCARROT CastExpression
+                           {
+                              $$ = new RightShiftOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
+                           }
                        ;
 
 CastExpression :  UnaryExpression

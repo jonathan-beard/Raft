@@ -12,6 +12,6 @@ CondOp::CondOp() : Operation( "CondOp" )
 }
 
 
-CondOp;;CondOp( const std::string name ) : Operation( name )
+CondOp::CondOp( const std::string name ) : Operation( name )
 {
 }
