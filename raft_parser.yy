@@ -153,6 +153,7 @@
       class TypeCastExpression;
       class Free;
       class ModOp;
+
    }
 }
 
@@ -571,6 +572,7 @@
 %type    <node>    StreamOption
 %type    <node>    StorageModifierI
 %type    <node>    GenericInstantiation
+%type    <node>    SelectiveArrayInitializer
 
 %%
 CompilationUnit   :     END
@@ -1611,6 +1613,28 @@ Initializer :  MultiBoolInit
                }
             ;
 
+
+SelectiveArrayInitializerBool : LBRACKET ArraySize RBRACKET EQUALS Boolean 
+                              {
+                                 //TODO finish this 
+                              }
+                              ;
+SelectiveArrayInitializerNum : LBRACKET ArraySize RBRACKET EQUALS
+                              {
+
+                              }
+                              ;
+SelectiveArrayInitializerStr : LBRACKET ArraySize RBRACKET EQUALS
+                              {
+
+                              }
+                              ;
+
+SelectiveArrayInitializerObj : LBRACKET ArraySize RBRACKET EQUALS
+                              {
+
+                              }
+                              ;
 
 MultiBoolInit            : MultiBoolInit  COMMA BoolInitializer
                            {
