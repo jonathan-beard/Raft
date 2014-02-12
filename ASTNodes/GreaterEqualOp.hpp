@@ -5,5 +5,13 @@
  */
 #ifndef _GREATEREQUALOP_HPP_
 #define _GREATEREQUALOP_HPP_  1
+#include "CondOp.hpp"
 
+namespace Node{
+class GreaterEqualOp : public CondOp {
+public:
+   GreaterEqualOp();
+   virtual ~GreaterEqualOP() = default;
+};
+}
 #endif /* END _GREATEREQUALOP_HPP_ */

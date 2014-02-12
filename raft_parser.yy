@@ -2080,34 +2080,21 @@ RelationalExpression    :  ShiftExpression
                            }
                         |  RelationalExpression LCARROT ShiftExpression
                            {
-                              //TODO come back here
-                              NodeAbstract *carrot( nullptr );
-                              carrot = new NodeAbstract();
-                              assert( carrot != nullptr );
-                              carrot->set_name( "RelationalExpression - <" );
-                              carrot->AdoptChildren( $1 );
-                              carrot->AdoptChildren( $3 );
-                              $$ = carrot;
+                              $$ = new LessThanOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         |  RelationalExpression OP_LE ShiftExpression
                            {
-                              NodeAbstract *le( nullptr );
-                              le = new NodeAbstract();
-                              assert( le != nullptr );
-                              le->set_name( "RelationalExpression - <=" );
-                              le->AdoptChildren( $1 );
-                              le->AdoptChildren( $3 );
-                              $$ = le;
+                              $$ = new LessEqualOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         |  RelationalExpression OP_GE ShiftExpression
                            {
-                              NodeAbstract *ge( nullptr );
-                              ge = new NodeAbstract();
-                              assert( ge != nullptr );
-                              ge->set_name( "RelationalExpression - >=" );
-                              ge->AdoptChildren( $1 );
-                              ge->AdoptChildren( $3 );
-                              $$ = ge;
+                              $$ = new GreaterEqualOp();
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $3 );
                            }
                         ;
 
@@ -2141,6 +2128,7 @@ MultiplicativeExpression   :  CastExpression
                            }
                     |   MultiplicativeExpression   ASTERICK CastExpression
                            {
+                              //TODO here
                               NodeAbstract *ast( nullptr );
                               ast = new NodeAbstract();
                               assert( ast != nullptr );
