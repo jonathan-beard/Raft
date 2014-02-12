@@ -5,5 +5,15 @@
  */
 #ifndef _CASTEXPRESSION_HPP_
 #define _CASTEXPRESSION_HPP_  1
-//TODO finish me
+#include "Expression.hpp"
+
+namespace Node{
+class CastExpression : public Expression {
+public:
+   CastExpression();
+   virtual ~CastExpression() = default;
+protected:
+   CastExpression( const std::string name );
+};
+}
 #endif /* END _CASTEXPRESSION_HPP_ */

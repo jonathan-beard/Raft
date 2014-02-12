@@ -152,6 +152,7 @@
       class RightShiftOp;
       class TypeCastExpression;
       class Free;
+      class ModOp;
    }
 }
 
@@ -323,6 +324,7 @@
    #include  "LeftShiftOp.hpp"
    #include  "RightShiftOp.hpp"
    #include  "Free.hpp"
+   #include  "ModOp.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -2147,7 +2149,7 @@ MultiplicativeExpression   :  CastExpression
                            }
                        |   MultiplicativeExpression   PERCENT   CastExpression
                            {
-                              $$->new ModOp();
+                              $$ = new ModOp();
                               $$->AdoptChildren( $1 );
                               $$->AdoptChildren( $3 );
                            }
