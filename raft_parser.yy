@@ -153,7 +153,11 @@
       class TypeCastExpression;
       class Free;
       class ModOp;
-
+      class AllOthersInArray;
+      class ArrayInitialization;
+      class BoolArrayInitialization;
+      class NumArrayInitialization;
+      class StrArrayInitialization;
    }
 }
 
@@ -326,6 +330,11 @@
    #include  "RightShiftOp.hpp"
    #include  "Free.hpp"
    #include  "ModOp.hpp"
+   #include  "ArrayInitialization.hpp"
+   #include  "BoolArrayInitialization.hpp"
+   #include  "NumArrayInitialization.hpp"
+   #include  "StrArrayInitialization.hpp"
+   #include  "AllOthersInArray.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -572,8 +581,12 @@
 %type    <node>    StreamOption
 %type    <node>    StorageModifierI
 %type    <node>    GenericInstantiation
-%type    <node>    SelectiveArrayInitializer
-
+%type    <node>    SelectiveArrayInitializerNum 
+%type    <node>    SelectiveArrayInitializerBool
+%type    <node>    SelectiveArrayInitializerStr
+%type    <node>    MultipleArrayInitBool
+%type    <node>    MultipleArrayInitNum
+%type    <node>    MultipleArrayInitStr
 %%
 CompilationUnit   :     END
                   |     T
@@ -1614,25 +1627,77 @@ Initializer :  MultiBoolInit
             ;
 
 
+MultipleArrayInitBool : SelectiveArrayInitializerBool
+                        {
+                           $$ = $1;
+                        }
+                      | MultipleArrayInitBool COMMA SelectiveArrayInitializerBool
+                        {
+                           $$ = $1;
+                           $1->MakeSibling( $3 );
+                        }
+                      ;
+MultipleArrayInitNum : SelectiveArrayInitializerNum
+                        {
+                           $$ = $1;
+                        }
+                      | MultipleArrayInitNum COMMA SelectiveArrayInitializerNum
+                        {
+                           $$ = $1;
+                           $1->MakeSibling( $3 );
+                        }
+                      ;
+MultipleArrayInitStr : SelectiveArrayInitializerStr
+                        {
+                           $$ = $1;
+                        }
+                      | MultipleArrayInitStr COMMA SelectiveArrayInitializerStr
+                        {
+                           $$ = $1;
+                           $1->MakeSibling( $3 );
+                        }
+                      ;
+
 SelectiveArrayInitializerBool : LBRACKET ArraySize RBRACKET EQUALS Boolean 
                               {
-                                 //TODO finish this 
+                                 $$ = new BoolArrayInitialization();
+                                 $$->AdoptChildren( $2 );
+                                 $$->AdoptChildren( $5 );
+                              }
+                              | LBRACKET THREEDOTS RBRACKET EQUALS Boolean
+                              {
+                                 $$ = new BoolArrayInitialization();
+                                 $$->AdoptChildren( 
+                                    new AllOthersInArray() );
+                                 $$->AdoptChildren( $5 );
                               }
                               ;
-SelectiveArrayInitializerNum : LBRACKET ArraySize RBRACKET EQUALS
+SelectiveArrayInitializerNum : LBRACKET ArraySize RBRACKET EQUALS Number
                               {
-
+                                 $$ = new NumArrayInitialization();
+                                 $$->AdoptChildren( $2 );
+                                 $$->AdoptChildren( $5 );
+                              }
+                              | LBRACKET THREEDOTS RBRACKET EQUALS Number
+                              {
+                                 $$ = new NumArrayInitialization();
+                                 $$->AdoptChildren( 
+                                    new AllOthersInArray() );
+                                 $$->AdoptChildren( $5 );
                               }
                               ;
-SelectiveArrayInitializerStr : LBRACKET ArraySize RBRACKET EQUALS
+SelectiveArrayInitializerStr : LBRACKET ArraySize RBRACKET EQUALS Literal
                               {
-
+                                 $$ = new StrArrayInitialization();
+                                 $$->AdoptChildren( $2 );
+                                 $$->AdoptChildren( $5 );
                               }
-                              ;
-
-SelectiveArrayInitializerObj : LBRACKET ArraySize RBRACKET EQUALS
+                              | LBRACKET THREEDOTS RBRACKET EQUALS Literal
                               {
-
+                                 $$ = new StrArrayInitialization();
+                                 $$->AdoptChildren( 
+                                    new AllOthersInArray() );
+                                 $$->AdoptChildren( $5 );
                               }
                               ;
 
@@ -1676,6 +1741,11 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               $$->AdoptChildren( new NoTypeModifier() );
                               $$->AdoptChildren( $3 );
                            }
+                       | IDENTIFIER TypeModifier LPAREN MultipleArrayInitBool RPAREN
+                        {
+                           $$ = new NodeAbstract();
+
+                        }
                          ;
 
 MultiObjectInit          : MultiObjectInit COMMA ObjectInitializer
@@ -1730,6 +1800,11 @@ NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                               $$->AdoptChildren( new NoTypeModifier() );
                               $$->AdoptChildren( $3 );
                            }
+                         | IDENTIFIER TypeModifier LPAREN MultipleArrayInitNum RPAREN
+                           {
+                           $$ = new NodeAbstract();
+
+                           }
                          ;
 
 MultiStringInit          : MultiStringInit COMMA StrInitializer
@@ -1756,6 +1831,10 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN Literal RPAREN
                               delete( $1 );
                               $$->AdoptChildren( new NoTypeModifier() );
                               $$->AdoptChildren( $3 );
+                           }
+                         | IDENTIFIER TypeModifier LPAREN MultipleArrayInitStr RPAREN
+                           {
+                           $$ = new NodeAbstract();
                            }
                          ;
 
