@@ -2,9 +2,6 @@ class Foo{
 @public:
    void main( String args[](nill) )
    {
-      /** stack allocation **/
       int8 a( 1 );
-      /** heap allocation **/
-      int8 a( new int8(100) );
    }
 }

@@ -5,9 +5,15 @@ class Foo{
    {
       /** static instantiation **/
       int8 foo[8]( 0 );
-      /** dynamic declaration **/
-      int8 foo[]( new int[8] );
       /** inline array declaration **/
       bool  f[4]( [1] = true, [2 ... 3] = false, [ ... ] = false );
+      bool  f[4]( [1] = true, [1, 2 ... 3] = false, [ ... ] = false );
+      f[ 1, 23 ... 2 ]  = 100;
+      f[ 23 ... 2 ]  = 100;
+      f[2] = 100;
+      f[ 1 , 2] = 100;
+      f[ 1 , 2, 3] = 100;
+      f[ 1 , 2, 3, 4] = 100;
+      f[ 1 , 2, 3, 4 ... 5] = 100;
    }
 }

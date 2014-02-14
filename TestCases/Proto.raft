@@ -1,11 +1,18 @@
 class Foo<int8 f(8)>{
 @public:
-   int32 a( 0 );
+   /**
+    * remember, you can set teh initial values here, but  you
+    * can't assign any field variables outside of a body
+    */
+   
+   const int32 a( 0 );
    int32 foo( 0 );
-   /** TODO, get this syntax to work!! */
+   
    bool  f[4]( [1] = 0, [2] = 0 , [ ... ] =  0);
+   
 
-   Foo f( new Foo() );
+   Foo f( 1,2,3 );
+
    /**
     * Foo - example of a constructor, will be called once
     * at instantiation but no more.
@@ -36,6 +43,5 @@ class Bar{
 @public:
    void main( String args[](nill) )
    {
-      Foo f( new Foo() );
    }
 }

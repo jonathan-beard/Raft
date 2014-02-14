@@ -4,7 +4,6 @@ class Foo< class Type, int32 array[2](1) > : extends Kernel{
    streams [[int64 a]] Foo [[ int64 x, int32 a[100,2], int8 b ]]
    {
       int32 a( 100 );
-      aa = alloc int32[ 100 ];
       c[0,0] = 4;
    }
    String a("foobar");
@@ -38,7 +37,6 @@ class Foo< class Type, int32 array[2](1) > : extends Kernel{
    void main( String args[](nill) )
    {
       
-      int32 test_array[]( new int32[ 100 ], 0 );
       int32 array_output[]( Sum( $[1], $[2] ) @/ test_array );
       bar();
 

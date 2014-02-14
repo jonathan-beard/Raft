@@ -158,6 +158,7 @@
       class BoolArrayInitialization;
       class NumArrayInitialization;
       class StrArrayInitialization;
+      class ArraySlice;
    }
 }
 
@@ -335,7 +336,7 @@
    #include  "NumArrayInitialization.hpp"
    #include  "StrArrayInitialization.hpp"
    #include  "AllOthersInArray.hpp"
-
+   #include  "ArraySlice.hpp"
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
                     Raft::Scanner               &scanner,
@@ -411,7 +412,6 @@
 %token       NILL  
 %token       CONST
 %token       ALLOC
-%token       NEW
 %token       STATIC
 %token       ATOMIC
 %token       NONATOMIC
@@ -488,7 +488,6 @@
 %type    <node>    ConstructorDeclaration
 %type    <node>    MultiObjectInit
 %type    <node>    StorageModifier
-%type    <node>    DeclareAndAssignArray
 %type    <node>    ClassInitializers
 %type    <node>    MethodBody
 %type    <node>    MethodDeclarator
@@ -498,8 +497,6 @@
 %type    <node>    LocalVariableDeclarationsAndStatements
 %type    <node>    LocalVariableDeclarationOrStatement
 %type    <node>    LocalVariableDeclaration
-%type    <node>    ArrayListNumber
-%type    <node>    ArrayListLiteral
 %type    <node>    LocalStorageModifier
 %type    <node>    Statement
 %type    <node>    EmptyStatement
@@ -546,8 +543,6 @@
 %type    <node>    UnaryExpression
 %type    <node>    PostfixExpression
 %type    <node>    PrimaryExpression
-%type    <node>    AllocationExpression
-%type    <node>    DeAllocationExpression
 %type    <node>    NotJustName
 %type    <node>    ComplexPrimary
 %type    <node>    ComplexPrimaryNoParenthesis
@@ -587,6 +582,7 @@
 %type    <node>    MultipleArrayInitBool
 %type    <node>    MultipleArrayInitNum
 %type    <node>    MultipleArrayInitStr
+%type    <node>    ArraySlice
 %%
 CompilationUnit   :     END
                   |     T
@@ -853,26 +849,11 @@ FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $3 );
                             }
-                          | StorageModifier Type Initializer DeclareAndAssignArray SEMI
-                            {
-                              $$ = new FieldVarDecl();
-                              $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $3 );
-                              $$->AdoptChildren( $4 );
-                            }
                           | Type Initializer SEMI
                             {
                               $$ = new FieldVarDecl();
                               $$->AdoptChildren( $1 );
                               $$->AdoptChildren( $2 );
-                            }
-                          | Type Initializer DeclareAndAssignArray SEMI
-                            {
-                              $$ = new FieldVarDecl();
-                              $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $3 );
                             }
                           ;
 
@@ -1082,7 +1063,7 @@ DeclaratorName           : IDENTIFIER
                               $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
                            }
-                         | BoolInitializer 
+                         |BoolInitializer 
                            {
                               $$ = $1;
                            }
@@ -1148,21 +1129,6 @@ LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
 
                                  $$ = var;
                               }
-                           |  LocalStorageModifier Type Initializer DeclareAndAssignArray SEMI
-                              {
-                                 NodeAbstract *var( nullptr );
-                                 var = new NodeAbstract();
-                                 assert( var != nullptr );
-                                 var->set_name( "VarDecl" );
-
-                                 $1->MakeSibling( $2 );
-                                 $1->MakeSibling( $3 );
-                                 $1->MakeSibling( $4 );
-
-                                 var->AdoptChildren( $1 );
-
-                                 $$ = var;
-                              }
                            |  Type Initializer SEMI
                               {
                                  NodeAbstract *var( nullptr );
@@ -1174,103 +1140,8 @@ LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
                                  var->AdoptChildren( $1 );
                                  $$ = var;
                               }
-                           |  Type Initializer DeclareAndAssignArray SEMI
-                              {
-                                 NodeAbstract *var( nullptr );
-                                 var = new NodeAbstract();
-                                 assert( var != nullptr );
-                                 
-                                 var->set_name( "VarDecl" );
-                                 $1->MakeSibling( $2 );
-                                 $1->MakeSibling( $3 );
-                                 var->AdoptChildren( $1 );
-                                 $$ = var;
-                              }
                            ;
 
-DeclareAndAssignArray      :  EQUALS LBRACE ArrayListNumber  RBRACE
-                              {
-                                 NodeAbstract *decl( nullptr );
-                                 decl = new NodeAbstract();
-                                 assert( decl != nullptr );
-
-                                 decl->set_name( "DeclareAndAssignArrNum" );
-                                 
-                                 decl->AdoptChildren( $3 );
-
-                                 $$ = decl;
-                              }
-                           |  EQUALS LBRACE ArrayListLiteral RBRACE
-                              {
-                                 NodeAbstract *decl( nullptr );
-                                 decl = new NodeAbstract();
-                                 assert( decl != nullptr );
-
-                                 decl->set_name( "DeclareAndAssignArrLit" );
-                                 
-                                 decl->AdoptChildren( $3 );
-
-                                 $$ = decl;
-                              }
-                           ;
-
-ArrayListNumber   : LBRACKET ArraySize RBRACKET EQUALS Number
-                     {
-                        NodeAbstract *arr( nullptr );
-                        arr = new NodeAbstract();
-                        assert( arr != nullptr );
-                        
-                        arr->set_name("Assign");
-
-                        $2->MakeSibling( $5 );
-                        arr->AdoptChildren( $2 );
-                        $$ = arr;
-                     }
-                  | ArrayListNumber COMMA LBRACKET ArraySize RBRACKET EQUALS Number
-                     {
-                        NodeAbstract *arr( nullptr );
-                        arr = new NodeAbstract();
-                        assert( arr != nullptr );
-                        
-                        arr->set_name("Assign");
-
-                        $4->MakeSibling( $7 );
-                        arr->AdoptChildren( $4 );
-
-                        $1->MakeSibling( arr );
-
-                        $$ = $1;
-                     }
-                  ;
-
-ArrayListLiteral  :  LBRACKET ArraySize RBRACKET EQUALS Literal
-                     {
-                        NodeAbstract *arr( nullptr );
-                        arr = new NodeAbstract();
-                        assert( arr != nullptr );
-                        
-                        arr->set_name("Assign");
-
-                        $2->MakeSibling( $5 );
-                        arr->AdoptChildren( $2 );
-                        $$ = arr;
-                     }
-                  |  ArrayListLiteral COMMA LBRACKET ArraySize RBRACKET EQUALS Literal
-                     {
-                        NodeAbstract *arr( nullptr );
-                        arr = new NodeAbstract();
-                        assert( arr != nullptr );
-                        
-                        arr->set_name("Assign");
-
-                        $4->MakeSibling( $7 );
-                        arr->AdoptChildren( $4 );
-
-                        $1->MakeSibling( arr );
-
-                        $$ = $1;
-                     }
-                  ;
 
 LocalStorageModifier : CONST
                         {
@@ -1658,7 +1529,31 @@ MultipleArrayInitStr : SelectiveArrayInitializerStr
                         }
                       ;
 
-SelectiveArrayInitializerBool : LBRACKET ArraySize RBRACKET EQUALS Boolean 
+ArraySlice :  ArraySlice COMMA INT_TOKEN 
+              {
+                 //TODO, redesign this bit 
+                 $$ -> AdoptChildren( new ArraySize( $3 ) );
+              }
+           |  INT_TOKEN  THREEDOTS  INT_TOKEN
+              {
+                $$ = new ArraySlice( $1, $3 );
+              }
+           |  INT_TOKEN COMMA INT_TOKEN
+              {
+                 $$ = new ArraySize( $1 );
+              }
+           |  INT_TOKEN COMMA INT_TOKEN  THREEDOTS  INT_TOKEN
+              {
+                $$ = new ArraySize( $1 );
+                $$ -> AdoptChildren( new ArraySlice( $3, $5 ) );
+              }
+           | INT_TOKEN
+             {
+               $$ = new ArraySize( $1 );
+             }
+           ;
+
+SelectiveArrayInitializerBool : LBRACKET ArraySlice RBRACKET EQUALS Boolean 
                               {
                                  $$ = new BoolArrayInitialization();
                                  $$->AdoptChildren( $2 );
@@ -1672,7 +1567,7 @@ SelectiveArrayInitializerBool : LBRACKET ArraySize RBRACKET EQUALS Boolean
                                  $$->AdoptChildren( $5 );
                               }
                               ;
-SelectiveArrayInitializerNum : LBRACKET ArraySize RBRACKET EQUALS Number
+SelectiveArrayInitializerNum : LBRACKET ArraySlice RBRACKET EQUALS Number
                               {
                                  $$ = new NumArrayInitialization();
                                  $$->AdoptChildren( $2 );
@@ -1686,7 +1581,7 @@ SelectiveArrayInitializerNum : LBRACKET ArraySize RBRACKET EQUALS Number
                                  $$->AdoptChildren( $5 );
                               }
                               ;
-SelectiveArrayInitializerStr : LBRACKET ArraySize RBRACKET EQUALS Literal
+SelectiveArrayInitializerStr : LBRACKET ArraySlice RBRACKET EQUALS Literal
                               {
                                  $$ = new StrArrayInitialization();
                                  $$->AdoptChildren( $2 );
@@ -2061,6 +1956,7 @@ AssignmentExpression :  ConditionalExpression
                         }
                      |  UnaryExpression AssignmentOperator
                         {
+                           std::cerr << "Assignment\n";
                            $$ = $2;
                            $$->AdoptChildren( $1 );
                         }
@@ -2321,62 +2217,34 @@ PrimaryExpression :  QualifiedName
                      }
                   ;
 
-
-
-AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
-                        {
-                           $$ = new Allocation();
-                           $$->AdoptChildren( $2 );
-                           $$->AdoptChildren( $4 );
-                        }
-                     |  ALLOC Type LBRACKET Expression RBRACKET
-                        {
-                           $$ = new Allocation();
-                           $$->AdoptChildren( $2 );
-                           $$->AdoptChildren( $4 );
-                        }
-                     |  ALLOC Type LPAREN  RPAREN
-                        {
-                           $$ = new Allocation();
-                           $$->AdoptChildren( $2 );
-                        }
-                     |  NEW Type LPAREN ArgumentList RPAREN
-                        {
-                           $$ = new New();
-                           $$->AdoptChildren( $2 );
-                           $$->AdoptChildren( $4 );
-                        }
-                     |  NEW Type LPAREN RPAREN
-                        {
-                           $$ = new New();
-                           $$->AdoptChildren( $2 );
-                        }
-                     |  NEW Type LBRACKET Expression RBRACKET
-                        {
-                           $$ = new New();
-                           $$->AdoptChildren( $2 );
-                           $$->AdoptChildren( $4 );
-                        }
-                     ;
-
-
-DeAllocationExpression : FREE LPAREN QualifiedName RPAREN
-                         {
-                           $$ = new Free();
-                           $$->AdoptChildren( $3 );
-                         }
-                       ;
+//AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
+//                        {
+//                           $$ = new Allocation();
+//                           $$->AdoptChildren( $2 );
+//                           $$->AdoptChildren( $4 );
+//                        }
+//                     |  ALLOC Type LBRACKET Expression RBRACKET
+//                        {
+//                           $$ = new Allocation();
+//                           $$->AdoptChildren( $2 );
+//                           $$->AdoptChildren( $4 );
+//                        }
+//                     |  ALLOC Type LPAREN  RPAREN
+//                        {
+//                           $$ = new Allocation();
+//                           $$->AdoptChildren( $2 );
+//                        }
+//                     ;
+//
+//DeAllocationExpression : FREE LPAREN QualifiedName RPAREN
+//                         {
+//                           $$ = new Free();
+//                           $$->AdoptChildren( $3 );
+//                         }
+//                       ;
 
 
 NotJustName :  SpecialName
-               {
-                  $$ = $1;
-               }
-            |  AllocationExpression
-               {
-                  $$ = $1;
-               }
-            |  DeAllocationExpression
                {
                   $$ = $1;
                }
@@ -2418,6 +2286,7 @@ ComplexPrimaryNoParenthesis : Literal
                               }
                             | ArrayAccess
                               {
+                                 std::cerr << "ArrayAccess\n";
                                  $$ = $1;
                               }
                             | Placeholder
@@ -2431,19 +2300,20 @@ Placeholder  : POUND
                }
              ;
 
-ArrayAccess :  NotJustName LBRACKET ArraySize RBRACKET
+ArrayAccess :  NotJustName LBRACKET ArraySlice RBRACKET
                {
                   $$ = new ArrayAccess();
                   $$->AdoptChildren( $1 );
                   $$->AdoptChildren( $3 );
                }
-            |  QualifiedName LBRACKET  ArraySize RBRACKET
+            |  QualifiedName LBRACKET  ArraySlice RBRACKET
                {
+                  std::cerr << "HERE\n";
                   $$ = new ArrayAccess();
                   $$->AdoptChildren( $1 );
                   $$->AdoptChildren( $3 );
                }
-            |  DelayedName LBRACKET ArraySize RBRACKET
+            |  DelayedName LBRACKET ArraySlice RBRACKET
                {
                   $$ = new ArrayAccess();
                   $$->AdoptChildren( $1 );
