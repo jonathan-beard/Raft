@@ -583,6 +583,9 @@
 %type    <node>    MultipleArrayInitNum
 %type    <node>    MultipleArrayInitStr
 %type    <node>    ArraySlice
+%type    <node>    ArrayAccessOptions
+%type    <node>    Slice
+
 %%
 CompilationUnit   :     END
                   |     T
@@ -1529,29 +1532,35 @@ MultipleArrayInitStr : SelectiveArrayInitializerStr
                         }
                       ;
 
-ArraySlice :  ArraySlice COMMA INT_TOKEN 
-              {
-                 //TODO, redesign this bit 
-                 $$ -> AdoptChildren( new ArraySize( $3 ) );
-              }
-           |  INT_TOKEN  THREEDOTS  INT_TOKEN
-              {
-                $$ = new ArraySlice( $1, $3 );
-              }
-           |  INT_TOKEN COMMA INT_TOKEN
-              {
-                 $$ = new ArraySize( $1 );
-              }
-           |  INT_TOKEN COMMA INT_TOKEN  THREEDOTS  INT_TOKEN
-              {
-                $$ = new ArraySize( $1 );
-                $$ -> AdoptChildren( new ArraySlice( $3, $5 ) );
-              }
-           | INT_TOKEN
-             {
-               $$ = new ArraySize( $1 );
-             }
-           ;
+Slice             : INT_TOKEN THREEDOTS INT_TOKEN
+                    {
+                      $$ = new ArraySlice( $1, $3 );
+                    }
+                   ;
+
+
+
+ArrayAccessOptions  : INT_TOKEN
+                      {
+                          $$ = new ArraySize( $1 );
+                      }
+                      | Slice
+                      {
+                          $$ = $1;
+                      }
+                    ;
+
+ArraySlice          : ArraySlice COMMA ArrayAccessOptions
+                      {
+                        $$ = $1;
+                        $$->AdoptChildren( $3 );
+                      }
+                    | ArrayAccessOptions
+                      {
+                        $$ = $1;
+                      }
+                    ;
+
 
 SelectiveArrayInitializerBool : LBRACKET ArraySlice RBRACKET EQUALS Boolean 
                               {
@@ -2217,32 +2226,6 @@ PrimaryExpression :  QualifiedName
                      }
                   ;
 
-//AllocationExpression :  ALLOC Type LPAREN   ArgumentList   RPAREN
-//                        {
-//                           $$ = new Allocation();
-//                           $$->AdoptChildren( $2 );
-//                           $$->AdoptChildren( $4 );
-//                        }
-//                     |  ALLOC Type LBRACKET Expression RBRACKET
-//                        {
-//                           $$ = new Allocation();
-//                           $$->AdoptChildren( $2 );
-//                           $$->AdoptChildren( $4 );
-//                        }
-//                     |  ALLOC Type LPAREN  RPAREN
-//                        {
-//                           $$ = new Allocation();
-//                           $$->AdoptChildren( $2 );
-//                        }
-//                     ;
-//
-//DeAllocationExpression : FREE LPAREN QualifiedName RPAREN
-//                         {
-//                           $$ = new Free();
-//                           $$->AdoptChildren( $3 );
-//                         }
-//                       ;
-
 
 NotJustName :  SpecialName
                {
@@ -2286,7 +2269,6 @@ ComplexPrimaryNoParenthesis : Literal
                               }
                             | ArrayAccess
                               {
-                                 std::cerr << "ArrayAccess\n";
                                  $$ = $1;
                               }
                             | Placeholder
@@ -2308,7 +2290,6 @@ ArrayAccess :  NotJustName LBRACKET ArraySlice RBRACKET
                }
             |  QualifiedName LBRACKET  ArraySlice RBRACKET
                {
-                  std::cerr << "HERE\n";
                   $$ = new ArrayAccess();
                   $$->AdoptChildren( $1 );
                   $$->AdoptChildren( $3 );
