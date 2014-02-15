@@ -19,7 +19,7 @@
 
 /* visitors */
 #include "DebugVisitor.hpp"
-
+#include "SymtabVisitor.hpp"
 Raft::Data raft_data;
 
 static void 
@@ -153,7 +153,8 @@ main( const int argc, char **argv )
    Raft::Driver driver( raft_data );
 
    /* REGISTER VISITORS HERE, IN THE ORDER YOU WANT THEM CALLED */
-   driver.RegisterVisitor( new Visitor::DebugVisitor( raft_data ) );
+   //driver.RegisterVisitor( new Visitor::DebugVisitor( raft_data ) );
+   driver.RegisterVisitor( new Visitor::SymtabVisitor( raft_data ) );
    /* END REGISTER VISITORS */
 
 

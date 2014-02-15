@@ -38,6 +38,10 @@ Driver::~Driver()
       delete( scanner );
       scanner = nullptr;
    }
+   for( auto visitor : visitor_list )
+   {
+      delete( visitor );
+   }
 }
 
 void

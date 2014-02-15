@@ -1,7 +1,7 @@
 VISITORDIR   = ./Visitors/
 
-VISITORS = DefaultVisitor DebugVisitor
-				
+VISITORS = DefaultVisitor DebugVisitor SymtabVisitor
+
 ASTVISITORS = $(addprefix $(VISITORDIR), $(VISITORS))
 
 VISITORCPPFILES = $(addsuffix .cpp, $(ASTVISITORS))

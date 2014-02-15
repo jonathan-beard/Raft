@@ -159,6 +159,7 @@
       class NumArrayInitialization;
       class StrArrayInitialization;
       class ArraySlice;
+      class EmptyStatement;
    }
 }
 
@@ -337,6 +338,7 @@
    #include  "StrArrayInitialization.hpp"
    #include  "AllOthersInArray.hpp"
    #include  "ArraySlice.hpp"
+   #include  "EmptyStatement.hpp"
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
                     Raft::Scanner               &scanner,
@@ -411,12 +413,10 @@
 %token       ELSE  
 %token       NILL  
 %token       CONST
-%token       ALLOC
 %token       STATIC
 %token       ATOMIC
 %token       NONATOMIC
 %token       STRUCT
-%token       FREE
 %token       INCREMENT  
 %token       DECREMENT  
 %token       QUESTION  
@@ -1148,30 +1148,11 @@ LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
 
 LocalStorageModifier : CONST
                         {
-                           NodeAbstract *mod( nullptr );
-                           mod = new NodeAbstract();
-                           assert( mod != nullptr );
-
-                           mod->set_name("Const" );
-                           $$ = mod;
-                        }
-                     | ATOMIC
-                        {
-                           NodeAbstract *mod( nullptr );
-                           mod = new NodeAbstract();
-                           assert( mod != nullptr );
-
-                           mod->set_name("Atomic" );
-                           $$ = mod;
+                           $$ = new Constant();
                         }
                      |  NONATOMIC
                         {
-                           NodeAbstract *mod( nullptr );
-                           mod = new NodeAbstract();
-                           assert( mod != nullptr );
-
-                           mod->set_name("NonAtomic" );
-                           $$ = mod;
+                           $$ = new NonAtomic();
                         }
                      ;
 
@@ -1204,13 +1185,7 @@ Statement   :  EmptyStatement
 
 EmptyStatement :  SEMI
                   {
-                     NodeAbstract *semi( nullptr );
-                     semi = new NodeAbstract();
-                     assert( semi != nullptr );
-
-                     semi->set_name( "EmptyStatement" );
-
-                     $$ = semi;
+                     $$ = new EmptyStatement();
                   }
                ;
 
@@ -1233,6 +1208,7 @@ Expression  :  AssignmentExpression
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
                         {
+                           /** TODO come back here **/
                            NodeAbstract *con( nullptr );
                            con = new NodeAbstract();
                            assert( con != nullptr );
@@ -1965,7 +1941,6 @@ AssignmentExpression :  ConditionalExpression
                         }
                      |  UnaryExpression AssignmentOperator
                         {
-                           std::cerr << "Assignment\n";
                            $$ = $2;
                            $$->AdoptChildren( $1 );
                         }
