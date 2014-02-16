@@ -164,6 +164,7 @@
       class IfStatement;
       class WhileStatement;
       class ForStatement;
+      class MapStatement;
    }
 }
 
@@ -347,6 +348,7 @@
    #include  "IfStatement.hpp"
    #include  "WhileStatement.hpp"
    #include  "ForStatement.hpp"
+   #include  "MapStatement.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1129,28 +1131,20 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
 
 LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
                               {
-                                 NodeAbstract *var( nullptr );
-                                 var = new NodeAbstract();
-                                 assert( var != nullptr );
-                                 var->set_name( "VarDecl" );
-
-                                 $1->MakeSibling( $2 );
-                                 $1->MakeSibling( $3 );
-
-                                 var->AdoptChildren( $1 );
-
-                                 $$ = var;
+                                 //TODO LOCALS
+                                 $$ = new NodeAbstract();
+                                 /*
+                                 $$ = new LocalVariableDeclaration();
+                                 $$->AdoptChildren( $1 );
+                                 $$->AdoptChildren( $2 );
+                                 $$->AdoptChildren( $3 );
+                                 */
                               }
                            |  Type Initializer SEMI
                               {
-                                 NodeAbstract *var( nullptr );
-                                 var = new NodeAbstract();
-                                 assert( var != nullptr );
-                                 
-                                 var->set_name( "VarDecl" );
-                                 $1->MakeSibling( $2 );
-                                 var->AdoptChildren( $1 );
-                                 $$ = var;
+                                 $$ = new NodeAbstract();
+
+                                 //$$ = new LocalVariableDeclaration();
                               }
                            ;
 
@@ -1286,17 +1280,9 @@ ForStatement   :  LBRACE Statement RBRACE
 
 MapExpression   :    Expression AT FORWARDSLASH Expression
                      {
-                        //TODO
-                        NodeAbstract *map( nullptr );
-                        map = new NodeAbstract();
-                        assert( map != nullptr );
-                        
-                        map->set_name( "MapExpression" );
-
-                        $1->MakeSibling( $4 );
-                        map->AdoptChildren( $1 );
-
-                        $$ = map;
+                        $$ = new MapStatement();
+                        $$->AdoptChildren( $1 );
+                        $$->AdoptChildren( $4 );
                      }
                 ;
 
@@ -1308,6 +1294,7 @@ InitFor  :  LocalVariableDeclaration
 
 ReturnStatement   :  RETURN SEMI
                      {
+                        //TODO
                         NodeAbstract *ret( nullptr );
                         ret = new NodeAbstract();
                         assert( ret != nullptr );

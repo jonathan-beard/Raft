@@ -6,7 +6,7 @@
 #include "FieldVarDecl.hpp"
 using namespace Node;
 
-FieldVarDecl::FieldVarDecl() : Declaration( "FieldVarDecl" )
+FieldVarDecl::FieldVarDecl() : VariableDeclaration( "FieldVarDecl" )
 {
 
 }

@@ -16,6 +16,7 @@ namespace Raft{
 namespace Node{
    class NodeAbstract;
    class Declaration;
+   class VariableDeclaration;
 }
 
 namespace Visitor{
@@ -34,7 +35,7 @@ public:
     */
    virtual void Visit( Node::NodeAbstract *node );
 
-   virtual void Visit( Node::Declaration  *node );
+   virtual void Visit( Node::VariableDeclaration  *node );
 
 private:
    std::vector< std::string> temp_st;

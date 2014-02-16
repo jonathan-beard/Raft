@@ -7,6 +7,7 @@
 #include "SymtabVisitor.hpp"
 #include "NodeAbstract.hpp"
 #include "Declaration.hpp"
+#include "VariableDeclaration.hpp"
 #include "data.hpp"
 
 using namespace Visitor;
@@ -29,12 +30,15 @@ SymtabVisitor::~SymtabVisitor()
 void
 SymtabVisitor::Visit( Node::NodeAbstract *node )
 {
+   std::cerr << "wrong one called!!\n";
    VisitChildren( node );
 }
 
 void
-SymtabVisitor::Visit( Node::Declaration  *node )
+SymtabVisitor::Visit( Node::VariableDeclaration  *node )
 {
+   std::cout << "Called on : ";
+   node->print( std::cout ) << "\n";
    std::stringstream ss;
    node->print( ss );
    temp_st.push_back( ss.str() );

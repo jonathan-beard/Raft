@@ -5,9 +5,9 @@
  */
 #ifndef _FIELDVARDECL_HPP_
 #define _FIELDVARDECL_HPP_  1
-#include "Declaration.hpp"
+#include "VariableDeclaration.hpp"
 namespace Node{
-class FieldVarDecl : public Declaration {
+class FieldVarDecl : public VariableDeclaration {
 public:
    FieldVarDecl();
    virtual ~FieldVarDecl() = default;
