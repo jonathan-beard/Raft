@@ -160,6 +160,10 @@
       class StrArrayInitialization;
       class ArraySlice;
       class EmptyStatement;
+      class Statement;
+      class IfStatement;
+      class WhileStatement;
+      class ForStatement;
    }
 }
 
@@ -339,6 +343,11 @@
    #include  "AllOthersInArray.hpp"
    #include  "ArraySlice.hpp"
    #include  "EmptyStatement.hpp"
+   #include  "Statement.hpp"
+   #include  "IfStatement.hpp"
+   #include  "WhileStatement.hpp"
+   #include  "ForStatement.hpp"
+
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
                     Raft::Scanner               &scanner,
@@ -1208,47 +1217,32 @@ Expression  :  AssignmentExpression
 SelectionStatementInit  :  
                         IF LPAREN Expression RPAREN Statement ELSE Statement
                         {
-                           /** TODO come back here **/
-                           NodeAbstract *con( nullptr );
-                           con = new NodeAbstract();
-                           assert( con != nullptr );
-                           con->set_name( "IfElseConditional" );
-                           
-                           /* first will be cond, then true then false */
-                           $3->MakeSibling( $5 ); 
-                           $3->MakeSibling( $7 );
-                           con->AdoptChildren( $3 );
+                           $$ = new IfStatement();
+                           /** conditional **/
+                           $$->AdoptChildren( $3 );
+                           /** true **/
+                           $$->AdoptChildren( $5 );
+                           /** false **/
+                           $$->AdoptChildren( $7 );
 
-                           $$ = con;
                         }
                     |   IF LPAREN Expression RPAREN Statement
                         {
-                           NodeAbstract *con( nullptr );
-                           con = new NodeAbstract();
-                           assert( con != nullptr );
-                           con->set_name( "IfConditional" );
-                           
-                           $3->MakeSibling( $5 );
-
-                           con->AdoptChildren( $3 );
-
-                           $$ = con;
+                           $$ = new IfStatement();
+                           /** conditional **/
+                           $$->AdoptChildren( $3 );
+                           /** true **/
+                           $$->AdoptChildren( $5 );
+                           /** false **/
+                           $$->AdoptChildren( new EmptyStatement() );
                         }
                     ;
 
 IterationStatement   :  WHILE LPAREN Expression RPAREN Statement
                         {
-                           NodeAbstract *wh( nullptr );
-                           wh = new NodeAbstract();
-                           assert( wh != nullptr );
-
-                           wh->set_name( "WhileStatement" );
-
-                           $3->MakeSibling( $5 );
-
-                           wh->AdoptChildren( $3 );
-
-                           $$ = wh;
+                           $$ = new WhileStatement();
+                           $$->AdoptChildren( $3 );
+                           $$->AdoptChildren( $5 );
                         }
                      |  ForIterationStatement
                         {
@@ -1264,55 +1258,35 @@ ForIterationStatement : BasicFor
 
 BasicFor :  FOR LPAREN InitFor RelationalExpression SEMI AssignmentExpression RPAREN ForStatement
             {
-               NodeAbstract *f( nullptr );
-               f = new NodeAbstract();
-               assert( f != nullptr );
-
-               f->set_name( "BasicFor" );
-
-               $3->MakeSibling( $4 );
-               $3->MakeSibling( $6 );
-               $3->MakeSibling( $8 );
-
-               f->AdoptChildren( $3 );
-               $$ = f;
+               $$ = new ForStatement();
+               /** init for loop **/
+               $$->AdoptChildren( $3 );
+               /** conditional **/
+               $$->AdoptChildren( $4 );
+               /** increment **/
+               $$->AdoptChildren( $6 );
+               /** block **/
+               $$->AdoptChildren( $8 );
             }
          ;
 
 ForStatement   :  LBRACE Statement RBRACE
                   {
-                     NodeAbstract *st( nullptr );
-                     st = new NodeAbstract();
-                     assert( st != nullptr );
-
-                     st->set_name( "ForStatement" );
-
-                     st->AdoptChildren( $2 );
-
-                     $$ = st;
+                     $$ = $2;
                   }
                |  SEMI
                   {
-                     NodeAbstract *st( nullptr );
-                     st = new NodeAbstract();
-                     assert( st != nullptr );
-
-                     st->set_name( "EmptyForStatement" );
-                     $$ = st;
+                     $$ = new EmptyStatement();
                   }
                |  LBRACE RBRACE
                   {
-                     NodeAbstract *st( nullptr );
-                     st = new NodeAbstract();
-                     assert( st != nullptr );
-
-                     st->set_name( "EmptyForStatement" );
-                     $$ = st;
+                     $$ = new EmptyStatement();
                   }
                ;
 
 MapExpression   :    Expression AT FORWARDSLASH Expression
                      {
+                        //TODO
                         NodeAbstract *map( nullptr );
                         map = new NodeAbstract();
                         assert( map != nullptr );
@@ -1328,9 +1302,7 @@ MapExpression   :    Expression AT FORWARDSLASH Expression
 
 InitFor  :  LocalVariableDeclaration
             {
-               $$ = new NodeAbstract();
-               $$->set_name( "InitFor" );
-               $$->AdoptChildren( $1 );
+               $$ = $1;
             }
          ;
 

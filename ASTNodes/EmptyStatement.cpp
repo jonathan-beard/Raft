@@ -7,6 +7,6 @@
 
 using namespace Node;
 
-EmptyStatement::EmptyStatement() : NodeAbstract( "EmptyStatement" ){
+EmptyStatement::EmptyStatement() : Statement( "EmptyStatement" ){
 
 }

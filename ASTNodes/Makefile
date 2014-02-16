@@ -37,8 +37,9 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             CastExpression BitOperation \
             ArrayInitialization BoolArrayInitialization \
             NumArrayInitialization StrArrayInitialization \
-            AllOthersInArray ArraySlice EmptyStatement
-				
+            AllOthersInArray ArraySlice EmptyStatement \
+				Statement IfStatement WhileStatement ForStatement 
+
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 
 ASTCPPFILES = $(addsuffix .cpp, $(ASTNODES))

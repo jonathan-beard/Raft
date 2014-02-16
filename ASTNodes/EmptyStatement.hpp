@@ -5,9 +5,9 @@
  */
 #ifndef _EMPTYSTATEMENT_HPP_
 #define _EMPTYSTATEMENT_HPP_  1
-#include "NodeAbstract.hpp"
+#include "Statement.hpp"
 namespace Node {
-class EmptyStatement : public NodeAbstract {
+class EmptyStatement : public Statement {
 public:
    EmptyStatement();
    virtual ~EmptyStatement() = default;

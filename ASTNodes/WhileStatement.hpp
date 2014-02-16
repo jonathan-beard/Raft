@@ -5,5 +5,12 @@
  */
 #ifndef _WHILESTATEMENT_HPP_
 #define _WHILESTATEMENT_HPP_  1
-
+#include "Statement.hpp"
+namespace Node {
+class WhileStatement : public Statement {
+public:
+   WhileStatement();
+   virtual ~WhileStatement() = default;
+};
+}
 #endif /* END _WHILESTATEMENT_HPP_ */
