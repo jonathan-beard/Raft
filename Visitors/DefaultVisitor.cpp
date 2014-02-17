@@ -35,22 +35,17 @@ DefaultVisitor::~DefaultVisitor()
 }
 
 void 
-DefaultVisitor::VisitChildren( NodeAbstract *node )
+DefaultVisitor::VisitChildren( NodeAbstract &node )
 {
-   assert( node != nullptr );
-   NodeAbstract *child( node->get_child() );
-   if( child == nullptr )
+   NodeAbstract &child( node->get_child() );
+   if( node.has_child() ) /* by def child is in siblings list */
    {
-      return;
-   }
-   else /* by def child is in siblings list */
-   {
+      auto &child( node->get_child() );
       /* for pretty print */
       increase_indent();
-      auto &siblings( child->get_siblings() );
-      for( NodeAbstract *sib : siblings )
+      auto &siblings( child.get_siblings() );
+      for( NodeAbstract &sib : siblings )
       {
-         assert( sib != nullptr );
          sib->Accept( (*this) );
       }
       /* for pretty print */

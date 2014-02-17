@@ -28,14 +28,14 @@ SymtabVisitor::~SymtabVisitor()
 }
 
 void
-SymtabVisitor::Visit( Node::NodeAbstract *node )
+SymtabVisitor::Visit( Node::NodeAbstract &node )
 {
    std::cerr << "wrong one called!!\n";
    VisitChildren( node );
 }
 
 void
-SymtabVisitor::Visit( Node::VariableDeclaration  *node )
+SymtabVisitor::Visit( Node::VariableDeclaration  &node )
 {
    std::cout << "Called on : ";
    node->print( std::cout ) << "\n";

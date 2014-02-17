@@ -119,10 +119,11 @@ void NodeAbstract::Orphan()
    /* TODO decide if the siblings should go or stay */
 }
 
-NodeAbstract*  NodeAbstract::get_first_sibling()
+NodeAbstract&  
+NodeAbstract::get_first_sibling()
 {
    if( siblings.size() == 0 ) return( nullptr );
-   return( ( *siblings.begin() ) );
+   return( *( *siblings.begin() ) );
 }
 
 void           NodeAbstract::set_parent( NodeAbstract *parent )
@@ -131,9 +132,10 @@ void           NodeAbstract::set_parent( NodeAbstract *parent )
    this->parent = parent;
 }
 
-NodeAbstract* NodeAbstract::get_parent()
+NodeAbstract& 
+NodeAbstract::get_parent()
 {
-   return( this->parent );
+   return( *(this->parent) );
 }
 
 std::set<NodeAbstract* >&      
@@ -142,9 +144,10 @@ NodeAbstract::get_siblings()
    return( siblings );
 }
 
-NodeAbstract*  NodeAbstract::get_child()
+NodeAbstract&  
+NodeAbstract::get_child()
 {
-   return( this->child );
+   return( *(this->child) );
 }
 
 int64_t
@@ -202,7 +205,7 @@ NodeAbstract::GetType() const
 void  
 NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
-   visitor.Visit( this );
+   visitor.Visit( *this );
 }
 
 void 

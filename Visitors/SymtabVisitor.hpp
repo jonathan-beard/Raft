@@ -33,9 +33,9 @@ public:
     * print the nodes at the appropriate levels
     * @param   node - Node::NodeAbstract*
     */
-   virtual void Visit( Node::NodeAbstract *node );
+   virtual void Visit( Node::NodeAbstract &node );
 
-   virtual void Visit( Node::VariableDeclaration  *node );
+   virtual void Visit( Node::VariableDeclaration  &node );
 
 private:
    std::vector< std::string> temp_st;
