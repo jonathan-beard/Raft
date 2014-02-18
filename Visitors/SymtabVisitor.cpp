@@ -38,9 +38,9 @@ void
 SymtabVisitor::Visit( Node::VariableDeclaration  &node )
 {
    std::cout << "Called on : ";
-   node->print( std::cout ) << "\n";
+   node.print( std::cout ) << "\n";
    std::stringstream ss;
-   node->print( ss );
+   node.print( ss );
    temp_st.push_back( ss.str() );
    
    VisitChildren( node );

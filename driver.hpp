@@ -28,10 +28,10 @@ public:
 private:
    void parse_error( int errorcode, int retval );
    
-   Raft::Parser  *parser;
-   Raft::Scanner *scanner;
-   Raft::Data    &data;
-   Node::NodeAbstract *root;
+   Raft::Parser         *parser;
+   Raft::Scanner        *scanner;
+   Raft::Data           &data;
+   Node::NodeAbstract   *root;
 
    std::vector< Visitor::DefaultVisitor* >  visitor_list;
 };

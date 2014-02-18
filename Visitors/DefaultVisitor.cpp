@@ -37,14 +37,13 @@ DefaultVisitor::~DefaultVisitor()
 void 
 DefaultVisitor::VisitChildren( NodeAbstract &node )
 {
-   NodeAbstract &child( node->get_child() );
    if( node.has_child() ) /* by def child is in siblings list */
    {
-      auto &child( node->get_child() );
+      auto &child( node.get_child() );
       /* for pretty print */
       increase_indent();
-      auto &siblings( child.get_siblings() );
-      for( NodeAbstract &sib : siblings )
+      std::set<NodeAbstract* > &siblings( child.get_siblings() );
+      for( NodeAbstract *sib : siblings )
       {
          sib->Accept( (*this) );
       }

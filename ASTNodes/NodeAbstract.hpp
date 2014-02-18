@@ -68,7 +68,7 @@ public:
     * @return  NodeAbstract*
     */
    NodeAbstract&        get_first_sibling();
-
+   bool                 has_sibling();
    /**
     *  Verious getter / setter methods to set the local
     *  instance variables with the name after get_ and

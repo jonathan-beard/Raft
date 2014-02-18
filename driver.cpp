@@ -116,6 +116,6 @@ Driver::InvokeVisitors()
    for( Visitor::DefaultVisitor *v : visitor_list )
    {
       /* invoke the visitor on the tree */
-      Node::NodeAbstract::invoke( *v, root );
+      Node::NodeAbstract::invoke( *v, *root );
    }
 }

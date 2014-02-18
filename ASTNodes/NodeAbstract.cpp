@@ -234,12 +234,11 @@ void
 NodeAbstract::invoke( Visitor::DefaultVisitor &visitor,
                       NodeAbstract   &root )
 {  
-   assert( root    != nullptr );
    /**
     * technically we could work around this, but will probably be
     * easier for students using Crafting a Compiler and the
     * Aho/Lam/Sethi/Ullman Compilers book to recognize and modify
     * this visitor pattern.
     */
-   root->Accept( visitor );
+   root.Accept( visitor );
 }
