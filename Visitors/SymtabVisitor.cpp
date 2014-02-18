@@ -31,15 +31,12 @@ SymtabVisitor::~SymtabVisitor()
 void
 SymtabVisitor::Visit( Node::NodeAbstract &node )
 {
-  std::cerr << typeid( node ).name() << "\n";
   VisitChildren( node );
 }
 
 void
-SymtabVisitor::Visit( Node::FieldVarDecl  &node )
+SymtabVisitor::Visit( Node::VariableDeclaration &node )
 {
-   std::cout << "Called on : ";
-   node.print( std::cout ) << "\n";
    std::stringstream ss;
    node.print( ss );
    temp_st.push_back( ss.str() );

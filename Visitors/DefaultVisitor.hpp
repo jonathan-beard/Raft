@@ -7,6 +7,7 @@
 #define _DEFAULTVISITOR_HPP_  1
 
 #include <ostream>
+#include "Reflect.hpp"
 
 namespace Raft{
    class Data;
@@ -18,7 +19,7 @@ namespace Node{
 
 namespace Visitor{
 
-class DefaultVisitor {
+class DefaultVisitor : public Reflect {
 public:
    DefaultVisitor( Raft::Data &d );
    DefaultVisitor( const DefaultVisitor &visitor );
