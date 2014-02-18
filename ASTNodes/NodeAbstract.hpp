@@ -67,7 +67,7 @@ public:
     * this reference or bad things could happy.
     * @return  NodeAbstract*
     */
-   NodeAbstract*        get_first_sibling();
+   NodeAbstract&        get_first_sibling();
 
    /**
     *  Verious getter / setter methods to set the local
@@ -75,11 +75,13 @@ public:
     *  set_.
     */
    void                 set_parent( NodeAbstract *parent );
-   NodeAbstract*        get_parent();
+   NodeAbstract&        get_parent();
+   bool                 has_parent();
 
    std::set<NodeAbstract* >&  get_siblings();
 
-   NodeAbstract*        get_child();
+   NodeAbstract&        get_child();
+   bool                 has_child(); 
 
    int64_t              get_number();
 
@@ -130,10 +132,10 @@ public:
     * to be discadable so the destructor is called on it. The
     * root param will be set to the current tree.
     * @param   visitor - DefaultVisitor&
-    * @param   root    - NodeAbstract*
+    * @param   root    - NodeAbstract&
     */
    static   void  invoke( Visitor::DefaultVisitor &visitor, 
-                          NodeAbstract *root );
+                          NodeAbstract &root );
     
 
 protected:

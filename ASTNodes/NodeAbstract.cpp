@@ -119,10 +119,15 @@ void NodeAbstract::Orphan()
    /* TODO decide if the siblings should go or stay */
 }
 
+bool
+NodeAbstract::has_sibling()
+{
+   return( siblings.size() != 0 );
+}  
+
 NodeAbstract&  
 NodeAbstract::get_first_sibling()
 {
-   if( siblings.size() == 0 ) return( nullptr );
    return( *( *siblings.begin() ) );
 }
 
@@ -150,6 +155,12 @@ NodeAbstract::get_child()
    return( *(this->child) );
 }
 
+bool
+NodeAbstract::has_child()
+{
+   return( (this->child) != nullptr );
+}
+
 int64_t
 NodeAbstract::get_number()
 {
@@ -167,20 +178,24 @@ NodeAbstract::set_name( const std::string name )
    this->name = name;
 }
 
+bool
+NodeAbstract::has_parent()
+{
+   return( parent != nullptr );
+}
 
 std::ostream&
 NodeAbstract::print( std::ostream &stream)
 {
-   NodeAbstract *the_parental_unit( nullptr );
-   the_parental_unit = get_parent();
+   auto &the_parental_unit( get_parent() );
    std::stringstream the_parent_name;
-   if( the_parental_unit == nullptr )
+   if( ! the_parental_unit.has_parent() )
    {
       the_parent_name << "None";
    }
    else
    {
-      the_parent_name << the_parental_unit->get_number();
+      the_parent_name << the_parental_unit.get_number();
    }
 
    stream << "Node: " << get_number() << " - " << get_name();
@@ -217,7 +232,7 @@ NodeAbstract::SetOrigin( Raft::Data &d )
 
 void  
 NodeAbstract::invoke( Visitor::DefaultVisitor &visitor,
-                      NodeAbstract   *root )
+                      NodeAbstract   &root )
 {  
    assert( root    != nullptr );
    /**
