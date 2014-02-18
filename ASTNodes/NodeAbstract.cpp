@@ -220,6 +220,7 @@ NodeAbstract::GetType() const
 void  
 NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
+   std::cerr << typeid( *this ).name() << "\n";
    visitor.Visit( *this );
 }
 
