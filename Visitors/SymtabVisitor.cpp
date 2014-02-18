@@ -8,6 +8,7 @@
 #include "NodeAbstract.hpp"
 #include "Declaration.hpp"
 #include "VariableDeclaration.hpp"
+#include "FieldVarDecl.hpp"
 #include "data.hpp"
 
 using namespace Visitor;
@@ -30,12 +31,12 @@ SymtabVisitor::~SymtabVisitor()
 void
 SymtabVisitor::Visit( Node::NodeAbstract &node )
 {
-   std::cerr << "wrong one called!!\n";
-   VisitChildren( node );
+  std::cerr << typeid( node ).name() << "\n";
+  VisitChildren( node );
 }
 
 void
-SymtabVisitor::Visit( Node::VariableDeclaration  &node )
+SymtabVisitor::Visit( Node::FieldVarDecl  &node )
 {
    std::cout << "Called on : ";
    node.print( std::cout ) << "\n";

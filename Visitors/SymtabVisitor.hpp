@@ -17,6 +17,7 @@ namespace Node{
    class NodeAbstract;
    class Declaration;
    class VariableDeclaration;
+   class FieldVarDecl;
 }
 
 namespace Visitor{
@@ -33,9 +34,9 @@ public:
     * print the nodes at the appropriate levels
     * @param   node - Node::NodeAbstract*
     */
-   virtual void Visit( Node::NodeAbstract &node );
+   virtual void Visit( Node::NodeAbstract  &node );
 
-   virtual void Visit( Node::VariableDeclaration  &node );
+   virtual void Visit( Node::FieldVarDecl  &node );
 
 private:
    std::vector< std::string> temp_st;
