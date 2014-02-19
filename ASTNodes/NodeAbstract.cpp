@@ -220,8 +220,9 @@ NodeAbstract::GetType() const
 void  
 NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
-   auto func( visitor.GetMethodFor( *this ) );
-   func( (*this ) );
+   auto *func( visitor.GetFunctionFor( *this ) );
+   assert( func != nullptr );
+   (*func)( (*this ) );
 }
 
 void 

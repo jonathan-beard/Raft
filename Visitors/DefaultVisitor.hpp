@@ -25,8 +25,7 @@ public:
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
-   /* default visit, you must have at least this one */
-   virtual void Visit( Node::NodeAbstract &node ) = 0;
+   static void Visit( Node::NodeAbstract &node,  );
 
    virtual void VisitChildren( Node::NodeAbstract &node );
 
