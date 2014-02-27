@@ -7,7 +7,6 @@
 #define _DEFAULTVISITOR_HPP_  1
 
 #include <ostream>
-#include "Reflect.hpp"
 
 namespace Raft{
    class Data;
@@ -25,8 +24,20 @@ public:
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
-   static void Visit( Node::NodeAbstract &node,  );
+   /**
+    * Visit - Calls the correct visitor metohd for the node passed
+    * as a param according to the methods available and the class
+    * tree param.
+    * @param   node - Node::NodeAbstract&
+    * @param   tree - ClassTree&
+    */
+   virtual void Visit( Node::NodeAbstract &node, ClassTree &tree );
 
+   /**
+    * VisitChildren - Calls visit on all the children of 
+    * the node param.
+    * @param   node - Node::NodeAbstract&
+    */
    virtual void VisitChildren( Node::NodeAbstract &node );
 
    virtual void Error(std::string s);
