@@ -34,6 +34,11 @@ DefaultVisitor::~DefaultVisitor()
    /* nothing to destroy :( */
 }
 
+void Visit( Node::NodeAbstract &node, ClassTree &tree )
+{
+   
+}
+
 void 
 DefaultVisitor::VisitChildren( NodeAbstract &node )
 {

@@ -11,6 +11,8 @@
 #include <set>
 #include <string>
 
+#include "ClassTree.hpp"
+
 namespace Visitor{
    class DefaultVisitor;
 }
@@ -142,7 +144,7 @@ protected:
    /* convenience constructor for sub-classes */
    NodeAbstract( const std::string name );
    std::string name;
-
+   static ClassTree            class_tree;
 private:
    static int64_t              number_of_nodes;
    int64_t                     node_number;

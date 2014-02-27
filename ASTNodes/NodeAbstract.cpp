@@ -20,7 +20,7 @@ using namespace Node;
 
 /* private static variables */
 int64_t NodeAbstract::number_of_nodes = 0;
-
+ClassTree NodeAbstract::class_tree = ClassTree();
 /* constructors */
 NodeAbstract::NodeAbstract() : 
             name("NodeAbstract"),
@@ -220,9 +220,7 @@ NodeAbstract::GetType() const
 void  
 NodeAbstract::Accept( Visitor::DefaultVisitor &visitor )
 {
-   auto *func( visitor.GetFunctionFor( *this ) );
-   assert( func != nullptr );
-   (*func)( (*this ) );
+   visitor.Visit( *this, class_tree );
 }
 
 void 

@@ -1,6 +1,6 @@
 VISITORDIR   = ./Visitors/
 
-VISITORS = DefaultVisitor DebugVisitor SymtabVisitor Reflect
+VISITORS = DefaultVisitor #DebugVisitor SymtabVisitor 
 
 ASTVISITORS = $(addprefix $(VISITORDIR), $(VISITORS))
 

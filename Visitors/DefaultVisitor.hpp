@@ -7,6 +7,9 @@
 #define _DEFAULTVISITOR_HPP_  1
 
 #include <ostream>
+#include "ClassTree.hpp"
+#include <set>
+#include <functional>
 
 namespace Raft{
    class Data;
@@ -18,7 +21,7 @@ namespace Node{
 
 namespace Visitor{
 
-class DefaultVisitor : public Reflect {
+class DefaultVisitor {
 public:
    DefaultVisitor( Raft::Data &d );
    DefaultVisitor( const DefaultVisitor &visitor );
@@ -47,6 +50,9 @@ protected:
    std::string get_indent_level();
    
    Raft::Data  &data;
+   std::set< size_t /* hashcode */,
+             std::function< Node::NodeAbstract&( Node::NodeAbstract&) > > visit_methods;
+
 private:
    /* for prettier printing of nodes */
    static int64_t indent_level;
