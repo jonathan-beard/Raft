@@ -18,7 +18,7 @@
 #include "signalhooks.hpp"
 
 /* visitors */
-//#include "DebugVisitor.hpp"
+#include "DebugVisitor.hpp"
 //#include "SymtabVisitor.hpp"
 Raft::Data raft_data;
 

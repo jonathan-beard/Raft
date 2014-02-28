@@ -23,7 +23,7 @@ DebugVisitor::~DebugVisitor()
 }
 
 void
-DebugVisitor::Visit( Node::NodeAbstract &node )
+DebugVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
 {
    std::cout << get_indent_level();
    node.print( std::cout ) << std::endl;

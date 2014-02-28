@@ -30,7 +30,7 @@ public:
     * print the nodes at the appropriate levels
     * @param   node - Node::NodeAbstract*
     */
-   virtual void Visit( Node::NodeAbstract &node );
+   virtual void Visit( Node::NodeAbstract &node, ClassTree &tree );
 };
 
 } /* end namespace Visitor */

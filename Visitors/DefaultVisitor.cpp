@@ -36,7 +36,7 @@ DefaultVisitor::~DefaultVisitor()
 
 void Visit( Node::NodeAbstract &node, ClassTree &tree )
 {
-   
+      
 }
 
 void 
