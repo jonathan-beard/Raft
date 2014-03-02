@@ -34,7 +34,7 @@ DefaultVisitor::~DefaultVisitor()
    /* nothing to destroy :( */
 }
 
-void Visit( Node::NodeAbstract &node, ClassTree &tree )
+void DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
 {
       
 }

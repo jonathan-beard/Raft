@@ -8,7 +8,7 @@
 
 #include <ostream>
 #include "ClassTree.hpp"
-#include <set>
+#include <map>
 #include <functional>
 
 namespace Raft{
@@ -50,7 +50,7 @@ protected:
    std::string get_indent_level();
    
    Raft::Data  &data;
-   std::set< size_t /* hashcode */,
+   std::map< size_t /* hashcode */,
              std::function< Node::NodeAbstract&( Node::NodeAbstract&) > > visit_methods;
 
 private:
