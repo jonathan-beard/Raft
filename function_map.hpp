@@ -16,6 +16,6 @@ namespace Visitor{
    class DefaultVisitor;
 }
 
-typedef std::map< size_t, std::function< void(Visitor::DefaultVisitor&, Node::NodeAbstract&) > > FunctionMap;
+typedef std::map< size_t, std::function< void( Node::NodeAbstract&) > > FunctionMap;
 
 #endif /* END _FUNCTION_MAP_HPP_ */

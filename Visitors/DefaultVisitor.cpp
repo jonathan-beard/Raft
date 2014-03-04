@@ -49,7 +49,8 @@ DefaultVisitor::~DefaultVisitor()
 void
 DefaultVisitor::DefaultNodeAbstractVisit( Node::NodeAbstract &node )
 {
-   
+   std::cerr << "Visited: "; 
+      node.print( std::cerr ) << "\n";
 }
 
 void 
