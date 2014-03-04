@@ -2,7 +2,7 @@
 #define _CLASSTREE_HPP_ 1
 #include <ostream>
 #include <map>
-#include <set>
+#include "function_map.hpp"
 
 class ClassTree {
 public:   
@@ -24,10 +24,11 @@ public:
     * function call in "funciton_classes" that matches "class_type", if
     * no matching base class is found, zero is returned.
     * @param   class_type - const size_t
-    * @parem   function_classes - std::set<size_t>&
-    * @return  size_t, closest match out of function_classes
+    * @param   function_map - FunctionMap& with functions to match
+    * @return  size_t, closest match out of function_map
     */
-   size_t   getClosestTo(  const size_t class_type, std::set< size_t > &function_classes );
+   size_t   getClosestTo(  const size_t class_type, 
+                           FunctionMap  &function_map );
 
    std::ostream& printTree( std::ostream &stream );
 

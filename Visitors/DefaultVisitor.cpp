@@ -5,6 +5,8 @@
  */
 #include <iostream>
 #include <cassert>
+#include <typeinfo>
+#include <utility>
 
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
@@ -20,7 +22,13 @@ int64_t DefaultVisitor::indent_level = 0;
 DefaultVisitor::DefaultVisitor(Raft::Data &d) : 
                                data( d )
 {
-   /* nothing else to construct at the moment */
+   /** 
+    * NOTE: add a visitor for the base node, can be overriden later
+    * in derived classes if need be by removing the node in 
+    * the tree and replacing it
+    */
+   const size_t hash_code( typeid( Node::NodeAbstract ).hash_code() );
+   visit_methods.insert( std::make_pair( hash_code, DefaultNodeAbstractVisit ) );
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
@@ -34,9 +42,32 @@ DefaultVisitor::~DefaultVisitor()
    /* nothing to destroy :( */
 }
 
-void DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
+/**
+ * DefaultNodeAbstractVisit - base visit method, does nothing but
+ * accept the type.
+ */
+void
+DefaultVisitor::DefaultNodeAbstractVisit( Node::NodeAbstract &node )
 {
-      
+   
+}
+
+void 
+DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
+{
+   const size_t hash_code( tree.getClosestTo( typeid( node ).hash_code(), visit_methods ) );
+   if( hash_code == 0 )
+   {
+      data.get_errorstream() << 
+         "No function found for (" << typeid( node ).name() << "), attempting to recover.\n";
+      return;
+   }
+   /**
+    * else get function, we know it exists so unless something really really bad happened,
+    * this should work
+    */
+   auto func( visit_methods[ hash_code ] );
+   func( node );
 }
 
 void 

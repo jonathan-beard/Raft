@@ -78,7 +78,7 @@ ClassTree::addRelation( const size_t base, const size_t derived )
 }
 
 size_t
-ClassTree::getClosestTo( const size_t class_type , std::set< size_t > &function_classes )
+ClassTree::getClosestTo( const size_t class_type ,FunctionMap  &function_map )
 {
    auto found( tree.find( class_type ) );
    if( found == tree.end() ) return( 0 );
@@ -86,11 +86,11 @@ ClassTree::getClosestTo( const size_t class_type , std::set< size_t > &function_
    Node *node( found->second );
    do
    {
-      auto match( function_classes.find( node->key ) );
-      if( match != function_classes.end() )
+      auto match( function_map.find( node->key ) );
+      if( match != function_map.end() )
       {
          /* we've a winner */
-         return( (*match) );
+         return( (*match).first );
       }
       node = node->parent;
    }while( node->parent != node );

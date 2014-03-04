@@ -8,8 +8,7 @@
 
 #include <ostream>
 #include "ClassTree.hpp"
-#include <map>
-#include <functional>
+#include "function_map.hpp"
 
 namespace Raft{
    class Data;
@@ -26,6 +25,9 @@ public:
    DefaultVisitor( Raft::Data &d );
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
+
+   static void DefaultNodeAbstractVisit( Node::NodeAbstract &node );
+
 
    /**
     * Visit - Calls the correct visitor metohd for the node passed
@@ -50,9 +52,7 @@ protected:
    std::string get_indent_level();
    
    Raft::Data  &data;
-   std::map< size_t /* hashcode */,
-             std::function< Node::NodeAbstract&( Node::NodeAbstract&) > > visit_methods;
-
+   FunctionMap visit_methods;
 private:
    /* for prettier printing of nodes */
    static int64_t indent_level;
