@@ -9,8 +9,12 @@ using namespace Node;
 
 Statement::Statement() : NodeAbstract( "Statement" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Statement ).hash_code() );
 }
 
 Statement::Statement( const std::string name ) : NodeAbstract( name )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Statement ).hash_code() );
 }

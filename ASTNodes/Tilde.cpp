@@ -8,5 +8,7 @@ using namespace Node;
 
 Tilde::Tilde() : Returns( "Tilde" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::Tilde ).hash_code() );
    /** nothing to do **/
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 SimpleParameter::SimpleParameter() : Parameter( "SimpleParameter" )
 {
+   class_tree.addRelation( typeid( Node::Parameter ).hash_code(),
+                           typeid( Node::SimpleParameter ).hash_code() );
 }

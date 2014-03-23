@@ -9,5 +9,7 @@ using namespace Node;
 
 Static::Static() : StorageModifier( "Static" )
 {
+   class_tree.addRelation( typeid( Node::StorageModifier ).hash_code(),
+                           typeid( Node::Static ).hash_code() );
 
 }

@@ -8,4 +8,6 @@ using namespace Node;
 
 Fork::Fork() : StreamModifier( "Fork" )
 {
+   class_tree.addRelation( typeid( Node::StreamModifier ).hash_code(),
+                           typeid( Node::Fork ).hash_code() );
 }

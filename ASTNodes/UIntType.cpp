@@ -10,9 +10,13 @@ using namespace Node;
 
 UIntType::UIntType() : Type( "UIntType" )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::UIntType ).hash_code() );
 }
 
 
 UIntType::UIntType( const std::string name ) : Type( name )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::UIntType ).hash_code() );
 }

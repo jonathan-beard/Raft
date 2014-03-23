@@ -47,10 +47,11 @@ DefaultVisitor::~DefaultVisitor()
  * accept the type.
  */
 void
-DefaultVisitor::DefaultNodeAbstractVisit( Node::NodeAbstract &node )
+DefaultVisitor::DefaultNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor)
 {
-   std::cerr << "Visited: "; 
-      node.print( std::cerr ) << "\n";
+   std::cerr << visitor.get_indent_level();
+   node.print( std::cerr ) << "\n";
+   visitor.VisitChildren( node );
 }
 
 void 
@@ -68,7 +69,7 @@ DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
     * this should work
     */
    auto func( visit_methods[ hash_code ] );
-   func( node );
+   func( node, (*this) );
 }
 
 void 

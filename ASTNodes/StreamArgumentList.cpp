@@ -9,5 +9,7 @@ using namespace Node;
 
 StreamArgumentList::StreamArgumentList() : ArgumentList( "StreamArgumentList" )
 {
+   class_tree.addRelation( typeid( Node::ArgumentList ).hash_code(),
+                           typeid( Node::StreamArgumentList ).hash_code() );
    /** nothing to do here **/
 }

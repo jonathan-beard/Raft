@@ -9,4 +9,6 @@ using namespace Node;
 
 ForStatement::ForStatement() : Statement( "ForStatement" )
 {
+   class_tree.addRelation( typeid( Node::Statement ).hash_code(),
+                           typeid( Node::ForStatement ).hash_code() );
 }

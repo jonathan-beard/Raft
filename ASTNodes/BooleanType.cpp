@@ -10,6 +10,8 @@ using namespace Node;
 
 BooleanType::BooleanType() : Type("BooleanType")
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::BooleanType ).hash_code() );
    /* nothing to do here */
 }
 

@@ -9,4 +9,6 @@ using namespace Node;
 
 IfStatement::IfStatement() : Statement( "IfStatement" )
 {
+   class_tree.addRelation( typeid( Node::Statement ).hash_code(),
+                           typeid( Node::IfStatement ).hash_code() );
 }

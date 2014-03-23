@@ -9,5 +9,7 @@ using namespace Node;
 
 EmptyBody::EmptyBody() : Body( "EmptyBody" )
 {
+   class_tree.addRelation( typeid( Node::Body ).hash_code(),
+                           typeid( Node::EmptyBody ).hash_code() );
 
 }

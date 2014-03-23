@@ -10,5 +10,7 @@ using namespace Node;
 UInt64Type::UInt64Type() : UIntType(
                            "UInt64Type" ) 
 {
+   class_tree.addRelation( typeid( Node::UIntType ).hash_code(),
+                           typeid( Node::UInt64Type ).hash_code() );
 
 }

@@ -10,5 +10,7 @@ using namespace Node;
 Int32Type::Int32Type() : IntType(
                          "Int32Type" )
 {
+   class_tree.addRelation( typeid( Node::IntType ).hash_code(),
+                           typeid( Node::Int32Type ).hash_code() );
    /* nothing to do here */
 }

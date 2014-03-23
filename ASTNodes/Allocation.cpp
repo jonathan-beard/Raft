@@ -8,5 +8,6 @@ using namespace Node;
 
 Allocation::Allocation() : Returns( "Allocation" )
 {
-   /** nothing to do here **/
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::Allocation ).hash_code() );
 }

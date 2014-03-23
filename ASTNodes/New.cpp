@@ -8,5 +8,7 @@ using namespace Node;
 
 New::New() : Returns( "New" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::New ).hash_code() );
 
 }

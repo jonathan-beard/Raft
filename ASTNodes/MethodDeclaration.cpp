@@ -9,5 +9,7 @@ using namespace Node;
 
 MethodDeclaration::MethodDeclaration( const std::string name ) : Declaration( name )
 {
+   class_tree.addRelation( typeid( Node::Declaration ).hash_code(),
+                           typeid( Node::MethodDeclaration ).hash_code() );
 
 }

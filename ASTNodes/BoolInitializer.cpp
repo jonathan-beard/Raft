@@ -9,5 +9,7 @@ using namespace Node;
 
 BoolInitializer::BoolInitializer( bool v, const std::string name ) : Initializer( v, name )
 {
+   class_tree.addRelation( typeid( Node::Initializer ).hash_code(),
+                           typeid( Node::BoolInitializer ).hash_code() );
 
 }

@@ -9,8 +9,12 @@ using namespace Node;
 
 MethodInherit::MethodInherit() : Inherit( "MethodInherit" )
 {
+   class_tree.addRelation( typeid( Node::Inherit ).hash_code(),
+                           typeid( Node::MethodInherit ).hash_code() );
 }
 
 MethodInherit::MethodInherit( const std::string name ) : Inherit( name )
 {
+   class_tree.addRelation( typeid( Node::Inherit ).hash_code(),
+                           typeid( Node::MethodInherit ).hash_code() );
 }

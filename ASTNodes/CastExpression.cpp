@@ -9,9 +9,13 @@ using namespace Node;
 
 CastExpression::CastExpression() : Expression( "CastExpression" )
 {
+   class_tree.addRelation( typeid( Node::Expression ).hash_code(),
+                           typeid( Node::CastExpression ).hash_code() );
 }
 
 
 CastExpression::CastExpression( const std::string name ) : Expression( name )
 {
+   class_tree.addRelation( typeid( Node::Expression ).hash_code(),
+                           typeid( Node::CastExpression ).hash_code() );
 }

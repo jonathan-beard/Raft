@@ -9,4 +9,6 @@ using namespace Node;
 
 System::System() : InstantiationModifier( "System" )
 {
+   class_tree.addRelation( typeid( Node::InstantiationModifier ).hash_code(),
+                           typeid( Node::System ).hash_code() );
 }

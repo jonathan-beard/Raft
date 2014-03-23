@@ -12,5 +12,7 @@ Float64Type::Float64Type() : FloatType(
                              DBL_MIN, 
                              DBL_MAX )
 {
+   class_tree.addRelation( typeid( Node::FloatType ).hash_code(),
+                           typeid( Node::Float64Type ).hash_code() );
    /* nothing to do here */
 }

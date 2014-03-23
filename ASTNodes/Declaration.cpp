@@ -10,10 +10,14 @@ using namespace Node;
 
 Declaration::Declaration() : NodeAbstract( "Declaration" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Declaration ).hash_code() );
 
 }
 
 Declaration::Declaration( const std::string name ) : NodeAbstract( name )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Declaration ).hash_code() );
 
 }

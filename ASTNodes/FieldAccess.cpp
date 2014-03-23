@@ -9,5 +9,7 @@ using namespace Node;
 
 FieldAccess::FieldAccess( const std::string name ) : Access( name )
 {
+   class_tree.addRelation( typeid( Node::Access ).hash_code(),
+                           typeid( Node::FieldAccess ).hash_code() );
 
 }

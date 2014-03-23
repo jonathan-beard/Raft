@@ -9,4 +9,6 @@ using namespace Node;
 
 NotEqualOp::NotEqualOp() : CondOp( "NotEqualOp" )
 {
+   class_tree.addRelation( typeid( Node::CondOp ).hash_code(),
+                           typeid( Node::NotEqualOp ).hash_code() );
 }

@@ -7,5 +7,7 @@
 using namespace Node;
 Public::Public() : Visibility( "Public" )
 {
+   class_tree.addRelation( typeid( Node::Visibility ).hash_code(),
+                           typeid( Node::Public ).hash_code() );
 
 }

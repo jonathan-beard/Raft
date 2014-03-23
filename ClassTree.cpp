@@ -80,6 +80,16 @@ ClassTree::addRelation( const size_t base, const size_t derived )
 size_t
 ClassTree::getClosestTo( const size_t class_type ,FunctionMap  &function_map )
 {
+   /**
+    * NOTE: You might get some strange errors with this function
+    * if there is an ASTNode that is not in the tree, if you 
+    * notice the first line we implicitly check to find an entry
+    * point that is one of the leaves in the tree.  If it doesn't
+    * exist then there's no entry point and zero is returned.  
+    * This behavior can be guarded against by being very careful
+    * about adding ASTNodes to the tree.  Its okay to add them
+    * more than once, just not zero times.
+    */
    auto found( tree.find( class_type ) );
    if( found == tree.end() ) return( 0 );
    /** else start **/

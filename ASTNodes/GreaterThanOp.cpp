@@ -9,4 +9,6 @@ using namespace Node;
 
 GreaterThanOp::GreaterThanOp() : CondOp( "GreaterThanOp" )
 {
+   class_tree.addRelation( typeid( Node::CondOp ).hash_code(),
+                           typeid( Node::GreaterThanOp ).hash_code() );
 }

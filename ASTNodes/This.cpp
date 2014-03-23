@@ -9,5 +9,7 @@ using namespace Node;
 
 This::This() : Returns( "This" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::This ).hash_code() );
    /** nothing to do here **/
 }

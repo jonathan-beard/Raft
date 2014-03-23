@@ -8,4 +8,6 @@ using namespace Node;
 
 ArrayParameter::ArrayParameter() : Parameter( "ArrayParameter" )
 {
+   class_tree.addRelation( typeid( Node::Parameter ).hash_code(),
+                           typeid( Node::ArrayParameter ).hash_code() );
 }

@@ -10,4 +10,6 @@ using namespace Node;
 NoGenericInstantiation::NoGenericInstantiation() : 
             GenericInstantiationList( "NoGenericInstantiation" )
 {
+   class_tree.addRelation( typeid( Node::GenericInstantiationList ).hash_code(),
+                           typeid( Node::NoGenericInstantiation ).hash_code() );
 }

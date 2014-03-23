@@ -7,4 +7,8 @@
 
 using namespace Node;
 
-Source::Source() : NodeAbstract("Source"){};
+Source::Source() : NodeAbstract("Source")
+{
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Source ).hash_code() );
+}

@@ -9,9 +9,13 @@ using namespace Node;
 
 StreamOutput::StreamOutput() : StreamEdges( "StreamOutput" )
 {
+   class_tree.addRelation( typeid( Node::StreamEdges ).hash_code(),
+                           typeid( Node::StreamOutput ).hash_code() );
 }
 
 
 StreamOutput::StreamOutput( const std::string name ) : StreamEdges( name )
 {
+   class_tree.addRelation( typeid( Node::StreamEdges ).hash_code(),
+                           typeid( Node::StreamOutput ).hash_code() );
 }

@@ -11,5 +11,7 @@ using namespace Node;
 Int8Type::Int8Type() : IntType( 
                         "Int8Type")
 {
+   class_tree.addRelation( typeid( Node::IntType ).hash_code(),
+                           typeid( Node::Int8Type ).hash_code() );
    /* nothing to do */
 }

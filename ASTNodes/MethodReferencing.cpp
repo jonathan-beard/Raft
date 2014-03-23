@@ -9,5 +9,7 @@ using namespace Node;
 MethodReferencing::MethodReferencing() : 
                                     Referencing( "MethodReferencing" )
 {
+   class_tree.addRelation( typeid( Node::Referencing ).hash_code(),
+                           typeid( Node::MethodReferencing ).hash_code() );
    /** nothing to do here **/
 }

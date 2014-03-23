@@ -10,5 +10,7 @@ using namespace Node;
 Int16Type::Int16Type() : IntType(
                          "Int16Type" )
 {
+   class_tree.addRelation( typeid( Node::IntType ).hash_code(),
+                           typeid( Node::Int16Type ).hash_code() );
    /* nothing to do */
 }

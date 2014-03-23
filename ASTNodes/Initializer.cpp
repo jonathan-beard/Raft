@@ -12,10 +12,14 @@ using namespace Node;
 
 Initializer::Initializer() : NodeAbstract( "Initializer" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Initializer ).hash_code() );
 }
 
 
 Initializer::Initializer( const std::string name ) : NodeAbstract( name )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Initializer ).hash_code() );
 }
 

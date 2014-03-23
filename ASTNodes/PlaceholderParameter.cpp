@@ -9,5 +9,7 @@ using namespace Node;
 
 PlaceholderParameter::PlaceholderParameter() : Parameter( "Placeholder" )
 {
+   class_tree.addRelation( typeid( Node::Parameter ).hash_code(),
+                           typeid( Node::PlaceholderParameter ).hash_code() );
 
 }

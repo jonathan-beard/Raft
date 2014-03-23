@@ -8,4 +8,6 @@ using namespace Node;
 
 NoTypeModifier::NoTypeModifier() : TypeModifier( "NoTypeModifier" )
 {
+   class_tree.addRelation( typeid( Node::TypeModifier ).hash_code(),
+                           typeid( Node::NoTypeModifier ).hash_code() );
 }

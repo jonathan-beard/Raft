@@ -9,4 +9,6 @@ using namespace Node;
 
 DivOp::DivOp() : MathOp( "DivOp" )
 {
+   class_tree.addRelation( typeid( Node::MathOp ).hash_code(),
+                           typeid( Node::DivOp ).hash_code() );
 }

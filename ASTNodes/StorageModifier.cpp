@@ -9,10 +9,13 @@ using namespace Node;
 
 StorageModifier::StorageModifier() : Modifier()
 {
+   class_tree.addRelation( typeid( Node::Modifier ).hash_code(),
+                           typeid( Node::StorageModifier ).hash_code() );
 }
 
 
 StorageModifier::StorageModifier( const std::string name ) : Modifier( name )
 {
-
+   class_tree.addRelation( typeid( Node::Modifier ).hash_code(),
+                           typeid( Node::StorageModifier ).hash_code() );
 }

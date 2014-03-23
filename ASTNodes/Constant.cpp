@@ -9,5 +9,7 @@ using namespace Node;
 
 Constant::Constant() : StorageModifier( "Constant" )
 {
+   class_tree.addRelation( typeid( Node::StorageModifier ).hash_code(),
+                           typeid( Node::Constant ).hash_code() );
 
 }

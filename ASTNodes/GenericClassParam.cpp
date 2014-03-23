@@ -9,5 +9,7 @@ using namespace Node;
 
 GenericClassParam::GenericClassParam( const std::string name ) : Generic( name )
 {
+   class_tree.addRelation( typeid( Node::Generic ).hash_code(),
+                           typeid( Node::GenericClassParam ).hash_code() );
 
 }

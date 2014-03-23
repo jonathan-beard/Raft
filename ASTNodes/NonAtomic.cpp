@@ -8,5 +8,7 @@ using namespace Node;
 
 NonAtomic::NonAtomic() : StorageModifier( "NonAtomic" )
 {
+   class_tree.addRelation( typeid( Node::StorageModifier ).hash_code(),
+                           typeid( Node::NonAtomic ).hash_code() );
 
 }

@@ -9,5 +9,7 @@ using namespace Node;
 
 Protected::Protected() : Visibility( "Protected" )
 {
+   class_tree.addRelation( typeid( Node::Visibility ).hash_code(),
+                           typeid( Node::Protected ).hash_code() );
 
 }

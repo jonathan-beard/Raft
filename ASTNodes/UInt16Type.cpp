@@ -9,5 +9,7 @@ using namespace Node;
 
 UInt16Type::UInt16Type() : UIntType( "UInt16Type")
 {
+   class_tree.addRelation( typeid( Node::UIntType ).hash_code(),
+                           typeid( Node::UInt16Type ).hash_code() );
    /* nothing else to do here */
 }

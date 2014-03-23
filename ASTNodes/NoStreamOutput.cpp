@@ -9,4 +9,6 @@ using namespace Node;
 
 NoStreamOutput::NoStreamOutput() : StreamOutput( "NoStreamOutput" )
 {
+   class_tree.addRelation( typeid( Node::StreamOutput ).hash_code(),
+                           typeid( Node::NoStreamOutput ).hash_code() );
 }

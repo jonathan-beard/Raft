@@ -9,4 +9,7 @@ using namespace Node;
 StrArrayInitialization::StrArrayInitialization()
    : ArrayInitialization( "StrArrayInitialization" )
 {
+   class_tree.addRelation( typeid( Node::ArrayInitialization ).hash_code(),
+                           typeid( Node::StrArrayInitialization ).hash_code() );
+
 }

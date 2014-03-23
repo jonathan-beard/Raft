@@ -11,6 +11,8 @@ using namespace Node;
 
 ObjectType::ObjectType( std::string name) : Type( name )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::ObjectType ).hash_code() );
    /* nothing to do here */
 }
 

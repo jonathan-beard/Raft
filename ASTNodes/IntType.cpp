@@ -10,9 +10,13 @@ using namespace Node;
 
 IntType::IntType() : Type( "IntType" )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::IntType ).hash_code() );
 }
 
 
 IntType::IntType( const std::string name ) : Type( name )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::IntType ).hash_code() );
 }

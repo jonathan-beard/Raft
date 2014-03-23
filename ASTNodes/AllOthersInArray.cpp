@@ -7,6 +7,8 @@
 
 using namespace Node;
 
-AllOthersInArray::AllOthersInArray() : Value( 0 )
+AllOthersInArray::AllOthersInArray() : Value<uint64_t>( 0 )
 {
+   class_tree.addRelation( typeid( Node::Value<uint64_t> ).hash_code(),
+                           typeid( Node::AllOthersInArray ).hash_code() );
 }

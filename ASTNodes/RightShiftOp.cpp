@@ -9,4 +9,6 @@ using namespace Node;
 
 RightShiftOp::RightShiftOp() : BitOperation( "RightShiftOp" )
 {
+   class_tree.addRelation( typeid( Node::BitOperation ).hash_code(),
+                           typeid( Node::RightShiftOp ).hash_code() );
 }

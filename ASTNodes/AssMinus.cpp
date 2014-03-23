@@ -9,4 +9,6 @@ using namespace Node;
 
 AssMinus::AssMinus() : Assignment( "AssMinus" )
 {
+   class_tree.addRelation( typeid( Node::Assignment ).hash_code(),
+                           typeid( Node::AssMinus ).hash_code() );
 }

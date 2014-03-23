@@ -9,4 +9,6 @@ using namespace Node;
 
 AndOp::AndOp() : BitOperation( "AndOp" )
 {
+   class_tree.addRelation( typeid( Node::BitOperation ).hash_code(),
+                           typeid( Node::AndOp ).hash_code() );
 }

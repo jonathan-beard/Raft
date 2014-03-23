@@ -9,5 +9,7 @@ using namespace Node;
 
 VariableStreams::VariableStreams() : NodeAbstract( "VariableStreams" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::VariableStreams ).hash_code() );
    /** nothing to do here **/
 }

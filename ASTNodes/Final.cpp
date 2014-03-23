@@ -9,4 +9,6 @@ using namespace Node;
 
 Final::Final() : InstantiationModifier( "Final" )
 {
+   class_tree.addRelation( typeid( Node::InstantiationModifier ).hash_code(),
+                           typeid( Node::Final ).hash_code() );
 }

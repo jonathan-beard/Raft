@@ -9,5 +9,7 @@ using namespace Node;
 
 ValueBase::ValueBase() : Returns( "ValueBase" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::ValueBase ).hash_code() );
 
 }

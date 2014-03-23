@@ -9,4 +9,6 @@ using namespace Node;
 
 MethodOverrides::MethodOverrides() : MethodInherit( "MethodOverrides" )
 {
+   class_tree.addRelation( typeid( Node::MethodInherit ).hash_code(),
+                           typeid( Node::MethodOverrides ).hash_code() );
 }

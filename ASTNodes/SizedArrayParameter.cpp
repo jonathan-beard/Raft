@@ -8,4 +8,6 @@ using namespace Node;
 
 SizedArrayParameter::SizedArrayParameter() : Parameter( "SizedArrayParameter" )
 {
+   class_tree.addRelation( typeid( Node::Parameter ).hash_code(),
+                           typeid( Node::SizedArrayParameter ).hash_code() );
 }

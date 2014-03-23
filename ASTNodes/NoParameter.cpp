@@ -9,4 +9,6 @@ using namespace Node;
 
 NoParameter::NoParameter() : Parameter( "NoParameter" )
 {
+   class_tree.addRelation( typeid( Node::Parameter ).hash_code(),
+                           typeid( Node::NoParameter ).hash_code() );
 }

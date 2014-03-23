@@ -9,4 +9,6 @@ using namespace Node;
 
 HatOp::HatOp() : BitOperation( "HatOp" )
 {
+   class_tree.addRelation( typeid( Node::BitOperation ).hash_code(),
+                           typeid( Node::HatOp ).hash_code() );
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 Converge::Converge() : StreamModifier( "Converge" )
 {
+   class_tree.addRelation( typeid( Node::StreamModifier ).hash_code(),
+                           typeid( Node::Converge ).hash_code() );
 }

@@ -8,5 +8,7 @@ using namespace Node;
 
 FieldVarDecl::FieldVarDecl() : VariableDeclaration( "FieldVarDecl" )
 {
+   class_tree.addRelation( typeid( Node::VariableDeclaration ).hash_code(),
+                           typeid( Node::FieldVarDecl ).hash_code() );
 
 }

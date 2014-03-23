@@ -9,5 +9,7 @@ using namespace Node;
 
 StreamOption::StreamOption() : NodeAbstract( "StreamOption" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::StreamOption ).hash_code() );
    /** nothing to do here **/
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 ClassNoInherit::ClassNoInherit() : ClassInherit( "ClassNoInherit" )
 {
+   class_tree.addRelation( typeid( Node::ClassInherit ).hash_code(),
+                           typeid( Node::ClassNoInherit ).hash_code() );
 }

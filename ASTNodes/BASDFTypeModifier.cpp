@@ -14,6 +14,8 @@ BASDFTypeModifier::BASDFTypeModifier() :
                         mean_flow( -1.0 ),
                         std_flow( -1.0 )
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::BASDFTypeModifier ).hash_code() );
    /* nothing to do here */
 }
 
@@ -29,6 +31,8 @@ BASDFTypeModifier::BASDFTypeModifier(
                            mean_flow( mean),
                            std_flow( std )
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::BASDFTypeModifier ).hash_code() );
    /* nothing to do here */
 }
 

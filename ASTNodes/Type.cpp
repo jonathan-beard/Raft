@@ -12,16 +12,22 @@ using namespace Node;
 
 Type::Type() : NodeAbstract( "AbstractType" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Type ).hash_code() );
    /* nothing to do */
 }
 
 Type::Type( const std::string n ) : NodeAbstract( n )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Type ).hash_code() );
    /* nothing really to do */
 }
 
 Type::Type( const Type &type )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Type ).hash_code() );
    this->name = type.name;
 }
 

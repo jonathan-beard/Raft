@@ -9,5 +9,7 @@ using namespace Node;
 
 GenericList::GenericList() : NodeAbstract( "GenericList" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::GenericList ).hash_code() );
 
 }

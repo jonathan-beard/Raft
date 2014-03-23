@@ -11,6 +11,8 @@ VectorType::VectorType( size_t s )
    :  TypeModifier( "VectorType" ),
       size( s )
 {
+   class_tree.addRelation( typeid( Node::TypeModifier ).hash_code(),
+                           typeid( Node::VectorType ).hash_code() );
    /* nothing to do here */
 }
 
@@ -18,6 +20,8 @@ VectorType::VectorType( const std::string n,
                         size_t s ) : TypeModifier( n ),
                                      size( s )
 {
+   class_tree.addRelation( typeid( Node::TypeModifier ).hash_code(),
+                           typeid( Node::VectorType ).hash_code() );
    /* nothing to do here */
 }
 

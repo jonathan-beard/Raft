@@ -9,4 +9,6 @@ using namespace Node;
 
 Minus::Minus() : MathOp( "Minus" )
 {
+   class_tree.addRelation( typeid( Node::MathOp ).hash_code(),
+                           typeid( Node::Minus ).hash_code() );
 }

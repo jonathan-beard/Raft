@@ -9,4 +9,6 @@ using namespace Node;
 
 GenericInstantiation::GenericInstantiation() : Declaration( "GenericInstantiation" )
 {
+   class_tree.addRelation( typeid( Node::Declaration ).hash_code(),
+                           typeid( Node::GenericInstantiation ).hash_code() );
 }

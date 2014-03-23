@@ -10,5 +10,7 @@ using namespace Node;
 Int64Type::Int64Type() : IntType(
                          "Int64Type" )
 {
+   class_tree.addRelation( typeid( Node::IntType ).hash_code(),
+                           typeid( Node::Int64Type ).hash_code() );
    /* nothing to do here */
 }

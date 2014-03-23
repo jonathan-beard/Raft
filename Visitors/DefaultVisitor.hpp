@@ -26,7 +26,7 @@ public:
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
-   static void DefaultNodeAbstractVisit( Node::NodeAbstract &node );
+   static void DefaultNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor );
 
 
    /**

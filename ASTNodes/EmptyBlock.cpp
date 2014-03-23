@@ -9,4 +9,6 @@ using namespace Node;
 
 EmptyBlock::EmptyBlock() : Block( "EmptyBlock" )
 {
+   class_tree.addRelation( typeid( Node::Block ).hash_code(),
+                           typeid( Node::EmptyBlock ).hash_code() );
 }

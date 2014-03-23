@@ -18,6 +18,8 @@ Port::Port() : Type( "PortType" ),
                port_type( nullptr ),
                flow_type( nullptr )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::Port ).hash_code() );
    /* nothing to do here */
 }
 

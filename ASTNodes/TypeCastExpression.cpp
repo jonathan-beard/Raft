@@ -9,5 +9,7 @@ using namespace Node;
 
 TypeCastExpression::TypeCastExpression() : CastExpression( "TypeCastExpression" )
 {
+   class_tree.addRelation( typeid( Node::CastExpression ).hash_code(),
+                           typeid( Node::TypeCastExpression ).hash_code() );
 
 }

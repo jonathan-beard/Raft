@@ -10,4 +10,6 @@ using namespace Node;
 NoInstantiationModifier::NoInstantiationModifier() :
                       InstantiationModifier( "NoInstantiationModifier" )
 {
+   class_tree.addRelation( typeid( Node::InstantiationModifier ).hash_code(),
+                           typeid( Node::NoInstantiationModifier ).hash_code() );
 }

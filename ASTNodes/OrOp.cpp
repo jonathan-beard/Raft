@@ -9,4 +9,6 @@ using namespace Node;
 
 OrOp::OrOp() : BitOperation( "OrOp" )
 {
+   class_tree.addRelation( typeid( Node::BitOperation ).hash_code(),
+                           typeid( Node::OrOp ).hash_code() );
 }

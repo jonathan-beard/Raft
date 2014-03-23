@@ -9,5 +9,7 @@ using namespace Node;
 
 UnaryPlus::UnaryPlus() : Returns( "UnaryPlus" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::UnaryPlus ).hash_code() );
    /** nothing to do here **/
 }

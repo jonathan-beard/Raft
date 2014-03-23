@@ -11,6 +11,8 @@ SDFTypeModifier::SDFTypeModifier() :
                      DataFlowTypeModifier( "SDFTypeModifier" ),
                      constant_flow( -1 )
 {                     
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::SDFTypeModifier ).hash_code() );
    /* nothing to do here */
 }
 
@@ -19,6 +21,8 @@ SDFTypeModifier::SDFTypeModifier( const std::string n,
                      DataFlowTypeModifier( n ),
                      constant_flow( c_flow )
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::SDFTypeModifier ).hash_code() );
    /* nothing to do here */
 }
 

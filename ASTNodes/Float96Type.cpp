@@ -12,5 +12,7 @@ Float96Type::Float96Type() : FloatType(
                              LDBL_MIN,
                              LDBL_MAX )
 {
+   class_tree.addRelation( typeid( Node::FloatType ).hash_code(),
+                           typeid( Node::Float96Type ).hash_code() );
    /* nothing to do here */
 }

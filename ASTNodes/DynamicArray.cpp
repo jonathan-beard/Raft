@@ -9,4 +9,6 @@ using namespace Node;
 
 DynamicArray::DynamicArray() : TypeModifier( "DynamicArray" )
 {
+   class_tree.addRelation( typeid( Node::TypeModifier ).hash_code(),
+                           typeid( Node::DynamicArray ).hash_code() );
 }

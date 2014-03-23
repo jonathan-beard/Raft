@@ -12,6 +12,8 @@ FloatType::FloatType() : Type( "GenericFloat" ),
                          min( LDBL_MIN ),
                          max( LDBL_MAX )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::FloatType ).hash_code() );
    /* nothing really to do here */
 }
 
@@ -22,6 +24,8 @@ FloatType::FloatType( const std::string n,
                         min( minimum ),
                         max( maximum )
 {
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::FloatType ).hash_code() );
    /* nothing really to do here */
 }
 

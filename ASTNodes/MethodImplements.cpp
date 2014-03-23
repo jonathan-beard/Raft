@@ -9,4 +9,6 @@ using namespace Node;
 
 MethodImplements::MethodImplements() : MethodInherit( "MethodImplements" )
 {
+   class_tree.addRelation( typeid( Node::MethodInherit ).hash_code(),
+                           typeid( Node::MethodImplements ).hash_code() );
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 NoStreamInput::NoStreamInput() : StreamInput( "NoStreamInput" )
 {
+   class_tree.addRelation( typeid( Node::StreamInput ).hash_code(),
+                           typeid( Node::NoStreamInput ).hash_code() );
 }

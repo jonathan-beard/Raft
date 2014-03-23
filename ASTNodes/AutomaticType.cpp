@@ -10,6 +10,8 @@ using namespace Node;
 AutomaticType::AutomaticType() : Type("AutomaticType")
 {
    //nothing to do
+   class_tree.addRelation( typeid( Node::Type ).hash_code(),
+                           typeid( Node::AutomaticType ).hash_code() );
 }
 
 

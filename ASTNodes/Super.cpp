@@ -9,5 +9,7 @@ using namespace Node;
 
 Super::Super() : Returns( "Super" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::Super ).hash_code() );
    /** nothing to do here **/
 }

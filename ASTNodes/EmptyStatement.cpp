@@ -9,4 +9,6 @@ using namespace Node;
 
 EmptyStatement::EmptyStatement() : Statement( "EmptyStatement" ){
 
+   class_tree.addRelation( typeid( Node::Statement ).hash_code(),
+                           typeid( Node::EmptyStatement ).hash_code() );
 }

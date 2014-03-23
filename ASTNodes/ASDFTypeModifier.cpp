@@ -15,6 +15,8 @@ ASDFTypeModifier::ASDFTypeModifier() :
                         std_flow( -1.0 )
 {
    /* nothing to do here */
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::ASDFTypeModifier ).hash_code() );
 }
 
 ASDFTypeModifier::ASDFTypeModifier( 
@@ -29,6 +31,8 @@ ASDFTypeModifier::ASDFTypeModifier(
                            mean_flow( mean),
                            std_flow( std )
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::ASDFTypeModifier ).hash_code() );
    /* nothing to do here */
 }
 

@@ -12,6 +12,8 @@ Float32Type::Float32Type() : FloatType("Float32Type",
                                        FLT_MIN,
                                        FLT_MAX )
 {
+   class_tree.addRelation( typeid( Node::FloatType ).hash_code(),
+                           typeid( Node::Float32Type ).hash_code() );
  /* nothing really to do here */
 }
 

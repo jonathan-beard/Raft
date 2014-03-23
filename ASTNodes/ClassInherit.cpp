@@ -9,9 +9,13 @@ using namespace Node;
 
 ClassInherit::ClassInherit() : Inherit( "ClassInherit" )
 {
+   class_tree.addRelation( typeid( Node::Inherit ).hash_code(),
+                           typeid( Node::ClassInherit ).hash_code() );
 
 }
 
 ClassInherit::ClassInherit( const std::string name ) : Inherit( name )
 {
+   class_tree.addRelation( typeid( Node::Inherit ).hash_code(),
+                           typeid( Node::ClassInherit ).hash_code() );
 }

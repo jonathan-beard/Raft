@@ -9,10 +9,14 @@ using namespace Node;
 
 Body::Body() : NodeAbstract( "Body" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Body ).hash_code() );
 
 }
 
 Body::Body( const std::string name ) : NodeAbstract( name )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Body ).hash_code() );
 
 }

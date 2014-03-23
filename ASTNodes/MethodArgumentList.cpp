@@ -9,5 +9,7 @@ using namespace Node;
 
 MethodArgumentList::MethodArgumentList() : ArgumentList( "MethodArgumentList" )
 {
+   class_tree.addRelation( typeid( Node::ArgumentList ).hash_code(),
+                           typeid( Node::MethodArgumentList ).hash_code() );
    /** nothing to do here **/
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 EmptyTypeModifier::EmptyTypeModifier() : TypeModifier( "EmptyTypeModifier" )
 {
+   class_tree.addRelation( typeid( Node::TypeModifier ).hash_code(),
+                           typeid( Node::EmptyTypeModifier ).hash_code() );
 }

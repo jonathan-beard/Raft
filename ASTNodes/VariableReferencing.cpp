@@ -10,5 +10,7 @@ using namespace Node;
 VariableReferencing::VariableReferencing() : 
                                  Referencing( "VariableReferencing" )
 {
+   class_tree.addRelation( typeid( Node::Referencing ).hash_code(),
+                           typeid( Node::VariableReferencing ).hash_code() );
    /** nothing to do here **/
 }

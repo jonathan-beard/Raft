@@ -10,5 +10,7 @@ using namespace Node;
 StreamPropertyList::StreamPropertyList() : 
                               NodeAbstract( "StreamPropertyList" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::StreamPropertyList ).hash_code() );
    /** nothing to do here **/
 }

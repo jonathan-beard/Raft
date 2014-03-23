@@ -10,4 +10,6 @@ using namespace Node;
 NumArrayInitialization::NumArrayInitialization() : 
    ArrayInitialization( "NumArrayInitialization" )
 {
+   class_tree.addRelation( typeid( Node::ArrayInitialization ).hash_code(),
+                           typeid( Node::NumArrayInitialization ).hash_code() );
 }

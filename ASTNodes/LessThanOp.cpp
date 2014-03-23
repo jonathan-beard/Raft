@@ -9,4 +9,6 @@ using namespace Node;
 
 LessThanOp::LessThanOp() : CondOp( "LessThanOp" )
 {
+   class_tree.addRelation( typeid( Node::CondOp ).hash_code(),
+                           typeid( Node::LessThanOp ).hash_code() );
 }

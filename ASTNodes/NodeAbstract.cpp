@@ -33,6 +33,8 @@ NodeAbstract::NodeAbstract() :
     * we only have to change one pointer value 
     */
    parent = this;
+   class_tree.addRelation( 0x0 /* no parent */,
+                           typeid( Node::NodeAbstract ).hash_code() );
 }
 
 NodeAbstract::NodeAbstract( const std::string n ):
@@ -46,6 +48,8 @@ NodeAbstract::NodeAbstract( const std::string n ):
     * we only have to change one pointer value 
     */
    parent = this;
+   class_tree.addRelation( 0x0 /* no parent */,
+                           typeid( Node::NodeAbstract ).hash_code() );
 }
                            
 
@@ -57,6 +61,10 @@ NodeAbstract::NodeAbstract( const NodeAbstract &node )
    child  = node.child;
    siblings.insert( node.siblings.begin(), 
                     node.siblings.end() );
+   /**
+    * no need to add to class_tree, the constructor has been called at least
+    * once since we're calling the copy constructor with it.
+    */
 }
 
 

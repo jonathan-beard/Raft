@@ -9,5 +9,7 @@ using namespace Node;
 
 Nill::Nill() : Returns( "Nill" )
 {
+   class_tree.addRelation( typeid( Node::Returns ).hash_code(),
+                           typeid( Node::Nill ).hash_code() );
    /** nothing to do here **/
 }

@@ -13,6 +13,8 @@ OutputPort::OutputPort( Type *t, DataFlowTypeModifier *flow ) :
                                     t,
                                     flow )
 {
+   class_tree.addRelation( typeid( Node::Port ).hash_code(),
+                           typeid( Node::OutputPort ).hash_code() );
    /* nothing to do here */
 }
 

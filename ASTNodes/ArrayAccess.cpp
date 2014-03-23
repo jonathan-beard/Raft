@@ -7,5 +7,7 @@
 using namespace Node;
 ArrayAccess::ArrayAccess() : Access( "ArrayAccess" )
 {
+   class_tree.addRelation( typeid( Node::Access ).hash_code(),
+                           typeid( Node::ArrayAccess ).hash_code() );
 
 }

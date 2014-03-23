@@ -13,10 +13,14 @@ InputPort::InputPort( Type *t, DataFlowTypeModifier *flow )
                                        t,
                                        flow )
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::InputPort ).hash_code() );
    /* nothing to do here */
 }
 
 InputPort::~InputPort()
 {
+   class_tree.addRelation( typeid( Node::DataFlowTypeModifier ).hash_code(),
+                           typeid( Node::InputPort ).hash_code() );
    /* nothing to do at the moment */
 }

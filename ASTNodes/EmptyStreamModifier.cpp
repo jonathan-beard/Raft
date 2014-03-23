@@ -8,4 +8,6 @@ using namespace Node;
 EmptyStreamModifier::EmptyStreamModifier() : 
                                     StreamModifier( "EmptyStreamModifier" )
 {
+   class_tree.addRelation( typeid( Node::StreamModifier ).hash_code(),
+                           typeid( Node::EmptyStreamModifier ).hash_code() );
 }

@@ -9,4 +9,6 @@ using namespace Node;
 
 MultOp::MultOp() : MathOp( "MultOp" )
 {
+   class_tree.addRelation( typeid( Node::MathOp ).hash_code(),
+                           typeid( Node::MultOp ).hash_code() );
 }

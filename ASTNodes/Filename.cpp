@@ -10,6 +10,8 @@ using namespace Node;
 Filename::Filename( std::string n ) : NodeAbstract( "Filename" ),
                                       filename( n )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Filename ).hash_code() );
 }
 
 std::ostream&

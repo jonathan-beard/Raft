@@ -10,4 +10,6 @@ using namespace Node;
 BoolArrayInitialization::BoolArrayInitialization() :
    ArrayInitialization( "BoolArrayInitialization" )
 {
+   class_tree.addRelation( typeid( Node::ArrayInitialization ).hash_code(),
+                           typeid( Node::BoolArrayInitialization ).hash_code() );
 }

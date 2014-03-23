@@ -9,4 +9,6 @@ using namespace Node;
 
 GreaterEqualOp::GreaterEqualOp() : CondOp( "GreaterEqualOp" )
 {
+   class_tree.addRelation( typeid( Node::CondOp ).hash_code(),
+                           typeid( Node::GreaterEqualOp ).hash_code() );
 }

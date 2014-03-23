@@ -9,9 +9,13 @@ using namespace Node;
 
 CondOp::CondOp() : Operation( "CondOp" )
 {
+   class_tree.addRelation( typeid( Node::Operation ).hash_code(),
+                           typeid( Node::CondOp ).hash_code() );
 }
 
 
 CondOp::CondOp( const std::string name ) : Operation( name )
 {
+   class_tree.addRelation( typeid( Node::Operation ).hash_code(),
+                           typeid( Node::CondOp ).hash_code() );
 }

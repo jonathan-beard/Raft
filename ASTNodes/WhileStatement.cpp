@@ -9,4 +9,6 @@ using namespace Node;
 
 WhileStatement::WhileStatement() : Statement( "WhileStatement" )
 {
+   class_tree.addRelation( typeid( Node::Statement ).hash_code(),
+                           typeid( Node::WhileStatement ).hash_code() );
 }

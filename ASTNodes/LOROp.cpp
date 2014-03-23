@@ -9,4 +9,6 @@ using namespace Node;
 
 LOROp::LOROp() : CondOp( "LOROp" )
 {
+   class_tree.addRelation( typeid( Node::CondOp ).hash_code(),
+                           typeid( Node::LOROp ).hash_code() );
 }

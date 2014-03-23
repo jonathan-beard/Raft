@@ -9,5 +9,7 @@ using namespace Node;
 
 GenericTypeMultiple::GenericTypeMultiple() : Generic( "GenericTypeMultiple" )
 {
+   class_tree.addRelation( typeid( Node::Generic ).hash_code(),
+                           typeid( Node::GenericTypeMultiple ).hash_code() );
 
 }

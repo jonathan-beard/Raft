@@ -22,6 +22,7 @@ DebugVisitor::~DebugVisitor()
 
 }
 
+#if(0)
 void
 DebugVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
 {
@@ -30,3 +31,4 @@ DebugVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
    node.print( std::cout ) << std::endl;
    VisitChildren( node );
 }
+#endif

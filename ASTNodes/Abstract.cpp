@@ -9,4 +9,6 @@ using namespace Node;
 
 Abstract::Abstract() : InstantiationModifier( "Abstract" )
 {
+   class_tree.addRelation( typeid( Node::InstantiationModifier ).hash_code(),
+                           typeid( Node::Abstract ).hash_code() );
 }

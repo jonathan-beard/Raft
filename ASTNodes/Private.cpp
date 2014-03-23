@@ -9,5 +9,7 @@ using namespace Node;
 
 Private::Private() : Visibility( "Private" )
 {
+   class_tree.addRelation( typeid( Node::Visibility ).hash_code(),
+                           typeid( Node::Private ).hash_code() );
 
 }

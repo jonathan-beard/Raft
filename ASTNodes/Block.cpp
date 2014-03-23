@@ -9,8 +9,12 @@ using namespace Node;
 
 Block::Block() : NodeAbstract( "Block" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Block ).hash_code() );
 }
 
 Block::Block( const std::string name ) : NodeAbstract( name )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::Block ).hash_code() );
 }

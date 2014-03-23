@@ -7,6 +7,8 @@
 using namespace Node;
 ArraySlice::ArraySlice( uint64_t a, uint64_t b ) : NodeAbstract( "ArraySlice" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::ArraySlice ).hash_code() );
    range[0] = a;
    range[1] = b;
 }
