@@ -27,10 +27,15 @@ public:
    SymtabVisitor( Raft::Data &d );
    virtual ~SymtabVisitor();
 
-   static void AbstractVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor );
-   static void VarVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor );
+   static void AbstractVisit( Node::NodeAbstract &node, 
+                              Visitor::DefaultVisitor &visitor );
 
-private:
+   static void VarVisit( Node::NodeAbstract &node, 
+                         Visitor::DefaultVisitor &visitor );
+   
+   friend void VarVisit( Node::NodeAbstract&, 
+                         Visitor::DefaultVisitor&);
+protected:
    std::vector< std::string> temp_st;
 };
 

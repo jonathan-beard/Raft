@@ -23,7 +23,8 @@ public:
    DebugVisitor( Raft::Data &d );
    virtual ~DebugVisitor();
    
-   static void DebugNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor );
+   static void DebugNodeAbstractVisit( Node::NodeAbstract &node, 
+                                       Visitor::DefaultVisitor &visitor );
 };
 
 } /* end namespace Visitor */

@@ -44,15 +44,18 @@ DefaultVisitor::~DefaultVisitor()
 void 
 DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
 {
-   const size_t hash_code( tree.getClosestTo( typeid( node ).hash_code(), visit_methods ) );
+   const size_t hash_code( 
+      tree.getClosestTo( typeid( node ).hash_code(), visit_methods ) );
    if( hash_code == 0 )
    {
       data.get_errorstream() << 
-         "No function found for (" << typeid( node ).name() << "), attempting to recover.\n";
+         "No function found for (" << 
+            typeid( node ).name() << "), attempting to recover.\n";
       return;
    }
    /**
-    * else get function, we know it exists so unless something really really bad happened,
+    * else get function, we know it exists so unless 
+    * something really really bad happened,
     * this should work
     */
    auto func( visit_methods[ hash_code ] );

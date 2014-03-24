@@ -26,6 +26,9 @@ public:
       std::stringstream ss;
       ss << value;
       set_name( ss.str() );
+      class_tree.addRelation( 
+                     typeid( Node::ValueBase ).hash_code(),
+                     typeid( Node::Value< T > ).hash_code() );
    }
    
    virtual ~Value() = default;
