@@ -14,7 +14,9 @@ using namespace Visitor;
 DebugVisitor::DebugVisitor( Raft::Data &data ) : 
                             DefaultVisitor( data )
 {
-   /* nothing really to do here */
+   /* register needed visitors */
+   const size_t hash_code( typeid( Node::NodeAbstract ).hash_code() );
+   visit_methods.insert( std::make_pair( hash_code, DebugNodeAbstractVisit ) );
 }
 
 DebugVisitor::~DebugVisitor()
@@ -22,13 +24,15 @@ DebugVisitor::~DebugVisitor()
 
 }
 
-#if(0)
+/**
+ * DefaultNodeAbstractVisit - base visit method, does nothing but
+ * accept the type.
+ */
 void
-DebugVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )
+DebugVisitor::DebugNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor)
 {
-   //TODO, come back here
-   std::cout << get_indent_level();
-   node.print( std::cout ) << std::endl;
-   VisitChildren( node );
+   std::cerr << visitor.get_indent_level();
+   node.print( std::cerr ) << "\n";
+   visitor.VisitChildren( node );
 }
-#endif
+

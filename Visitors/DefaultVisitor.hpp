@@ -26,7 +26,6 @@ public:
    DefaultVisitor( const DefaultVisitor &visitor );
    virtual ~DefaultVisitor();
 
-   static void DefaultNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor );
 
 
    /**
@@ -46,10 +45,11 @@ public:
    virtual void VisitChildren( Node::NodeAbstract &node );
 
    virtual void Error(std::string s);
+   
+   std::string get_indent_level();
 protected:
    void increase_indent();
    void decrease_indent();
-   std::string get_indent_level();
    
    Raft::Data  &data;
    FunctionMap visit_methods;

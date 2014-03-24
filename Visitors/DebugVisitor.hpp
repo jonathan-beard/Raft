@@ -22,15 +22,8 @@ class DebugVisitor : public DefaultVisitor {
 public:
    DebugVisitor( Raft::Data &d );
    virtual ~DebugVisitor();
-
-   /**
-    * Visit - (NodeAbstract), for debugging purposes
-    * define more precise Visit methods as more 
-    * nodes are created.  These visitors will simply
-    * print the nodes at the appropriate levels
-    * @param   node - Node::NodeAbstract*
-    */
-//   virtual void Visit( Node::NodeAbstract &node, ClassTree &tree );
+   
+   static void DebugNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor );
 };
 
 } /* end namespace Visitor */

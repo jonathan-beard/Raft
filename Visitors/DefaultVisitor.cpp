@@ -27,8 +27,6 @@ DefaultVisitor::DefaultVisitor(Raft::Data &d) :
     * in derived classes if need be by removing the node in 
     * the tree and replacing it
     */
-   const size_t hash_code( typeid( Node::NodeAbstract ).hash_code() );
-   visit_methods.insert( std::make_pair( hash_code, DefaultNodeAbstractVisit ) );
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
@@ -42,17 +40,6 @@ DefaultVisitor::~DefaultVisitor()
    /* nothing to destroy :( */
 }
 
-/**
- * DefaultNodeAbstractVisit - base visit method, does nothing but
- * accept the type.
- */
-void
-DefaultVisitor::DefaultNodeAbstractVisit( Node::NodeAbstract &node, Visitor::DefaultVisitor &visitor)
-{
-   std::cerr << visitor.get_indent_level();
-   node.print( std::cerr ) << "\n";
-   visitor.VisitChildren( node );
-}
 
 void 
 DefaultVisitor::Visit( Node::NodeAbstract &node, ClassTree &tree )

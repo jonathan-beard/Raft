@@ -27,16 +27,8 @@ public:
    SymtabVisitor( Raft::Data &d );
    virtual ~SymtabVisitor();
 
-   /**
-    * Visit - (NodeAbstract), for debugging purposes
-    * define more precise Visit methods as more 
-    * nodes are created.  These visitors will simply
-    * print the nodes at the appropriate levels
-    * @param   node - Node::NodeAbstract*
-    */
-   virtual void Visit( Node::NodeAbstract  &node );
-
-   virtual void Visit( Node::VariableDeclaration &node );
+   static void AbstractVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor );
+   static void VarVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor );
 
 private:
    std::vector< std::string> temp_st;

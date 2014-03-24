@@ -10,6 +10,8 @@
 #include "VariableDeclaration.hpp"
 #include "FieldVarDecl.hpp"
 #include "data.hpp"
+#include <sstream>
+#include <utility>
 
 using namespace Visitor;
 
@@ -17,6 +19,11 @@ SymtabVisitor::SymtabVisitor( Raft::Data &data ) :
                             DefaultVisitor( data )
 {
    /* nothing really to do here */
+   visit_methods.insert( std::make_pair( typeid( Node::NodeAbstract ).hash_code(),
+                                        AbstractVisit ) );
+
+   visit_methods.insert( std::make_pair( typeid( Node::VariableDeclaration ).hash_code(),
+                                        VarVisit ) );
 }
 
 SymtabVisitor::~SymtabVisitor()
@@ -29,17 +36,16 @@ SymtabVisitor::~SymtabVisitor()
 }
 
 void
-SymtabVisitor::Visit( Node::NodeAbstract &node )
+SymtabVisitor::AbstractVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor )
 {
-  VisitChildren( node );
+   visitor.VisitChildren( node );
 }
 
 void
-SymtabVisitor::Visit( Node::VariableDeclaration &node )
+SymtabVisitor::VarVisit( Node::VariableDeclaration &node, Visitor::DefaultVisitor &visitor )
 {
    std::stringstream ss;
    node.print( ss );
    temp_st.push_back( ss.str() );
-   
-   VisitChildren( node );
+   visitor.VisitChildren( node );
 }
