@@ -1,0 +1,28 @@
+class Sum< class T >{
+@private:
+   /** 
+    * the variable sum is shared across all threads of this class,
+    * the static nomenclatures is a bit different in Raft since 
+    * it is not in fact shared across all instanes of Sum, just 
+    * its parallel instances (streams).
+    */
+   static T sum( 0 );
+
+@public:
+
+   streams [[ T out ]] sum [[ T in ]]
+   {
+      sum += in;
+   }
+
+   void main( String args[](nill) )
+   {
+      /** read in a .csv file */
+      float32 t[]( Raft.system.read( args[1], "list" ) );
+      
+      /** instantiate a sum object */
+      Sum s< float32 >();
+      avg = ( < reduce = true > s[[ $ ]]< ... > @/ t ) / Raft.array.length( t );
+      Raft.system.print( "Mean: " + avg );
+   }ß
+}
