@@ -6,9 +6,9 @@
 #include "FieldVarDecl.hpp"
 using namespace Node;
 
-FieldVarDecl::FieldVarDecl() : VariableDeclaration( "FieldVarDecl" )
+FieldVarDecl::FieldVarDecl() : VarDeclFollows( "FieldVarDecl" )
 {
-   class_tree.addRelation( typeid( Node::VariableDeclaration ).hash_code(),
+   class_tree.addRelation( typeid( Node::VarDeclFollows ).hash_code(),
                            typeid( Node::FieldVarDecl ).hash_code() );
 
 }

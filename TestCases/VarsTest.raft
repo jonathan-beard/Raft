@@ -1,0 +1,10 @@
+class Foo{
+@public:
+   void main( String args[](nill) )
+   {
+      int8  a( 0 );
+      float32 b( 2.3 );
+
+      int8 foo[8]( 0 );
+   }
+}

@@ -7,7 +7,8 @@
 
 using namespace Node;
 
-VariableDeclaration::VariableDeclaration( const std::string name ) : Declaration( name )
+VariableDeclaration::VariableDeclaration( const std::string name ) : 
+                                                             Declaration( name )
 {
    class_tree.addRelation( typeid( Node::Declaration ).hash_code(),
                            typeid( Node::VariableDeclaration ).hash_code() );

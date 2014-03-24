@@ -108,7 +108,6 @@ ClassTree::getClosestTo( const size_t class_type ,FunctionMap  &function_map )
    return( 0 );
 }
 
-
 ClassTree::Node::Node( size_t key ) : parent( this ),
                                       key( key )
 {

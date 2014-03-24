@@ -165,6 +165,7 @@
       class WhileStatement;
       class ForStatement;
       class MapStatement;
+      class LocalVarDecl;
    }
 }
 
@@ -349,6 +350,7 @@
    #include  "WhileStatement.hpp"
    #include  "ForStatement.hpp"
    #include  "MapStatement.hpp"
+   #include  "LocalVarDecl.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -1131,20 +1133,16 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
 
 LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
                               {
-                                 //TODO LOCALS
-                                 $$ = new NodeAbstract();
-                                 /*
-                                 $$ = new LocalVariableDeclaration();
+                                 $$ = new LocalVarDecl();
                                  $$->AdoptChildren( $1 );
                                  $$->AdoptChildren( $2 );
                                  $$->AdoptChildren( $3 );
-                                 */
                               }
                            |  Type Initializer SEMI
                               {
-                                 $$ = new NodeAbstract();
-
-                                 //$$ = new LocalVariableDeclaration();
+                                 $$ = new LocalVarDecl();
+                                 $$->AdoptChildren( $1 );
+                                 $$->AdoptChildren( $2 );
                               }
                            ;
 

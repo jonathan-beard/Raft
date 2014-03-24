@@ -30,7 +30,6 @@ public:
    size_t   getClosestTo(  const size_t class_type, 
                            FunctionMap  &function_map );
 
-   std::ostream& printTree( std::ostream &stream );
 
 private:
    struct Node {
