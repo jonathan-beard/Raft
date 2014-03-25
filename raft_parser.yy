@@ -1605,6 +1605,7 @@ ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                            }
                          | IDENTIFIER LPAREN ArgumentList RPAREN
                            {
+                              //FIXME
                               $$ = new VariableDeclaration( *$1 );
                               delete( $1 );
                               $$->AdoptChildren( new NoTypeModifier() );
