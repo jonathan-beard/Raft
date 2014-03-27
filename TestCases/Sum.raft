@@ -1,24 +1,72 @@
-class Sum< class T extends Raft.number >{
+/**
+ * Sum - a test class for the Raft language.  This
+ * is the first real app, as it was for the AutoPipe
+ * streaming language.  This is also a generic class,
+ * which accepts any class that extends Raft.number
+ * as a type.  Alternatively a user could specify
+ * class Sum< class T in { int8, int32, int64, float32, float64 } >
+ * to restrict the Sum class even further.
+ */ 
+
+class Sum< class T extends Raft.number >
+{
 @private:
-   
+   /**
+    * All global vars by default constant, only
+    * assignable at object construction.  Labeling
+    * as nonconst allows updating of these variables.
+    * by default they're atomic, a user can select
+    * nonatomic if that's what they really want.
+    */
    nonconst T sum( T.cast( 0 ) );
 
 @public:
 
-   streams [[ T out ]] sum [[ T in ]]
+   streams T out Sum [[ T in ]]
    {
-      sum += in;
-
+      /**
+       * By definition work blocks lock non-thread
+       * local vars while inside the work block unless
+       * a user specifies un-synchronized behavior
+       */
+      work
+      {
+         sum += in;
+      } 
+      onsignal( in.EOD )
+      {
+         /** 
+          * each port has several signals, this being
+          * EOD or End of Data, meaning the run-time
+          * has detected that there is no more data 
+          * comming in on the input streams, empty them
+          * and then this signal will be thrown, the first
+          * one to catch it returns the value and all other
+          * streaming kernels will exit gracefully. 
+          */
+         out = sum;
+      }
    }
 
    void main( String args[]( nill ) )
    {
-      /** read in a .csv file */
-      float32 t[]( Raft.system.read( args[1], "list" ) );
+      /** read in a .csv file as a stream */
+      Raft.inputStream<float32> input_stream( Raft.system.read( args[1], "list" ) );
       
       /** instantiate a sum object */
       Sum s< float32 >();
-      float32 avg( ( < reduce = true > sum[[ $ ]]< ... > @/ t ) / Raft.array.length( t ) );
-      Raft.system.print( "Mean: " + avg );
+
+      /** 
+       * map (@/) over the input stream, the order operator,
+       * tells the runtime that we don't care what order
+       * the sum kernel gets the numbers, only that they get 
+       * there.  The stream operator is used since we don't want
+       * all the numbers to be read in at once if its a really huge 
+       * file, this way they're processed as they're read in, and 
+       * just as quickly disgarded.
+       */
+      float32 avg( ( sum[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );
+
+      Raft.system.println( "Mean: " + avg );
    }
 }
