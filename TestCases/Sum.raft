@@ -1,12 +1,7 @@
-class Sum< class T >{
+class Sum< class T extends Raft.number >{
 @private:
-   /** 
-    * the variable sum is shared across all threads of this class,
-    * the static nomenclatures is a bit different in Raft since 
-    * it is not in fact shared across all instanes of Sum, just 
-    * its parallel instances (streams).
-    */
-   static T sum( nill );
+   
+   nonconst T sum( T.cast( 0 ) );
 
 @public:
 
