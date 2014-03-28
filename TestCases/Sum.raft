@@ -4,7 +4,7 @@
  * streaming language.  This is also a generic class,
  * which accepts any class that extends Raft.number
  * as a type.  Alternatively a user could specify
- * class Sum< class T in { int8, int32, int64, float32, float64 } >
+ * class Sum< class T el { int8, int32, int64, float32, float64 } >
  * to restrict the Sum class even further.
  */ 
 

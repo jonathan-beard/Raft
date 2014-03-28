@@ -416,7 +416,7 @@
 %token       ATPRIVATE  
 %token       ATPROTECTED 
 %token       SIGNAL
-%token       IN
+%token       EL
 %token       RETURN  
 %token       VOID  
 %token       THIS  
