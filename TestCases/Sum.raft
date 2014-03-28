@@ -23,9 +23,11 @@ class Sum< class T extends Raft.number >
     * ensuring sequential consistency.  The stream "in"
     * is specified in the [[ xxx ]] brackets, a single 
     * valued return is given as out as opposed to an
-    * output stream.
+    * output stream.  Any function with the streams keyword
+    * can be duplicated on multiple threads by the run-time
+    * but it must also honor ordering constraints.
     */
-   streams T out Sum [[ T in ]]
+   streams T sum [[ T in ]]
    {
       /**
        * Streams (the thing with the name "in") are objects
@@ -51,6 +53,10 @@ class Sum< class T extends Raft.number >
           * Raft.unlock( sum )
           */
 
+         /**
+          * keyword onsignal, provides synchronous signalling
+          * inside streaming functions.
+          */
          onsignal( in.EOD )
          {
             /** 
@@ -62,7 +68,7 @@ class Sum< class T extends Raft.number >
              * one to catch it returns the value and all other
              * streaming kernels will exit gracefully. 
              */
-            out = sum;
+            return( sum );
          }
       }
    }
