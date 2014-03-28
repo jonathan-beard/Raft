@@ -42,7 +42,7 @@ syn keyword javaConditional	if else switch
 syn keyword javaRepeat		while for do
 syn match   javaRepeat     "@/"
 syn keyword javaBoolean		true false
-syn keyword javaConstant	nill
+syn keyword javaConstant	null
 syn match javaConstant          "\$" 
 " syn match javaConstant          '\#'
 syn keyword javaTypedef		this super
