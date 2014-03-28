@@ -1,9 +1,9 @@
-" Vim syntax file " Language:	  Java
+" Vim syntax file " Language:	  Raft
 " Maintainer:	Claudio Fleiner <claudio@fleiner.com>
-" URL:		http://www.fleiner.com/vim/syntax/java.vim
+" URL:		http://www.fleiner.com/vim/syntax/raft.vim
 " Last Change:	2010 March 23
 
-" Please check :help java.vim for comments on some of the options available.
+" Please check :help raft.vim for comments on some of the options available.
 
 " Quit when a syntax file was already loaded
 if !exists("main_syntax")
@@ -14,330 +14,330 @@ if !exists("main_syntax")
   endif
   " we define it here so that included files can test for it
   let main_syntax='raft'
-  syn region javaFold start="{" end="}" transparent fold
+  syn region raftFold start="{" end="}" transparent fold
 endif
 
 " don't use standard HiLink, it will not work with included syntax files
 if version < 508
-  command! -nargs=+ JavaHiLink hi link <args>
+  command! -nargs=+ RaftHiLink hi link <args>
 else
-  command! -nargs=+ JavaHiLink hi def link <args>
+  command! -nargs=+ RaftHiLink hi def link <args>
 endif
 
-" some characters that cannot be in a java program (outside a string)
-syn match javaError "[`]"
-syn match javaError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|[^-]->\|\*\/"
-syn match javaOK "\.\.\."
+" some characters that cannot be in a raft program (outside a string)
+syn match raftError "[`]"
+syn match raftError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|[^-]->\|\*\/"
+syn match raftOK "\.\.\."
 
-" use separate name so that it can be deleted in javacc.vim
-JavaHiLink javaError2 javaError
+" use separate name so that it can be deleted in raftcc.vim
+RaftHiLink raftError2 raftError
 
 
 
 " keyword definitions
-syn keyword javaExternal	native package
-syn match javaExternal		"#include"
-syn keyword javaError		goto
-syn keyword javaConditional	if else switch
-syn keyword javaRepeat		while for do
-syn match   javaRepeat     "@/"
-syn keyword javaBoolean		true false
-syn keyword javaConstant	null
-syn match javaConstant          "\$" 
-" syn match javaConstant          '\#'
-syn keyword javaTypedef		this super
-syn keyword javaOperator	new alloc free
-syn keyword javaConditional        el onsignal
-syn keyword javaType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
-syn keyword javaType		void
-syn keyword javaStatement	return
-syn keyword javaStorageClass	static synchronized transient volatile final
-syn keyword javaExceptions	throw try catch finally
-syn keyword javaAssert		assert
-syn keyword javaClassDecl	extends implements interface
+syn keyword raftExternal	native package
+syn match raftExternal		"#include"
+syn keyword raftError		goto
+syn keyword raftConditional	if else switch
+syn keyword raftRepeat		while for do
+syn match   raftRepeat     "@/"
+syn keyword raftBoolean		true false
+syn keyword raftConstant	null
+syn match raftConstant          "\$" 
+" syn match raftConstant          '\#'
+syn keyword raftTypedef		this super
+syn keyword raftOperator	new alloc free
+syn keyword raftConditional        el onsignal
+syn keyword raftType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
+syn keyword raftType		void
+syn keyword raftStatement	return
+syn keyword raftStorageClass	static synchronized transient volatile final
+syn keyword raftExceptions	throw try catch finally
+syn keyword raftAssert		assert
+syn keyword raftClassDecl	extends implements interface
 " to differentiate the keyword class from MyClass.class we use a match here
-syn match   javaTypedef		"\.\s*\<class\>"ms=s+1
-syn keyword javaClassDecl	enum
-syn match   javaClassDecl	"^class\>"
-syn match   javaClassDecl	"[^.]\s*\<class\>"ms=s+1
-syn match   javaAnnotation	"@\([_$a-zA-Z][_$a-zA-Z0-9]*\.\)*[_$a-zA-Z][_$a-zA-Z0-9]*\>"
-syn match   javaClassDecl	"@interface\>"
-syn keyword javaBranch		break continue nextgroup=javaUserLabelRef skipwhite
-syn match   javaUserLabelRef	"\k\+" contained
-syn match   javaVarArg		"\.\.\."
-syn keyword javaScopeDecl	@ports @public @protected @private @configs 
-syn keyword javaAnnotation overrides implements streams
-if exists("java_highlight_java_lang_ids")
-  let java_highlight_all=1
+syn match   raftTypedef		"\.\s*\<class\>"ms=s+1
+syn keyword raftClassDecl	enum
+syn match   raftClassDecl	"^class\>"
+syn match   raftClassDecl	"[^.]\s*\<class\>"ms=s+1
+syn match   raftAnnotation	"@\([_$a-zA-Z][_$a-zA-Z0-9]*\.\)*[_$a-zA-Z][_$a-zA-Z0-9]*\>"
+syn match   raftClassDecl	"@interface\>"
+syn keyword raftBranch		break continue nextgroup=raftUserLabelRef skipwhite
+syn match   raftUserLabelRef	"\k\+" contained
+syn match   raftVarArg		"\.\.\."
+syn keyword raftScopeDecl	@ports @public @protected @private @configs 
+syn keyword raftAnnotation overrides implements streams
+if exists("raft_highlight_raft_lang_ids")
+  let raft_highlight_all=1
 endif
-if exists("java_highlight_all")  || exists("java_highlight_java")  || exists("java_highlight_java_lang") 
-  " java.lang.*
-  syn match javaLangClass "\<System\>"
-  syn keyword javaR_JavaLang NegativeArraySizeException ArrayStoreException IllegalStateException RuntimeException IndexOutOfBoundsException UnsupportedOperationException ArrayIndexOutOfBoundsException ArithmeticException ClassCastException EnumConstantNotPresentException StringIndexOutOfBoundsException IllegalArgumentException IllegalMonitorStateException IllegalThreadStateException NumberFormatException NullPointerException TypeNotPresentException SecurityException
-  syn cluster javaTop add=javaR_JavaLang
-  syn cluster javaClasses add=javaR_JavaLang
-  JavaHiLink javaR_JavaLang javaR_Java
-  syn keyword javaC_JavaLang Process RuntimePermission StringKeySet CharacterData01 Class ThreadLocal ThreadLocalMap CharacterData0E Package Character StringCoding Long ProcessImpl ProcessEnvironment Short AssertionStatusDirectives 1PackageInfoProxy UnicodeBlock InheritableThreadLocal AbstractStringBuilder StringEnvironment ClassLoader ConditionalSpecialCasing CharacterDataPrivateUse StringBuffer StringDecoder Entry StringEntry WrappedHook StringBuilder StrictMath State ThreadGroup Runtime CharacterData02 MethodArray Object CharacterDataUndefined Integer Gate Boolean Enum Variable Subset StringEncoder Void Terminator CharsetSD IntegerCache CharacterCache Byte CharsetSE Thread SystemClassLoaderAction CharacterDataLatin1 StringValues StackTraceElement Shutdown ShortCache String ConverterSD ByteCache Lock EnclosingMethodInfo Math Float Value Double SecurityManager LongCache ProcessBuilder StringEntrySet Compiler Number UNIXProcess ConverterSE ExternalData CaseInsensitiveComparator CharacterData00 NativeLibrary
-  syn cluster javaTop add=javaC_JavaLang
-  syn cluster javaClasses add=javaC_JavaLang
-  JavaHiLink javaC_JavaLang javaC_Java
-  syn keyword javaE_JavaLang IncompatibleClassChangeError InternalError UnknownError ClassCircularityError AssertionError ThreadDeath IllegalAccessError NoClassDefFoundError ClassFormatError UnsupportedClassVersionError NoSuchFieldError VerifyError ExceptionInInitializerError InstantiationError LinkageError NoSuchMethodError Error UnsatisfiedLinkError StackOverflowError AbstractMethodError VirtualMachineError OutOfMemoryError
-  syn cluster javaTop add=javaE_JavaLang
-  syn cluster javaClasses add=javaE_JavaLang
-  JavaHiLink javaE_JavaLang javaE_Java
-  syn keyword javaX_JavaLang CloneNotSupportedException Exception NoSuchMethodException IllegalAccessException NoSuchFieldException Throwable InterruptedException ClassNotFoundException InstantiationException
-  syn cluster javaTop add=javaX_JavaLang
-  syn cluster javaClasses add=javaX_JavaLang
-  JavaHiLink javaX_JavaLang javaX_Java
+if exists("raft_highlight_all")  || exists("raft_highlight_raft")  || exists("raft_highlight_raft_lang") 
+  " raft.lang.*
+  syn match raftLangClass "\<System\>"
+  syn keyword raftR_RaftLang NegativeArraySizeException ArrayStoreException IllegalStateException RuntimeException IndexOutOfBoundsException UnsupportedOperationException ArrayIndexOutOfBoundsException ArithmeticException ClassCastException EnumConstantNotPresentException StringIndexOutOfBoundsException IllegalArgumentException IllegalMonitorStateException IllegalThreadStateException NumberFormatException NullPointerException TypeNotPresentException SecurityException
+  syn cluster raftTop add=raftR_RaftLang
+  syn cluster raftClasses add=raftR_RaftLang
+  RaftHiLink raftR_RaftLang raftR_Raft
+  syn keyword raftC_RaftLang Process RuntimePermission StringKeySet CharacterData01 Class ThreadLocal ThreadLocalMap CharacterData0E Package Character StringCoding Long ProcessImpl ProcessEnvironment Short AssertionStatusDirectives 1PackageInfoProxy UnicodeBlock InheritableThreadLocal AbstractStringBuilder StringEnvironment ClassLoader ConditionalSpecialCasing CharacterDataPrivateUse StringBuffer StringDecoder Entry StringEntry WrappedHook StringBuilder StrictMath State ThreadGroup Runtime CharacterData02 MethodArray Object CharacterDataUndefined Integer Gate Boolean Enum Variable Subset StringEncoder Void Terminator CharsetSD IntegerCache CharacterCache Byte CharsetSE Thread SystemClassLoaderAction CharacterDataLatin1 StringValues StackTraceElement Shutdown ShortCache String ConverterSD ByteCache Lock EnclosingMethodInfo Math Float Value Double SecurityManager LongCache ProcessBuilder StringEntrySet Compiler Number UNIXProcess ConverterSE ExternalData CaseInsensitiveComparator CharacterData00 NativeLibrary
+  syn cluster raftTop add=raftC_RaftLang
+  syn cluster raftClasses add=raftC_RaftLang
+  RaftHiLink raftC_RaftLang raftC_Raft
+  syn keyword raftE_RaftLang IncompatibleClassChangeError InternalError UnknownError ClassCircularityError AssertionError ThreadDeath IllegalAccessError NoClassDefFoundError ClassFormatError UnsupportedClassVersionError NoSuchFieldError VerifyError ExceptionInInitializerError InstantiationError LinkageError NoSuchMethodError Error UnsatisfiedLinkError StackOverflowError AbstractMethodError VirtualMachineError OutOfMemoryError
+  syn cluster raftTop add=raftE_RaftLang
+  syn cluster raftClasses add=raftE_RaftLang
+  RaftHiLink raftE_RaftLang raftE_Raft
+  syn keyword raftX_RaftLang CloneNotSupportedException Exception NoSuchMethodException IllegalAccessException NoSuchFieldException Throwable InterruptedException ClassNotFoundException InstantiationException
+  syn cluster raftTop add=raftX_RaftLang
+  syn cluster raftClasses add=raftX_RaftLang
+  RaftHiLink raftX_RaftLang raftX_Raft
 
-  JavaHiLink javaR_Java javaR_
-  JavaHiLink javaC_Java javaC_
-  JavaHiLink javaE_Java javaE_
-  JavaHiLink javaX_Java javaX_
-  JavaHiLink javaX_		     javaExceptions
-  JavaHiLink javaR_		     javaExceptions
-  JavaHiLink javaE_		     javaExceptions
-  JavaHiLink javaC_		     javaConstant
+  RaftHiLink raftR_Raft raftR_
+  RaftHiLink raftC_Raft raftC_
+  RaftHiLink raftE_Raft raftE_
+  RaftHiLink raftX_Raft raftX_
+  RaftHiLink raftX_		     raftExceptions
+  RaftHiLink raftR_		     raftExceptions
+  RaftHiLink raftE_		     raftExceptions
+  RaftHiLink raftC_		     raftConstant
 
-  syn keyword javaLangObject clone equals finalize getClass hashCode
-  syn keyword javaLangObject notify notifyAll toString wait
-  JavaHiLink javaLangObject		     javaConstant
-  syn cluster javaTop add=javaLangObject
-endif
-
-if filereadable(expand("<sfile>:p:h")."/javaid.vim")
-  source <sfile>:p:h/javaid.vim
+  syn keyword raftLangObject clone equals finalize getClass hashCode
+  syn keyword raftLangObject notify notifyAll toString wait
+  RaftHiLink raftLangObject		     raftConstant
+  syn cluster raftTop add=raftLangObject
 endif
 
-if exists("java_space_errors")
-  if !exists("java_no_trail_space_error")
-    syn match	javaSpaceError	"\s\+$"
+if filereadable(expand("<sfile>:p:h")."/raftid.vim")
+  source <sfile>:p:h/raftid.vim
+endif
+
+if exists("raft_space_errors")
+  if !exists("raft_no_trail_space_error")
+    syn match	raftSpaceError	"\s\+$"
   endif
-  if !exists("java_no_tab_space_error")
-    syn match	javaSpaceError	" \+\t"me=e-1
+  if !exists("raft_no_tab_space_error")
+    syn match	raftSpaceError	" \+\t"me=e-1
   endif
 endif
 
-syn region  javaLabelRegion	transparent matchgroup=javaLabel start="\<case\>" matchgroup=NONE end=":" contains=javaNumber,javaCharacter
-syn match   javaUserLabel	"^\s*[_$a-zA-Z][_$a-zA-Z0-9_]*\s*:"he=e-1 contains=javaLabel
-syn keyword javaLabel		default
+syn region  raftLabelRegion	transparent matchgroup=raftLabel start="\<case\>" matchgroup=NONE end=":" contains=raftNumber,raftCharacter
+syn match   raftUserLabel	"^\s*[_$a-zA-Z][_$a-zA-Z0-9_]*\s*:"he=e-1 contains=raftLabel
+syn keyword raftLabel		default
 
-if !exists("java_allow_cpp_keywords")
-  syn keyword javaError extern friend inline redeclared
-  syn keyword javaError register signed template typedef union
-  syn keyword javaError unsigned operator
+if !exists("raft_allow_cpp_keywords")
+  syn keyword raftError extern friend inline redeclared
+  syn keyword raftError register signed template typedef union
+  syn keyword raftError unsigned operator
 endif
 
-" The following cluster contains all java groups except the contained ones
-syn cluster javaTop add=javaExternal,javaError,javaError,javaBranch,javaLabelRegion,javaLabel,javaConditional,javaRepeat,javaBoolean,javaConstant,javaTypedef,javaOperator,javaType,javaType,javaStatement,javaStorageClass,javaAssert,javaExceptions,javaMethodDecl,javaClassDecl,javaClassDecl,javaClassDecl,javaScopeDecl,javaError,javaError2,javaUserLabel,javaLangObject,javaAnnotation,javaVarArg
+" The following cluster contains all raft groups except the contained ones
+syn cluster raftTop add=raftExternal,raftError,raftError,raftBranch,raftLabelRegion,raftLabel,raftConditional,raftRepeat,raftBoolean,raftConstant,raftTypedef,raftOperator,raftType,raftType,raftStatement,raftStorageClass,raftAssert,raftExceptions,raftMethodDecl,raftClassDecl,raftClassDecl,raftClassDecl,raftScopeDecl,raftError,raftError2,raftUserLabel,raftLangObject,raftAnnotation,raftVarArg
 
 
 " Comments
-syn keyword javaTodo		 contained TODO FIXME XXX
-if exists("java_comment_strings")
-  syn region  javaCommentString    contained start=+"+ end=+"+ end=+$+ end=+\*/+me=s-1,he=s-1 contains=javaSpecial,javaCommentStar,javaSpecialChar,@Spell
-  syn region  javaComment2String   contained start=+"+	end=+$\|"+  contains=javaSpecial,javaSpecialChar,@Spell
-  syn match   javaCommentCharacter contained "'\\[^']\{1,6\}'" contains=javaSpecialChar
-  syn match   javaCommentCharacter contained "'\\''" contains=javaSpecialChar
-  syn match   javaCommentCharacter contained "'[^\\]'"
-  syn cluster javaCommentSpecial add=javaCommentString,javaCommentCharacter,javaNumber
-  syn cluster javaCommentSpecial2 add=javaComment2String,javaCommentCharacter,javaNumber
+syn keyword raftTodo		 contained TODO FIXME XXX
+if exists("raft_comment_strings")
+  syn region  raftCommentString    contained start=+"+ end=+"+ end=+$+ end=+\*/+me=s-1,he=s-1 contains=raftSpecial,raftCommentStar,raftSpecialChar,@Spell
+  syn region  raftComment2String   contained start=+"+	end=+$\|"+  contains=raftSpecial,raftSpecialChar,@Spell
+  syn match   raftCommentCharacter contained "'\\[^']\{1,6\}'" contains=raftSpecialChar
+  syn match   raftCommentCharacter contained "'\\''" contains=raftSpecialChar
+  syn match   raftCommentCharacter contained "'[^\\]'"
+  syn cluster raftCommentSpecial add=raftCommentString,raftCommentCharacter,raftNumber
+  syn cluster raftCommentSpecial2 add=raftComment2String,raftCommentCharacter,raftNumber
 endif
-syn region  javaComment		 start="/\*"  end="\*/" contains=@javaCommentSpecial,javaTodo,@Spell
-syn match   javaCommentStar	 contained "^\s*\*[^/]"me=e-1
-syn match   javaCommentStar	 contained "^\s*\*$"
-syn match   javaLineComment	 "//.*" contains=@javaCommentSpecial2,javaTodo,@Spell
-JavaHiLink javaCommentString javaString
-JavaHiLink javaComment2String javaString
-JavaHiLink javaCommentCharacter javaCharacter
+syn region  raftComment		 start="/\*"  end="\*/" contains=@raftCommentSpecial,raftTodo,@Spell
+syn match   raftCommentStar	 contained "^\s*\*[^/]"me=e-1
+syn match   raftCommentStar	 contained "^\s*\*$"
+syn match   raftLineComment	 "//.*" contains=@raftCommentSpecial2,raftTodo,@Spell
+RaftHiLink raftCommentString raftString
+RaftHiLink raftComment2String raftString
+RaftHiLink raftCommentCharacter raftCharacter
 
-syn cluster javaTop add=javaComment,javaLineComment
+syn cluster raftTop add=raftComment,raftLineComment
 
-if !exists("java_ignore_javadoc") && main_syntax != 'jsp'
+if !exists("raft_ignore_raftdoc") && main_syntax != 'jsp'
   syntax case ignore
-  " syntax coloring for javadoc comments (HTML)
-  " syntax include @javaHtml <sfile>:p:h/html.vim
+  " syntax coloring for raftdoc comments (HTML)
+  " syntax include @raftHtml <sfile>:p:h/html.vim
   " unlet b:current_syntax
   " HTML enables spell checking for all text that is not in a syntax item. This
-  " is wrong for Java (all identifiers would be spell-checked), so it's undone
+  " is wrong for Raft (all identifiers would be spell-checked), so it's undone
   " here.
   syntax spell default
 
-  syn region  javaDocComment	start="/\*\*"  end="\*/" keepend contains=javaCommentTitle,@javaHtml,javaDocTags,javaDocSeeTag,javaTodo,@Spell
-  syn region  javaCommentTitle	contained matchgroup=javaDocComment start="/\*\*"   matchgroup=javaCommentTitle keepend end="\.$" end="\.[ \t\r<&]"me=e-1 end="[^{]@"me=s-2,he=s-1 end="\*/"me=s-1,he=s-1 contains=@javaHtml,javaCommentStar,javaTodo,@Spell,javaDocTags,javaDocSeeTag
+  syn region  raftDocComment	start="/\*\*"  end="\*/" keepend contains=raftCommentTitle,@raftHtml,raftDocTags,raftDocSeeTag,raftTodo,@Spell
+  syn region  raftCommentTitle	contained matchgroup=raftDocComment start="/\*\*"   matchgroup=raftCommentTitle keepend end="\.$" end="\.[ \t\r<&]"me=e-1 end="[^{]@"me=s-2,he=s-1 end="\*/"me=s-1,he=s-1 contains=@raftHtml,raftCommentStar,raftTodo,@Spell,raftDocTags,raftDocSeeTag
 
-  syn region javaDocTags	 contained start="{@\(link\|linkplain\|inherit[Dd]oc\|doc[rR]oot\|value\)" end="}"
-  syn match  javaDocTags	 contained "@\(param\|exception\|throws\|since\)\s\+\S\+" contains=javaDocParam
-  syn match  javaDocParam	 contained "\s\S\+"
-  syn match  javaDocTags	 contained "@\(version\|author\|return\|deprecated\|serial\|serialField\|serialData\)\>"
-  syn region javaDocSeeTag	 contained matchgroup=javaDocTags start="@see\s\+" matchgroup=NONE end="\_."re=e-1 contains=javaDocSeeTagParam
-  syn match  javaDocSeeTagParam  contained @"\_[^"]\+"\|<a\s\+\_.\{-}</a>\|\(\k\|\.\)*\(#\k\+\((\_[^)]\+)\)\=\)\=@ extend
+  syn region raftDocTags	 contained start="{@\(link\|linkplain\|inherit[Dd]oc\|doc[rR]oot\|value\)" end="}"
+  syn match  raftDocTags	 contained "@\(param\|exception\|throws\|since\)\s\+\S\+" contains=raftDocParam
+  syn match  raftDocParam	 contained "\s\S\+"
+  syn match  raftDocTags	 contained "@\(version\|author\|return\|deprecated\|serial\|serialField\|serialData\)\>"
+  syn region raftDocSeeTag	 contained matchgroup=raftDocTags start="@see\s\+" matchgroup=NONE end="\_."re=e-1 contains=raftDocSeeTagParam
+  syn match  raftDocSeeTagParam  contained @"\_[^"]\+"\|<a\s\+\_.\{-}</a>\|\(\k\|\.\)*\(#\k\+\((\_[^)]\+)\)\=\)\=@ extend
   syntax case match
 endif
 
 " match the special comment /**/
-syn match   javaComment		 "/\*\*/"
+syn match   raftComment		 "/\*\*/"
 
 " Strings and constants
-syn match   javaSpecialError	 contained "\\."
-syn match   javaSpecialCharError contained "[^']"
-syn match   javaSpecialChar	 contained "\\\([4-9]\d\|[0-3]\d\d\|[\"\\'ntbrf]\|u\x\{4\}\)"
-syn region  javaString		start=+"+ end=+"+ end=+$+ contains=javaSpecialChar,javaSpecialError,@Spell
+syn match   raftSpecialError	 contained "\\."
+syn match   raftSpecialCharError contained "[^']"
+syn match   raftSpecialChar	 contained "\\\([4-9]\d\|[0-3]\d\d\|[\"\\'ntbrf]\|u\x\{4\}\)"
+syn region  raftString		start=+"+ end=+"+ end=+$+ contains=raftSpecialChar,raftSpecialError,@Spell
 " next line disabled, it can cause a crash for a long line
-"syn match   javaStringError	  +"\([^"\\]\|\\.\)*$+
-syn match   javaCharacter	 "'[^']*'" contains=javaSpecialChar,javaSpecialCharError
-syn match   javaCharacter	 "'\\''" contains=javaSpecialChar
-syn match   javaCharacter	 "'[^\\]'"
-syn match   javaNumber		 "\<\(0[0-7]*\|0[xX]\x\+\|\d\+\)[lL]\=\>"
-syn match   javaNumber		 "\(\<\d\+\.\d*\|\.\d\+\)\([eE][-+]\=\d\+\)\=[fFdD]\="
-syn match   javaNumber		 "\<\d\+[eE][-+]\=\d\+[fFdD]\=\>"
-syn match   javaNumber		 "\<\d\+\([eE][-+]\=\d\+\)\=[fFdD]\>"
+"syn match   raftStringError	  +"\([^"\\]\|\\.\)*$+
+syn match   raftCharacter	 "'[^']*'" contains=raftSpecialChar,raftSpecialCharError
+syn match   raftCharacter	 "'\\''" contains=raftSpecialChar
+syn match   raftCharacter	 "'[^\\]'"
+syn match   raftNumber		 "\<\(0[0-7]*\|0[xX]\x\+\|\d\+\)[lL]\=\>"
+syn match   raftNumber		 "\(\<\d\+\.\d*\|\.\d\+\)\([eE][-+]\=\d\+\)\=[fFdD]\="
+syn match   raftNumber		 "\<\d\+[eE][-+]\=\d\+[fFdD]\=\>"
+syn match   raftNumber		 "\<\d\+\([eE][-+]\=\d\+\)\=[fFdD]\>"
 
 " unicode characters
-syn match   javaSpecial "\\u\d\{4\}"
+syn match   raftSpecial "\\u\d\{4\}"
 
-syn cluster javaTop add=javaString,javaCharacter,javaNumber,javaSpecial,javaStringError
+syn cluster raftTop add=raftString,raftCharacter,raftNumber,raftSpecial,raftStringError
 
-if exists("java_highlight_functions")
-  if java_highlight_functions == "indent"
-    syn match  javaFuncDef "^\(\t\| \{8\}\)[_$a-zA-Z][_$a-zA-Z0-9_. \[\]]*([^-+*/()]*)" contains=javaScopeDecl,javaType,javaStorageClass,@javaClasses
-    syn region javaFuncDef start=+^\(\t\| \{8\}\)[$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*,\s*+ end=+)+ contains=javaScopeDecl,javaType,javaStorageClass,@javaClasses
-    syn match  javaFuncDef "^  [$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*)" contains=javaScopeDecl,javaType,javaStorageClass,@javaClasses
-    syn region javaFuncDef start=+^  [$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*,\s*+ end=+)+ contains=javaScopeDecl,javaType,javaStorageClass,@javaClasses
+if exists("raft_highlight_functions")
+  if raft_highlight_functions == "indent"
+    syn match  raftFuncDef "^\(\t\| \{8\}\)[_$a-zA-Z][_$a-zA-Z0-9_. \[\]]*([^-+*/()]*)" contains=raftScopeDecl,raftType,raftStorageClass,@raftClasses
+    syn region raftFuncDef start=+^\(\t\| \{8\}\)[$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*,\s*+ end=+)+ contains=raftScopeDecl,raftType,raftStorageClass,@raftClasses
+    syn match  raftFuncDef "^  [$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*)" contains=raftScopeDecl,raftType,raftStorageClass,@raftClasses
+    syn region raftFuncDef start=+^  [$_a-zA-Z][$_a-zA-Z0-9_. \[\]]*([^-+*/()]*,\s*+ end=+)+ contains=raftScopeDecl,raftType,raftStorageClass,@raftClasses
   else
     " This line catches method declarations at any indentation>0, but it assumes
     " two things:
     "	1. class names are always capitalized (ie: Button)
     "	2. method names are never capitalized (except constructors, of course)
-    syn region javaFuncDef start=+^\s\+\(\(public\|protected\|private\|static\|abstract\|final\|system\|implements\|native\|synchronized\)\s\+\)*\(\(void\|boolean\|char\|byte\|short\|int\|long\|float\|double\|\([A-Za-z_][A-Za-z0-9_$]*\.\)*[A-Z][A-Za-z0-9_$]*\)\(<[^>]*>\)\=\(\[\]\)*\s\+[a-z][A-Za-z0-9_$]*\|[A-Z][A-Za-z0-9_$]*\)\s*([^0-9]+ end=+)+ contains=javaScopeDecl,javaType,javaStorageClass,javaComment,javaLineComment,@javaClasses
+    syn region raftFuncDef start=+^\s\+\(\(public\|protected\|private\|static\|abstract\|final\|system\|implements\|native\|synchronized\)\s\+\)*\(\(void\|boolean\|char\|byte\|short\|int\|long\|float\|double\|\([A-Za-z_][A-Za-z0-9_$]*\.\)*[A-Z][A-Za-z0-9_$]*\)\(<[^>]*>\)\=\(\[\]\)*\s\+[a-z][A-Za-z0-9_$]*\|[A-Z][A-Za-z0-9_$]*\)\s*([^0-9]+ end=+)+ contains=raftScopeDecl,raftType,raftStorageClass,raftComment,raftLineComment,@raftClasses
   endif
-  syn match  javaBraces  "[{}]"
-  syn cluster javaTop add=javaFuncDef,javaBraces
+  syn match  raftBraces  "[{}]"
+  syn cluster raftTop add=raftFuncDef,raftBraces
 endif
 
-if exists("java_highlight_debug")
+if exists("raft_highlight_debug")
 
   " Strings and constants
-  syn match   javaDebugSpecial		contained "\\\d\d\d\|\\."
-  syn region  javaDebugString		contained start=+"+  end=+"+  contains=javaDebugSpecial
-  syn match   javaDebugStringError	+"\([^"\\]\|\\.\)*$+
-  syn match   javaDebugCharacter	contained "'[^\\]'"
-  syn match   javaDebugSpecialCharacter contained "'\\.'"
-  syn match   javaDebugSpecialCharacter contained "'\\''"
-  syn match   javaDebugNumber		contained "\<\(0[0-7]*\|0[xX]\x\+\|\d\+\)[lL]\=\>"
-  syn match   javaDebugNumber		contained "\(\<\d\+\.\d*\|\.\d\+\)\([eE][-+]\=\d\+\)\=[fFdD]\="
-  syn match   javaDebugNumber		contained "\<\d\+[eE][-+]\=\d\+[fFdD]\=\>"
-  syn match   javaDebugNumber		contained "\<\d\+\([eE][-+]\=\d\+\)\=[fFdD]\>"
-  syn keyword javaDebugBoolean		contained true false
-  syn keyword javaDebugType		contained null this super
-  syn region javaDebugParen  start=+(+ end=+)+ contained contains=javaDebug.*,javaDebugParen
+  syn match   raftDebugSpecial		contained "\\\d\d\d\|\\."
+  syn region  raftDebugString		contained start=+"+  end=+"+  contains=raftDebugSpecial
+  syn match   raftDebugStringError	+"\([^"\\]\|\\.\)*$+
+  syn match   raftDebugCharacter	contained "'[^\\]'"
+  syn match   raftDebugSpecialCharacter contained "'\\.'"
+  syn match   raftDebugSpecialCharacter contained "'\\''"
+  syn match   raftDebugNumber		contained "\<\(0[0-7]*\|0[xX]\x\+\|\d\+\)[lL]\=\>"
+  syn match   raftDebugNumber		contained "\(\<\d\+\.\d*\|\.\d\+\)\([eE][-+]\=\d\+\)\=[fFdD]\="
+  syn match   raftDebugNumber		contained "\<\d\+[eE][-+]\=\d\+[fFdD]\=\>"
+  syn match   raftDebugNumber		contained "\<\d\+\([eE][-+]\=\d\+\)\=[fFdD]\>"
+  syn keyword raftDebugBoolean		contained true false
+  syn keyword raftDebugType		contained null this super
+  syn region raftDebugParen  start=+(+ end=+)+ contained contains=raftDebug.*,raftDebugParen
 
   " to make this work you must define the highlighting for these groups
-  syn match javaDebug "\<System\.\(out\|err\)\.print\(ln\)*\s*("me=e-1 contains=javaDebug.* nextgroup=javaDebugParen
-  syn match javaDebug "\<p\s*("me=e-1 contains=javaDebug.* nextgroup=javaDebugParen
-  syn match javaDebug "[A-Za-z][a-zA-Z0-9_]*\.printStackTrace\s*("me=e-1 contains=javaDebug.* nextgroup=javaDebugParen
-  syn match javaDebug "\<trace[SL]\=\s*("me=e-1 contains=javaDebug.* nextgroup=javaDebugParen
+  syn match raftDebug "\<System\.\(out\|err\)\.print\(ln\)*\s*("me=e-1 contains=raftDebug.* nextgroup=raftDebugParen
+  syn match raftDebug "\<p\s*("me=e-1 contains=raftDebug.* nextgroup=raftDebugParen
+  syn match raftDebug "[A-Za-z][a-zA-Z0-9_]*\.printStackTrace\s*("me=e-1 contains=raftDebug.* nextgroup=raftDebugParen
+  syn match raftDebug "\<trace[SL]\=\s*("me=e-1 contains=raftDebug.* nextgroup=raftDebugParen
 
-  syn cluster javaTop add=javaDebug
+  syn cluster raftTop add=raftDebug
 
   if version >= 508 || !exists("did_c_syn_inits")
-    JavaHiLink javaDebug		 Debug
-    JavaHiLink javaDebugString		 DebugString
-    JavaHiLink javaDebugStringError	 javaError
-    JavaHiLink javaDebugType		 DebugType
-    JavaHiLink javaDebugBoolean		 DebugBoolean
-    JavaHiLink javaDebugNumber		 Debug
-    JavaHiLink javaDebugSpecial		 DebugSpecial
-    JavaHiLink javaDebugSpecialCharacter DebugSpecial
-    JavaHiLink javaDebugCharacter	 DebugString
-    JavaHiLink javaDebugParen		 Debug
+    RaftHiLink raftDebug		 Debug
+    RaftHiLink raftDebugString		 DebugString
+    RaftHiLink raftDebugStringError	 raftError
+    RaftHiLink raftDebugType		 DebugType
+    RaftHiLink raftDebugBoolean		 DebugBoolean
+    RaftHiLink raftDebugNumber		 Debug
+    RaftHiLink raftDebugSpecial		 DebugSpecial
+    RaftHiLink raftDebugSpecialCharacter DebugSpecial
+    RaftHiLink raftDebugCharacter	 DebugString
+    RaftHiLink raftDebugParen		 Debug
 
-    JavaHiLink DebugString		 String
-    JavaHiLink DebugSpecial		 Special
-    JavaHiLink DebugBoolean		 Boolean
-    JavaHiLink DebugType		 Type
+    RaftHiLink DebugString		 String
+    RaftHiLink DebugSpecial		 Special
+    RaftHiLink DebugBoolean		 Boolean
+    RaftHiLink DebugType		 Type
   endif
 endif
 
-if exists("java_mark_braces_in_parens_as_errors")
-  syn match javaInParen		 contained "[{}]"
-  JavaHiLink javaInParen	javaError
-  syn cluster javaTop add=javaInParen
+if exists("raft_mark_braces_in_parens_as_errors")
+  syn match raftInParen		 contained "[{}]"
+  RaftHiLink raftInParen	raftError
+  syn cluster raftTop add=raftInParen
 endif
 
 " catch errors caused by wrong parenthesis
-syn region  javaParenT	transparent matchgroup=javaParen  start="("  end=")" contains=@javaTop,javaParenT1
-syn region  javaParenT1 transparent matchgroup=javaParen1 start="(" end=")" contains=@javaTop,javaParenT2 contained
-syn region  javaParenT2 transparent matchgroup=javaParen2 start="(" end=")" contains=@javaTop,javaParenT  contained
-syn match   javaParenError	 ")"
+syn region  raftParenT	transparent matchgroup=raftParen  start="("  end=")" contains=@raftTop,raftParenT1
+syn region  raftParenT1 transparent matchgroup=raftParen1 start="(" end=")" contains=@raftTop,raftParenT2 contained
+syn region  raftParenT2 transparent matchgroup=raftParen2 start="(" end=")" contains=@raftTop,raftParenT  contained
+syn match   raftParenError	 ")"
 " catch errors caused by wrong square parenthesis
-syn region  javaParenT	transparent matchgroup=javaParen  start="\["  end="\]" contains=@javaTop,javaParenT1
-syn region  javaParenT1 transparent matchgroup=javaParen1 start="\[" end="\]" contains=@javaTop,javaParenT2 contained
-syn region  javaParenT2 transparent matchgroup=javaParen2 start="\[" end="\]" contains=@javaTop,javaParenT  contained
-syn match   javaParenError	 "\]"
+syn region  raftParenT	transparent matchgroup=raftParen  start="\["  end="\]" contains=@raftTop,raftParenT1
+syn region  raftParenT1 transparent matchgroup=raftParen1 start="\[" end="\]" contains=@raftTop,raftParenT2 contained
+syn region  raftParenT2 transparent matchgroup=raftParen2 start="\[" end="\]" contains=@raftTop,raftParenT  contained
+syn match   raftParenError	 "\]"
 
-JavaHiLink javaParenError	javaError
+RaftHiLink raftParenError	raftError
 
-if !exists("java_minlines")
-  let java_minlines = 10
+if !exists("raft_minlines")
+  let raft_minlines = 10
 endif
-exec "syn sync ccomment javaComment minlines=" . java_minlines
+exec "syn sync ccomment raftComment minlines=" . raft_minlines
 
 " The default highlighting.
-if version >= 508 || !exists("did_java_syn_inits")
+if version >= 508 || !exists("did_raft_syn_inits")
   if version < 508
-    let did_java_syn_inits = 1
+    let did_raft_syn_inits = 1
   endif
-  JavaHiLink javaFuncDef		Function
-  JavaHiLink javaVarArg			Function
-  JavaHiLink javaBraces			Function
-  JavaHiLink javaBranch			Conditional
-  JavaHiLink javaUserLabelRef		javaUserLabel
-  JavaHiLink javaLabel			Label
-  JavaHiLink javaUserLabel		Label
-  JavaHiLink javaConditional		Conditional
-  JavaHiLink javaRepeat			Repeat
-  JavaHiLink javaExceptions		Exception
-  JavaHiLink javaAssert			Statement
-  JavaHiLink javaStorageClass		StorageClass
-  JavaHiLink javaMethodDecl		javaStorageClass
-  JavaHiLink javaClassDecl		javaStorageClass
-  JavaHiLink javaScopeDecl		javaStorageClass
-  JavaHiLink javaBoolean		Boolean
-  JavaHiLink javaSpecial		Special
-  JavaHiLink javaSpecialError		Error
-  JavaHiLink javaSpecialCharError	Error
-  JavaHiLink javaString			String
-  JavaHiLink javaCharacter		Character
-  JavaHiLink javaSpecialChar		SpecialChar
-  JavaHiLink javaNumber			Number
-  JavaHiLink javaError			Error
-  JavaHiLink javaStringError		Error
-  JavaHiLink javaStatement		Statement
-  JavaHiLink javaOperator		Operator
-  JavaHiLink javaComment		Comment
-  JavaHiLink javaDocComment		Comment
-  JavaHiLink javaLineComment		Comment
-  JavaHiLink javaConstant		Constant
-  JavaHiLink javaTypedef		Typedef
-  JavaHiLink javaTodo			Todo
-  JavaHiLink javaAnnotation		PreProc
+  RaftHiLink raftFuncDef		Function
+  RaftHiLink raftVarArg			Function
+  RaftHiLink raftBraces			Function
+  RaftHiLink raftBranch			Conditional
+  RaftHiLink raftUserLabelRef		raftUserLabel
+  RaftHiLink raftLabel			Label
+  RaftHiLink raftUserLabel		Label
+  RaftHiLink raftConditional		Conditional
+  RaftHiLink raftRepeat			Repeat
+  RaftHiLink raftExceptions		Exception
+  RaftHiLink raftAssert			Statement
+  RaftHiLink raftStorageClass		StorageClass
+  RaftHiLink raftMethodDecl		raftStorageClass
+  RaftHiLink raftClassDecl		raftStorageClass
+  RaftHiLink raftScopeDecl		raftStorageClass
+  RaftHiLink raftBoolean		Boolean
+  RaftHiLink raftSpecial		Special
+  RaftHiLink raftSpecialError		Error
+  RaftHiLink raftSpecialCharError	Error
+  RaftHiLink raftString			String
+  RaftHiLink raftCharacter		Character
+  RaftHiLink raftSpecialChar		SpecialChar
+  RaftHiLink raftNumber			Number
+  RaftHiLink raftError			Error
+  RaftHiLink raftStringError		Error
+  RaftHiLink raftStatement		Statement
+  RaftHiLink raftOperator		Operator
+  RaftHiLink raftComment		Comment
+  RaftHiLink raftDocComment		Comment
+  RaftHiLink raftLineComment		Comment
+  RaftHiLink raftConstant		Constant
+  RaftHiLink raftTypedef		Typedef
+  RaftHiLink raftTodo			Todo
+  RaftHiLink raftAnnotation		PreProc
 
-  JavaHiLink javaCommentTitle		SpecialComment
-  JavaHiLink javaDocTags		Special
-  JavaHiLink javaDocParam		Function
-  JavaHiLink javaDocSeeTagParam		Function
-  JavaHiLink javaCommentStar		javaComment
+  RaftHiLink raftCommentTitle		SpecialComment
+  RaftHiLink raftDocTags		Special
+  RaftHiLink raftDocParam		Function
+  RaftHiLink raftDocSeeTagParam		Function
+  RaftHiLink raftCommentStar		raftComment
 
-  JavaHiLink javaType			Type
-  JavaHiLink javaExternal		Include
+  RaftHiLink raftType			Type
+  RaftHiLink raftExternal		Include
 
-  JavaHiLink htmlComment		Special
-  JavaHiLink htmlCommentPart		Special
-  JavaHiLink javaSpaceError		Error
+  RaftHiLink htmlComment		Special
+  RaftHiLink htmlCommentPart		Special
+  RaftHiLink raftSpaceError		Error
 endif
 
-delcommand JavaHiLink
+delcommand RaftHiLink
 
 let b:current_syntax = "raft"
 

@@ -76,7 +76,7 @@ class Sum< class T extends Raft.number >
    void main( String args[]( null ) )
    {
       /** read in a .csv file as a stream */
-      Raft.inputStream input_stream<float32>( Raft.system.read( args[1], "list" ) );
+      Raft.inputStream input_stream< float32 >( Raft.system.read( args[1], "list" ) );
       
       /** instantiate a sum object */
       Sum s< float32 >();
