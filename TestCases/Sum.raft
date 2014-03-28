@@ -27,6 +27,14 @@ class Sum< class T extends Raft.number >
     */
    streams T out Sum [[ T in ]]
    {
+      /**
+       * Streams (the thing with the name "in") are objects
+       * that have several fields, one is good() to indicate
+       * the stream is open, without errors and has data.  The
+       * others are fields to indicate signals from the upstream
+       * sender such as the in.EOD which is the "End of Data"
+       * signal. 
+       */
       while( in.good() )
       {
          /**
