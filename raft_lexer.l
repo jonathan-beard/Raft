@@ -107,6 +107,8 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "@public:"              { TOKEN( ATPUBLIC ); }  /* set visibility public */
 "@private:"               { TOKEN( ATPRIVATE ); } /* visibility private */
 "@protected:"             { TOKEN( ATPROTECTED ); } /* visitility protected */
+"onsignal"              { TOKEN( SIGNAL ); }
+"in"                    { TOKEN( IN ); }
 "return"                { TOKEN( RETURN ); }
 "void"                  { TOKEN( VOID ); }
 "this"                  { TOKEN( THIS ); }

@@ -414,7 +414,9 @@
 %token       LAMBDAKERNEL
 %token       ATPUBLIC
 %token       ATPRIVATE  
-%token       ATPROTECTED  
+%token       ATPROTECTED 
+%token       SIGNAL
+%token       IN
 %token       RETURN  
 %token       VOID  
 %token       THIS  
