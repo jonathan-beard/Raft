@@ -2537,17 +2537,15 @@ Raft::Parser::error( const std::string &err_message )
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
    data.get_rf_errorstream() << "Parser error, in file with " << 
-   str << " with input \"" 
+   str 
+<< " with input \"" 
       << data.get_rf_parsestream().str() << "\"";
+   //TODO fix for multiple levels of include
    if( is_included_file )
    {
       std::string str_included( data.get_cpp_handler().PeekBelowHead() );
       data.get_rf_errorstream() << ",\n" <<
       "in included from file with " << str_included << ".\n";
-   }
-   else
-   {
-      data.get_rf_errorstream() << ".\n";
    }
    data.get_rf_errorstream() << "Error is somewhere in the line:\n" <<
    data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
