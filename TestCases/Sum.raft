@@ -22,17 +22,29 @@ class Sum< class T extends Raft.number >
 
 @public:
 
+   /**
+    * Sum - streaming function, always synchronized
+    * unless the user specifically uses the keyword
+    * "unsynchronized."  If that's the case then the 
+    * user is responsible for locking, unlocking and/or
+    * ensuring sequential consistency
+    */
    streams T out Sum [[ T in ]]
    {
       /**
-       * By definition work blocks lock non-thread
-       * local vars while inside the work block unless
-       * a user specifies un-synchronized behavior
+       * alternatively, you could also do this if unsynchronized
+       * Raft.lock( sum ) 
+       * or eventually there will be a library function
+       * that implements increment with primitive test / test & set
+       * locks
        */
-      work
-      {
-         sum += in;
-      } 
+      
+      sum += in;
+      
+      /**
+       * Raft.unlock( sum )
+       */
+
       onsignal( in.EOD )
       {
          /** 
