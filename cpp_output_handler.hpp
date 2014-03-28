@@ -70,6 +70,7 @@ struct File{
 
       std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
 
+      //FIXME use the method here for matching errors in parser
       std::stringstream output;
       output << "\033[1;31m";
       output << onlyfilename << " " <<  lineno << ": " 
