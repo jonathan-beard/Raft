@@ -12,6 +12,7 @@
 using namespace Raft;
 
 CPP_OutputHandler::CPP_OutputHandler( Data &d) :
+                                                   comment( false ),
                                                    data( d )
 {
    /* nothing really to do */
@@ -51,7 +52,7 @@ CPP_OutputHandler::AddUpdate( int64_t     lineno,
          remove_head();
          assert( has_head() == true );
          File &f( get_head() );
-         f.lineno = lineno;
+         f.lineno = (--lineno);
       }
       break;
       case( SYSTEM ):
@@ -177,6 +178,24 @@ CPP_OutputHandler::GetHeadCurrentLine()
    {
       return( "Error, no current file!!" );
    }
+}
+
+bool
+CPP_OutputHandler::IsComment()
+{
+   return( comment );
+}
+
+void
+CPP_OutputHandler::StartComment()
+{
+   comment = true;
+}
+
+void
+CPP_OutputHandler::EndComment()
+{
+   comment = false;
 }
 
 /**

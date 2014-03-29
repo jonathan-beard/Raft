@@ -2537,18 +2537,23 @@ Raft::Parser::error( const std::string &err_message )
    std::string str( data.get_cpp_handler().PeekHead() );
    const bool is_included_file( data.get_cpp_handler().IsHeadIncludedFile() );
    data.get_rf_errorstream() << "Parser error, in file with " << 
-   str 
-<< " with input \"" 
-      << data.get_rf_parsestream().str() << "\"";
-   //TODO fix for multiple levels of include
+   str << "\n"; 
+   
    if( is_included_file )
    {
       std::string str_included( data.get_cpp_handler().PeekBelowHead() );
       data.get_rf_errorstream() << ",\n" <<
       "in included from file with " << str_included << ".\n";
    }
-   data.get_rf_errorstream() << "Error is somewhere in the line:\n" <<
-   data.get_cpp_handler().GetHeadCurrentLine() << "\n\n";
+   /**
+    * TODO, here's what needs to happen.  Bison seems to have issues 
+    * with the line counting, so what we need to do is get the actual current 
+    * line, by checking to see if the current parse stream and the 
+    * head stored in cpp_handler are the same, if not then grab the file
+    * search the string and print the line out.
+    */
+   data.get_rf_errorstream() << "Somewhere in the line:" << "\n" <<
+   data.get_rf_parsestream().str() << "\n" << data.get_cpp_handler().GetHeadCurrentLine() << "\n";
    data.reset_rf_parsestream();
 }
 

@@ -37,7 +37,7 @@ struct File{
    
    std::ostream&  print( std::ostream &stream )
    {
-      stream << "filename \"" << filename << "\" @ line (" << lineno << ")";
+      stream << "filename \"" << filename << "\" @ line (" << (lineno + 1) << ")";
       return( stream );
    }
 
@@ -70,7 +70,6 @@ struct File{
 
       std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
 
-      //FIXME use the method here for matching errors in parser
       std::stringstream output;
       output << "\033[1;31m";
       output << onlyfilename << " " <<  lineno << ": " 
@@ -162,6 +161,11 @@ public:
    std::string PeekHead();
 
    std::string GetHeadCurrentLine();
+
+   bool  IsComment();
+   void  StartComment();
+   void  EndComment();
+
 protected:
    virtual void  add_file_object( File *f );
    virtual bool  has_head();
@@ -171,6 +175,7 @@ protected:
    virtual void  remove_head();
 private:
    std::vector< File* >  cpp_access_queue; 
+   bool  comment;
    Data &data;
 };
 
