@@ -14,6 +14,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "FindLine.hpp"
 #include "common.hpp"
 
 namespace Raft{
@@ -37,7 +38,7 @@ struct File{
    
    std::ostream&  print( std::ostream &stream )
    {
-      stream << "filename \"" << filename << "\" @ line (" << (lineno + 1) << ")";
+      stream << "filename \"" << filename << "\" around line (" << (lineno) << ")";
       return( stream );
    }
 
@@ -58,6 +59,7 @@ struct File{
    std::string GetCurrentLine( Data &d )
    {
       assert( filename.compare( "" ) != 0 );
+#if(0)
       std::ifstream input;
       input.open( filename, std::ifstream::in );
       int64_t curr_line( 0 );
@@ -67,14 +69,14 @@ struct File{
          std::getline( input, line );
       }
       input.close();
-
-      std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
-
-      std::stringstream output;
-      output << "\033[1;31m";
-      output << onlyfilename << " " <<  lineno << ": " 
-      << "\033[0m" << line;
-      return( output.str() );
+#endif
+      std::string current_parse_stream( d.get_rf_parsestream().str() );
+      
+      std::string line( FindLine::findLine( filename,
+                                            lineno,
+                                            current_parse_stream ) );
+      d.reset_rf_parsestream();
+      return( line );
    }
    
    int64_t     lineno;

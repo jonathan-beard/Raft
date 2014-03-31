@@ -245,7 +245,6 @@ CPP_OutputHandler::remove_head()
 {
    assert( has_head() == true );
    File *end( cpp_access_queue.back() );
-   end->print( std::cerr ) << "\n";
    delete( end );
    cpp_access_queue.erase( --cpp_access_queue.end() );
 }

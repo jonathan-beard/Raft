@@ -50,7 +50,7 @@ FindLine::findLine( const std::string filename,
    const std::string normal( "\033[0m" );
    const std::string red( "\033[1;31m" );
 
-    std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
+   std::string onlyfilename( Common::GetFileNameFromPath( filename ) );
 
    std::stringstream ss;
    while( queue.size() > 0 )
@@ -63,16 +63,39 @@ FindLine::findLine( const std::string filename,
    /** then highlight with appropriate colors **/
  
    std::string text( ss.str() );
+#if(0)
+   /** trim the phrase **/
+   const auto strBegin( phrase.find_first_not_of( " " ) );
+   if( strBegin == phrase.length() ) return( text );
 
+   const auto strEnd( phrase.find_last_not_of( " " ) );
+   const auto strLength( strEnd - strBegin + 1 );
+
+
+   const std::string trimPhrase( phrase.substr( strBegin, strLength ) );
+#endif   
    size_t start_index(  text.find( phrase ) );
-   size_t end_index(    text.find_first_not_of( phrase, start_index ) );
 
+   if( start_index == 0 || start_index > text.length() )
+   {
+      return( text );
+   }
+   
+   size_t end_index(    text.find_first_not_of( phrase, start_index ) );
+   if( end_index <= 0 || end_index > text.length() )
+   {
+      return( text );
+   }
+   
+
+  
 
    std::string start( text.substr( 0,start_index ) );
    std::string end( text.substr( end_index ) );
 
-   std::cout << start << blue << phrase << normal << end << "\n"; 
+   std::stringstream output;
+   output << start << " " << blue << phrase << normal << " " << end << "\n"; 
 
    input.close();
-   return( "foo" );
+   return( output.str() );
 }
