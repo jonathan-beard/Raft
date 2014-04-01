@@ -1,0 +1,28 @@
+class Foo{
+/**
+ * This is a comment.
+ */
+@private:
+   int8 x( 0 );
+   /**
+    * Sum - streaming function, always synchronized
+    * unless the user specifically uses the keyword
+    * unsynchronized.  If that's the case then the 
+    * user is responsible for locking, unlocking and/or
+    * ensuring sequential consistency.  The stream in
+    * hmm
+    **/
+   void temp( int8 arg )
+   {
+      //do something
+   }
+@public:
+   /**
+    * This is a comment.
+    * that spans multiple lines
+    */
+   void main( String args[](nill) )
+   {
+      
+   }
+}

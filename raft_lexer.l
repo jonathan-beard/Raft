@@ -66,11 +66,20 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
                     }
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
 
-<INITIAL>"/*"     BEGIN( ML_COMMENT ); 
-                  
+<INITIAL>{
+"/**"        BEGIN( ML_COMMENT ); 
+"/*"        BEGIN( ML_COMMENT ); 
+}
+
 <ML_COMMENT>{
-"*/"              BEGIN( INITIAL );
+"*/"                 BEGIN( INITIAL );
+"*"
+[^*\n]+
 .                 { PUSHTOSTREAM( yytext ); }
+"\n"              {
+                        data.reset_rf_parsestream(); 
+                        data.get_cpp_handler().IncrementHead();
+                  }
 }
 
 "//".+[^\n]*             {

@@ -1251,6 +1251,10 @@ SelectionStatementInit  :
                            /** false **/
                            $$->AdoptChildren( new EmptyStatement() );
                         }
+                    |   SIGNAL LPAREN QualifiedName RPAREN Statement
+                        {
+                           $$ = new NodeAbstract();
+                        }
                     ;
 
 IterationStatement   :  WHILE LPAREN Expression RPAREN Statement

@@ -1,4 +1,4 @@
-/**
+/*
  * Sum - a test class for the Raft language.  This
  * is the first real app, as it was for the AutoPipe
  * streaming language.  This is also a generic class,
@@ -13,7 +13,6 @@ class Sum< class T extends Raft.number >
 @private:
    T sum( T.cast( 0 ) );
 @public:
-
    /**
     * Sum - streaming function, always synchronized
     * unless the user specifically uses the keyword
@@ -29,46 +28,35 @@ class Sum< class T extends Raft.number >
    streams T sum [[ T in ]]
    {
       /**
-       * Streams (the thing with the name "in") are objects
-       * that have several fields, one is good() to indicate
-       * the stream is open, without errors and has data.  The
-       * others are fields to indicate signals from the upstream
-       * sender such as the in.EOD which is the "End of Data"
-       * signal. 
+       * alternatively, you could also do this if unsynchronized
+       * Raft.lock( sum ) 
+       * or eventually there will be a library function
+       * that implements increment with primitive test / test & set
+       * locks
        */
-      while( in.good() )
-      {
-         /**
-          * alternatively, you could also do this if unsynchronized
-          * Raft.lock( sum ) 
-          * or eventually there will be a library function
-          * that implements increment with primitive test / test & set
-          * locks
-          */
-         
-         sum += in;
-         
-         /**
-          * Raft.unlock( sum )
-          */
+      
+      sum += in;
+      
+      /**
+       * Raft.unlock( sum )
+       */
 
-         /**
-          * keyword onsignal, provides synchronous signalling
-          * inside streaming functions.
+      /*
+       * keyword onsignal, provides synchronous signalling
+       * inside streaming functions.
+       */
+      onsignal( in.EOD )
+      {
+         /** 
+          * each port has several signals, this being
+          * EOD or End of Data, meaning the run-time
+          * has detected that there is no more data 
+          * comming in on the input streams, empty them
+          * and then this signal will be thrown, the first
+          * one to catch it returns the value and all other
+          * streaming kernels will exit gracefully. 
           */
-         onsignal( in.EOD )
-         {
-            /** 
-             * each port has several signals, this being
-             * EOD or End of Data, meaning the run-time
-             * has detected that there is no more data 
-             * comming in on the input streams, empty them
-             * and then this signal will be thrown, the first
-             * one to catch it returns the value and all other
-             * streaming kernels will exit gracefully. 
-             */
-            return( sum );
-         }
+         return( sum );
       }
    }
 
