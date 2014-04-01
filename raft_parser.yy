@@ -681,6 +681,7 @@ TypeDeclaration   :     ClassDeclaration
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
+                           //TODO 
                            NodeAbstract *cls( nullptr );
                            cls = new ClassDeclaration( *$3 );
                            assert( cls != nullptr );
