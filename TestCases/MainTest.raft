@@ -1,4 +1,6 @@
 class Foo{
+@private:
+   int8 x( 0 );
 @public:
    void main( String args[](nill) )
    {

@@ -11,7 +11,7 @@
 namespace Node {
 class ClassImplements : public ClassInherit {
 public:
-   ClassImplements(const std::string name );
+   ClassImplements();
    virtual ~ClassImplements() = default;
 };
 }

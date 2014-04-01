@@ -600,6 +600,8 @@
 %type    <node>    ArraySlice
 %type    <node>    ArrayAccessOptions
 %type    <node>    Slice
+%type    <node>    GenericRestrictions
+%type    <node>    ClassList 
 
 %%
 CompilationUnit   :     END
@@ -733,14 +735,14 @@ GenericList :  GenericListA
                }
             ;
 
-GenericListA : CLASS IDENTIFIER
+GenericListA : CLASS IDENTIFIER GenericRestrictions
                {
                   NodeAbstract *cl( nullptr );
                   cl = new GenericClassParam( *$2 );
                   delete( $2 );
                   $$ = cl;
                }
-            |  Type  IDENTIFIER  TypeModifier
+            |  Type  IDENTIFIER  TypeModifier GenericRestrictions
                {
                   NodeAbstract *cl( nullptr );
                   cl = new GenericTypeParam( *$2 );
@@ -749,43 +751,61 @@ GenericListA : CLASS IDENTIFIER
                   cl->AdoptChildren( $3 );
                   $$ = cl;
                }
-            |  Type IDENTIFIER
+            |  Type IDENTIFIER GenericRestrictions
                {
                   GenericTypeParam *cl = new GenericTypeParam( *$2 );
                   cl->AdoptChildren( $1 );
                   delete( $2 );
                   $$ = cl;
                }
-            |  Type  Initializer
-               {
-                  NodeAbstract *cl( nullptr );
-                  cl = new GenericTypeMultiple();
-                  cl->AdoptChildren( $1 );
-                  cl->AdoptChildren( $2 );
-                  $$ = cl;
-               }
             ;
 
+GenericRestrictions : EXTENDS Type
+                    {
+                      $$ = new NodeAbstract();
+                      $$->AdoptChildren( $2 );
+                    }
+                    | IMPLEMENTS QualifiedName
+                    {
+                      $$ = new NodeAbstract();
+                      $$->AdoptChildren( $2 );
+                    }
+                    | EL LBRACE ClassList RBRACE 
+                    {
+                      $$ = new NodeAbstract();
+                    }
+                    |
+                    {
+                      $$ = new NodeAbstract();
+                    }
+                    ;
 
-Inherit           :     COLON EXTENDS IDENTIFIER
+
+
+ClassList         : Type
+                  {
+                     $$ = $1;
+                  }
+                  | ClassList COMMA Type
+                  {
+                     $$ = $1;
+                     $$->MakeSibling( $3 );
+                  }
+                  ;
+
+Inherit           :     COLON EXTENDS Type
                         {
-                           NodeAbstract *in( nullptr );
-                           in = new ClassExtends( *$3 );
-                           delete( $3 );
-                           $$ = in;
+                           $$ = new ClassExtends( );
+                           $$->AdoptChildren( $3 );
                         }
-                  |     COLON IMPLEMENTS IDENTIFIER 
+                  |     COLON IMPLEMENTS ObjectType
                         {
-                           NodeAbstract *in( nullptr );
-                           in = new ClassImplements( *$3 );
-                           delete( $3 );
-                           $$ = in;
+                           $$ = new ClassImplements();
+                           $$->AdoptChildren( $3 );
                         }
                   |
                         {
-                           NodeAbstract *empty( nullptr );
-                           empty = new ClassNoInherit();
-                           $$ = empty;
+                           $$ = new ClassNoInherit();
                         }
                   ;
 

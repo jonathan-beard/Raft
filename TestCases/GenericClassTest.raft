@@ -1,4 +1,18 @@
-class Foo< class Type, int32 array[2](1) >{
+class Foo< class Type >{
+@public:
+   void main( String args[](nill) )
+   {
+   }
+}
+
+class Foo< class Type elof { int8, float32 }  >{
+@public:
+   void main( String args[](nill) )
+   {
+   }
+}
+
+class Foo< class Type extends Raft.number >{
 @public:
    void main( String args[](nill) )
    {

@@ -11,7 +11,7 @@
 namespace Node{
 class ClassExtends : public ClassInherit {
 public:
-   ClassExtends( const std::string name );
+   ClassExtends();
    virtual ~ClassExtends() = default;
 };
 }

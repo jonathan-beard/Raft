@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-ClassImplements::ClassImplements( const std::string name ) : ClassInherit( name )
+ClassImplements::ClassImplements() : ClassInherit( "ClassImplements" )
 {
    class_tree.addRelation( typeid( Node::ClassInherit ).hash_code(),
                            typeid( Node::ClassImplements ).hash_code() );

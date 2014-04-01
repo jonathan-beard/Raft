@@ -7,7 +7,7 @@
 
 using namespace Node;
 
-ClassExtends::ClassExtends( const std::string name ) : ClassInherit( name )
+ClassExtends::ClassExtends() : ClassInherit( "ClassExtends" )
 {
    class_tree.addRelation( typeid( Node::ClassInherit ).hash_code(),
                            typeid( Node::ClassExtends ).hash_code() );

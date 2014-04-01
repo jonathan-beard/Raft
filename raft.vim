@@ -47,14 +47,14 @@ syn match raftConstant          "\$"
 " syn match raftConstant          '\#'
 syn keyword raftTypedef		this super
 syn keyword raftOperator	new alloc free
-syn keyword raftConditional        el onsignal
+syn keyword raftConditional     onsignal
 syn keyword raftType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
 syn keyword raftType		void
 syn keyword raftStatement	return
 syn keyword raftStorageClass	static synchronized transient volatile final
 syn keyword raftExceptions	throw try catch finally
 syn keyword raftAssert		assert
-syn keyword raftClassDecl	extends implements interface
+syn keyword raftClassDecl	extends implements interface elof
 " to differentiate the keyword class from MyClass.class we use a match here
 syn match   raftTypedef		"\.\s*\<class\>"ms=s+1
 syn keyword raftClassDecl	enum
