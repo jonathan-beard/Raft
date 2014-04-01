@@ -94,7 +94,7 @@ class Sum< class T extends Raft.number >
        * It'll make a good guess as to the number needed, but 
        * if more are needed then it'll add some more.
        */
-      float32 avg( ( sum[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );
+      float32 avg( ( s[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );
 
       Raft.system.println( "Mean: " + avg );
    }

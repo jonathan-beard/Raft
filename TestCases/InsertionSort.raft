@@ -13,10 +13,7 @@ class InsertionSort< class T >{
    }
 
 @private:
-   /**
-    * Note: x is now a synchronized variable shared across all 
-    * instantiations of InsertionSort
-    */
+   
    static int8 x(0);
 
    fork streams [[T out, ... ]] split [[ T in ]]
