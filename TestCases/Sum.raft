@@ -11,78 +11,29 @@
 class Sum< class T extends Raft.number >
 {
 @private:
-   T sum( T.cast( 0 ) );
+   var T sum( T.cast( 0 ) );
 @public:
-   /**
-    * Sum - streaming function, always synchronized
-    * unless the user specifically uses the keyword
-    * "unsynchronized."  If that's the case then the 
-    * user is responsible for locking, unlocking and/or
-    * ensuring sequential consistency.  The stream "in"
-    * is specified in the [[ xxx ]] brackets, a single 
-    * valued return is given as out as opposed to an
-    * output stream.  Any function with the streams keyword
-    * can be duplicated on multiple threads by the run-time
-    * but it must also honor ordering constraints.
-    */
+   
    streams T sum [[ T in ]]
    {
-      /**
-       * alternatively, you could also do this if unsynchronized
-       * Raft.lock( sum ) 
-       * or eventually there will be a library function
-       * that implements increment with primitive test / test & set
-       * locks
-       */
       
       sum += in;
-      
-      /**
-       * Raft.unlock( sum )
-       */
 
-      /*
-       * keyword onsignal, provides synchronous signalling
-       * inside streaming functions.
-       */
       onsignal( in.EOD )
       {
-         /** 
-          * each port has several signals, this being
-          * EOD or End of Data, meaning the run-time
-          * has detected that there is no more data 
-          * comming in on the input streams, empty them
-          * and then this signal will be thrown, the first
-          * one to catch it returns the value and all other
-          * streaming kernels will exit gracefully. 
-          */
          return( sum );
       }
    }
 
    void main( String args[]( null ) )
    {
-      /** read in a .csv file as a stream */
-      Raft.inputStream input_stream< float32 >( 
-                           Raft.system.read( args[1], "list" ) );
+      var Raft.inputStream input_stream< float32 >( 
+                             Raft.system.read( args[1], "list" ) );
       
-      /** instantiate a sum object */
-      Sum s< float32 >();
+      var Sum s< float32 >();
 
-      /** 
-       * map (@/) over the input stream, the order operator,
-       * tells the runtime that we don't care what order
-       * the sum kernel gets the numbers, only that they get 
-       * there.  The stream operator is used since we don't want
-       * all the numbers to be read in at once if its a really huge 
-       * file, this way they're processed as they're read in, and 
-       * just as quickly disgarded.  The map operator also has
-       * the added cool benefit of allowing the run-time to 
-       * dynamically add threads of Sum to the system, as eneded. 
-       * It'll make a good guess as to the number needed, but 
-       * if more are needed then it'll add some more.
-       */
-      float32 avg( ( s[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );
+      var float32 avg( ( 
+           s[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );
 
       Raft.system.println( "Mean: " + avg );
    }

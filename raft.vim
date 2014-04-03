@@ -46,7 +46,7 @@ syn keyword raftConstant	null
 syn match raftConstant          "\$" 
 " syn match raftConstant          '\#'
 syn keyword raftTypedef		this super
-syn keyword raftOperator	new alloc free
+syn keyword raftOperator	var new alloc free
 syn keyword raftConditional     onsignal
 syn keyword raftType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
 syn keyword raftType		void
