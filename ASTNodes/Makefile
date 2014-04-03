@@ -39,7 +39,8 @@ NODES    =  NodeAbstract Type NodeDumpable BooleanType Declaration \
             NumArrayInitialization StrArrayInitialization \
             AllOthersInArray ArraySlice EmptyStatement \
 				Statement IfStatement WhileStatement ForStatement MapStatement \
-				LocalVarDecl Follows VarDeclFollows
+				LocalVarDecl Follows VarDeclFollows NoStorageModifier \
+            Atomic Synchronized Unsynchronized MethodReturns
 
 ASTNODES = $(addprefix $(ASTDIR), $(NODES))            
 

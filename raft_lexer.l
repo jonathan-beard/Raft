@@ -67,19 +67,12 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 {WHITESPACE}      { PUSHTOSTREAM( yytext ); }
 
 <INITIAL>{
-"/**"        BEGIN( ML_COMMENT ); 
 "/*"        BEGIN( ML_COMMENT ); 
 }
 
 <ML_COMMENT>{
 "*/"                 BEGIN( INITIAL );
-"*"
-[^*\n]+
 .                 { PUSHTOSTREAM( yytext ); }
-"\n"              {
-                        data.reset_rf_parsestream(); 
-                        data.get_cpp_handler().IncrementHead();
-                  }
 }
 
 "//".+[^\n]*             {
@@ -95,6 +88,8 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ">>"                    { TOKEN( DRCARROT ); }
 "[["                    { TOKEN( DLBRACKET ); }
 "]]"                    { TOKEN( DRBRACKET ); }
+"<:"                    { TOKEN( STREAMHACKL ); }
+":>"                    { TOKEN( STREAMHACKR ); }
 "<"                     { TOKEN( LCARROT ); }
 ">"                     { TOKEN( RCARROT ); }
 ":"                     { TOKEN( COLON ); }
@@ -132,8 +127,11 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "const"                 { TOKEN( CONST ); }
 "static"                { TOKEN( STATIC ); }
 "atomic"                { TOKEN( ATOMIC ); }
-"nonatomic"             { TOKEN( NONATOMIC ); } 
+"nonatomic"             { TOKEN( NONATOMIC ); }
+"synchronized"          { TOKEN( SYNCHRONIZED ); }
+"unsynchronized"        { TOKEN( UNSYNCHRONIZED ); }
 "struct"                { TOKEN( STRUCT ); }
+"var"                   { TOKEN( VAR ); }
 "++"                    { TOKEN( INCREMENT ); }
 "--"                    { TOKEN( DECREMENT ); }
 "?"                     { TOKEN( QUESTION ); }

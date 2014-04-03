@@ -77,16 +77,19 @@
       class PlaceholderParameter;
       class FieldVarDecl;
       class StorageModifier;
+      class NoStorageModifier;
       class Constant;
       class Static;
       class NonAtomic;
+      class Atomic;
+      class Synchronized;
+      class Unsynchronized;
       class ClassInitializer;
       class EmptyClassInitializer;
       class ConstructorDeclaration;
       class StreamingMethodDeclaration;
       class Converge;
       class Fork;
-      class EmptyStreamModifier;
       class MethodDeclaration;
       class EmptyTypeModifier;
       class MethodInherit;
@@ -166,6 +169,7 @@
       class ForStatement;
       class MapStatement;
       class LocalVarDecl;
+      class MethodReturns;
    }
 }
 
@@ -261,8 +265,12 @@
    #include "Parameter.hpp"
    #include "PlaceholderParameter.hpp"
    #include "StorageModifier.hpp"
+   #include "NoStorageModifier.hpp"
    #include "Constant.hpp"
    #include "NonAtomic.hpp"
+   #include "Atomic.hpp"
+   #include "Synchronized.hpp"
+   #include "Unsynchronized.hpp"
    #include "Static.hpp"
    #include "ClassInitializer.hpp"
    #include "EmptyClassInitializer.hpp"
@@ -270,7 +278,6 @@
    #include "StreamingMethodDeclaration.hpp"
    #include "Converge.hpp"
    #include "Fork.hpp"
-   #include "EmptyStreamModifier.hpp"
    #include "MethodDeclaration.hpp"
    #include "EmptyTypeModifier.hpp"
    #include "ClassInherit.hpp"
@@ -351,6 +358,7 @@
    #include  "ForStatement.hpp"
    #include  "MapStatement.hpp"
    #include  "LocalVarDecl.hpp"
+   #include  "MethodReturns.hpp"
 
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
@@ -432,6 +440,7 @@
 %token       ATOMIC
 %token       NONATOMIC
 %token       STRUCT
+%token       VAR
 %token       INCREMENT  
 %token       DECREMENT  
 %token       QUESTION  
@@ -474,6 +483,10 @@
 %token       STRING  
 %token       FORK
 %token       CONVERGE
+%token       SYNCHRONIZED
+%token       UNSYNCHRONIZED
+%token       STREAMHACKL
+%token       STREAMHACKR
 %token   <bval>      TRUE
 %token   <bval>      FALSE
 %token   <sval>      STR_TOKEN 
@@ -511,8 +524,6 @@
 %type    <node>    DeclaratorName
 %type    <node>    LocalVariableDeclarationsAndStatements
 %type    <node>    LocalVariableDeclarationOrStatement
-%type    <node>    LocalVariableDeclaration
-%type    <node>    LocalStorageModifier
 %type    <node>    Statement
 %type    <node>    EmptyStatement
 %type    <node>    ExpressionStatement
@@ -578,13 +589,10 @@
 %type    <node>    StreamInitializers
 %type    <node>    StreamInitializer
 %type    <node>    StreamInitializersB
-%type    <node>    StreamingMethodConstructor
-%type    <node>    StreamDeclarator
-%type    <node>    StreamReturnDecl
+%type    <node>    StreamDeclaration
 %type    <node>    DelayedName
 %type    <node>    StreamCall
 %type    <node>    StreamCallPrefixA
-%type    <node>    StreamModifiers
 %type    <node>    StreamProperties
 %type    <node>    StreamPropertyOptions
 %type    <node>    StreamPropertyList
@@ -602,6 +610,12 @@
 %type    <node>    Slice
 %type    <node>    GenericRestrictions
 %type    <node>    ClassList 
+%type    <node>    MethodModifiers
+%type    <node>    MethodModifier
+%type    <node>    MethodDeclarationType
+%type    <node>    MethodReturnType
+%type    <node>    MethodInherits
+%type    <node>    Streams
 
 %%
 CompilationUnit   :     END
@@ -751,13 +765,6 @@ GenericListA : CLASS IDENTIFIER GenericRestrictions
                   cl->AdoptChildren( $3 );
                   $$ = cl;
                }
-            |  Type IDENTIFIER GenericRestrictions
-               {
-                  GenericTypeParam *cl = new GenericTypeParam( *$2 );
-                  cl->AdoptChildren( $1 );
-                  delete( $2 );
-                  $$ = cl;
-               }
             ;
 
 GenericRestrictions : EXTENDS Type
@@ -874,25 +881,15 @@ FieldDeclaration  :     FieldVariableDeclaration
                         {
                            $$ = $1;
                         }
-                  |     StreamingMethodConstructor
-                        {
-                           $$ = $1;
-                        }
                   ;
 
 
-FieldVariableDeclaration  : StorageModifier Type Initializer SEMI
+FieldVariableDeclaration  : VAR StorageModifier Type Initializer SEMI
                             {
                               $$ = new FieldVarDecl();
-                              $$->AdoptChildren( $1 );
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $3 );
-                            }
-                          | Type Initializer SEMI
-                            {
-                              $$ = new FieldVarDecl();
-                              $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
                             }
                           ;
 
@@ -917,6 +914,22 @@ StorageModifierI : CONST
                  | NONATOMIC
                   {
                      $$ = new NonAtomic();
+                  }
+                 | ATOMIC
+                  {
+                     $$ = new Atomic();
+                  }
+                 | SYNCHRONIZED
+                  {
+                     $$ = new Synchronized();
+                  }
+                 | UNSYNCHRONIZED
+                  {
+                     $$ = new Unsynchronized();
+                  }
+                 |
+                  {
+                     $$ = new NoStorageModifier();
                   }
                 ;
 
@@ -950,28 +963,7 @@ ConstructorDeclaration   : MethodDeclarator Block
                            }
                          ;
 
-StreamingMethodConstructor :  StreamModifiers STREAMS StreamInitializer StreamDeclarator Block
-                              {
-                                 $$ = $4;
-                                 $$->AdoptChildren( $1 );
-                                 $$->AdoptChildren( $3 );
-                                 $$->AdoptChildren( $5 );
-                              }
-                           ;
 
-StreamModifiers            : FORK
-                             {
-                                 $$ = new Fork();
-                             }
-                           | CONVERGE
-                             {
-                                 $$ = new Converge();
-                             }
-                           |
-                              {
-                                 $$ = new EmptyStreamModifier();
-                              }
-                           ;
 
 ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            {
@@ -990,39 +982,78 @@ ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
                            }
                          ;
 
-MethodDeclaration        : Type TypeModifier MethodDeclarator MethodBody
+
+MethodDeclaration        : MethodModifiers MethodReturnType MethodDeclarationType MethodBody
                            {
-                              $$ = $3; /* decl */
-                              $$->AdoptChildren( new MethodNoInherit() );
-                              $$->AdoptChildren( $1 /* type */ );
-                              $$->AdoptChildren( $2 /* modifier */ );
-                              $$->AdoptChildren( $4 /* body */ );
-                           }
-                         | Type MethodDeclarator MethodBody
-                           {
-                              $$ = $2; /* decl */
-                              $$->AdoptChildren( new MethodNoInherit() );
-                              $$->AdoptChildren( $1 /* type */ );
-                              $$->AdoptChildren( new EmptyTypeModifier() );
-                              $$->AdoptChildren( $3 /* body */ );
-                           }
-                         | IMPLEMENTS Type TypeModifier MethodDeclarator MethodBody
-                           {
-                              $$ = $4; /* decl */
-                              $$->AdoptChildren( new MethodImplements() );
-                              $$->AdoptChildren( $2 /* type */ );
-                              $$->AdoptChildren( $3 /* modifier */ );
-                              $$->AdoptChildren( $5 /* body */ );
-                           }
-                         | OVERRIDES Type TypeModifier MethodDeclarator MethodBody
-                           {
-                              $$ = $4; /* decl */
-                              $$->AdoptChildren( new MethodOverrides() );
-                              $$->AdoptChildren( $2 /* type */ );
-                              $$->AdoptChildren( $3 /* modifier */ );
-                              $$->AdoptChildren( $5 /* body */ );
+                              $$ = $3;
+                              $$->AdoptChildren( $1 );
+                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $4 );
                            }
                          ;
+
+MethodReturnType      : Type TypeModifier
+                        {
+                           $$ = new MethodReturns();
+                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $2 );
+                        }
+                      | StreamInitializer
+                        {
+                           $$ = $1;
+                        }
+                      ;
+
+MethodDeclarationType : MethodDeclaration
+                        {
+                           $$->AdoptChildren( $1 );
+                        }
+                      | StreamDeclaration
+                        {
+                           $$->AdoptChildren( $1 );
+                        }
+                      ;
+
+MethodModifiers : MethodModifiers MethodModifier
+                  {
+                     $$ = $1;
+                     $$->MakeSibling( $2 );
+                  }
+                | MethodModifier
+                  {
+                     $$ = $1;
+                  }
+                |
+                  {
+                     $$ = new NodeAbstract();
+                  }
+                ;
+
+MethodModifier  : MethodInherits
+                  {
+                     $$ = $1;
+                  }
+                | Streams
+                  {
+                     $$ = $1;
+                  }
+                ;
+
+MethodInherits :  IMPLEMENTS
+                  {
+                     $$ = new MethodImplements();
+                  }
+                | OVERRIDES
+                  {
+                     $$ = new MethodOverrides();
+                  }
+                ;
+
+Streams        :  STREAMS
+                  {
+                     $$ = new NodeAbstract();
+                  }
+               ;
 
 MethodBody  :  Block
                {
@@ -1030,7 +1061,7 @@ MethodBody  :  Block
                }
             ;
 
-StreamDeclarator  :  IDENTIFIER StreamInitializer
+StreamDeclaration  :  IDENTIFIER StreamInitializer
                      {
                         $$ = new StreamingMethodDeclaration( *$1 );
                         delete( $1 );
@@ -1081,25 +1112,12 @@ Parameter                : Type  DeclaratorName
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $1 );
                            }
-
-                         | Type  DeclaratorName LBRACKET RBRACKET
-                           {
-                              $$ = new ArrayParameter();
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $1 );
-                           }
-                         | Type  DeclaratorName LBRACKET ArraySize RBRACKET
-                           {
-                              $$ = new SizedArrayParameter();
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $4 );
-                           }
                          ;
 
-DeclaratorName           : IDENTIFIER
+DeclaratorName           : IDENTIFIER TypeModifier
                            {
                               $$ = new VariableDeclaration( *$1 );
+                              $$->AdoptChildren( $2 );
                               delete( $1 );
                            }
                          |BoolInitializer 
@@ -1144,7 +1162,7 @@ LocalVariableDeclarationsAndStatements
       }
    ;
 
-LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
+LocalVariableDeclarationOrStatement    :  FieldVariableDeclaration
                                           {
                                            $$ = $1;
                                           }
@@ -1154,31 +1172,6 @@ LocalVariableDeclarationOrStatement    :  LocalVariableDeclaration
                                           }
                                        ;
 
-LocalVariableDeclaration   :  LocalStorageModifier Type Initializer SEMI
-                              {
-                                 $$ = new LocalVarDecl();
-                                 $$->AdoptChildren( $1 );
-                                 $$->AdoptChildren( $2 );
-                                 $$->AdoptChildren( $3 );
-                              }
-                           |  Type Initializer SEMI
-                              {
-                                 $$ = new LocalVarDecl();
-                                 $$->AdoptChildren( $1 );
-                                 $$->AdoptChildren( $2 );
-                              }
-                           ;
-
-
-LocalStorageModifier : CONST
-                        {
-                           $$ = new Constant();
-                        }
-                     |  NONATOMIC
-                        {
-                           $$ = new NonAtomic();
-                        }
-                     ;
 
 
 Statement   :  EmptyStatement
@@ -1311,7 +1304,7 @@ MapExpression   :    Expression AT FORWARDSLASH Expression
                      }
                 ;
 
-InitFor  :  LocalVariableDeclaration
+InitFor  :  FieldVariableDeclaration
             {
                $$ = $1;
             }
@@ -1368,7 +1361,7 @@ StreamInitializers   :  VOID
                      }
                   ;
 
-StreamInitializersB  : StreamReturnDecl
+StreamInitializersB  : Parameter
                      {
                         $$ = $1;
                      }
@@ -1380,43 +1373,12 @@ StreamInitializersB  : StreamReturnDecl
                         varargs->AdoptChildren( $1 );
                         $$ = varargs;
                      }
-                     |  StreamInitializers COMMA StreamReturnDecl
+                     |  StreamInitializers COMMA Parameter
                      {
                         $$->MakeSibling( $3 );
                      }
                      ;
 
-
-StreamReturnDecl : Type TypeModifier IDENTIFIER
-                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( *$3 );
-                     $$->AdoptChildren( $1 );
-                     $$->AdoptChildren( $2 );
-                     delete( $3 );
-                   }
-                 | Type IDENTIFIER
-                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( *$2 );
-                     delete( $2 );
-                   }
-                 | Type IDENTIFIER LBRACKET RBRACKET
-                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( *$2 );
-                     delete( $2 );
-                     $$->AdoptChildren( $1 );
-                   }
-                 | Type IDENTIFIER LBRACKET ArraySize RBRACKET
-                   {
-                     $$ = new NodeAbstract();
-                     $$->set_name( *$2 );
-                     delete( $2 );
-                     $$->AdoptChildren( $1 );
-                     $$->AdoptChildren( $4 );
-                   }
-                 ;
 
 Initializer :  MultiBoolInit
                {
@@ -1583,13 +1545,6 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
                            }
-                         | IDENTIFIER LPAREN Boolean RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( $3 );
-                           }
                        | IDENTIFIER TypeModifier LPAREN LogicalUnaryExpression RPAREN
                            {
                               $$ = new VariableDeclaration( *$1 );
@@ -1598,17 +1553,9 @@ BoolInitializer          : IDENTIFIER TypeModifier LPAREN Boolean RPAREN
                               $$->AdoptChildren( $4 );
                            }
                          
-                       | IDENTIFIER LPAREN LogicalUnaryExpression RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( $3 );
-                           }
                        | IDENTIFIER TypeModifier LPAREN MultipleArrayInitBool RPAREN
                         {
                            $$ = new NodeAbstract();
-
                         }
                          ;
 
@@ -1630,14 +1577,6 @@ ObjectInitializer        : IDENTIFIER TypeModifier LPAREN ArgumentList RPAREN
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
                            }
-                         | IDENTIFIER LPAREN ArgumentList RPAREN
-                           {
-                              //FIXME
-                              $$ = new VariableDeclaration( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( $3 );
-                           }
                          ;
 
 MultiNumberInit          : MultiNumberInit COMMA NumberInitializer
@@ -1657,13 +1596,6 @@ NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                               delete( $1 );
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
-                           }
-                         | IDENTIFIER LPAREN Expression RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( $3 );
                            }
                          | IDENTIFIER TypeModifier LPAREN MultipleArrayInitNum RPAREN
                            {
@@ -1689,13 +1621,6 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN Literal RPAREN
                               delete( $1 );
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
-                           }
-                         | IDENTIFIER LPAREN Literal RPAREN
-                           {
-                              $$ = new VariableDeclaration( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( new NoTypeModifier() );
-                              $$->AdoptChildren( $3 );
                            }
                          | IDENTIFIER TypeModifier LPAREN MultipleArrayInitStr RPAREN
                            {
@@ -1862,6 +1787,10 @@ TypeModifier      :     LBRACKET ArraySize RBRACKET
                            NodeAbstract *n( new DynamicArray() );
                            n->AdoptChildren( new NoSizeParameter() );
                            $$ -> AdoptChildren( n );
+                        }
+                  |
+                        {
+                              $$ = new EmptyTypeModifier();
                         }
                   ;
 
@@ -2372,7 +2301,7 @@ StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                     }
                   ;
 
-StreamProperties   : LCARROT StreamPropertyOptions RCARROT
+StreamProperties   : STREAMHACKL StreamPropertyOptions STREAMHACKR
                      {
                         StreamPropertyList *vs( nullptr );
                         vs = new StreamPropertyList();
