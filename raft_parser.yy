@@ -589,7 +589,7 @@
 %type    <node>    StreamInitializers
 %type    <node>    StreamInitializer
 %type    <node>    StreamInitializersB
-%type    <node>    StreamDeclaration
+%type    <node>    StreamDeclarator
 %type    <node>    DelayedName
 %type    <node>    StreamCall
 %type    <node>    StreamCallPrefixA
@@ -1004,11 +1004,11 @@ MethodReturnType      : Type TypeModifier
                         }
                       ;
 
-MethodDeclarationType : MethodDeclaration
+MethodDeclarationType : MethodDeclarator
                         {
                            $$->AdoptChildren( $1 );
                         }
-                      | StreamDeclaration
+                      | StreamDeclarator
                         {
                            $$->AdoptChildren( $1 );
                         }
@@ -1061,7 +1061,7 @@ MethodBody  :  Block
                }
             ;
 
-StreamDeclaration  :  IDENTIFIER StreamInitializer
+StreamDeclarator  :  IDENTIFIER StreamInitializer
                      {
                         $$ = new StreamingMethodDeclaration( *$1 );
                         delete( $1 );
@@ -1596,11 +1596,11 @@ NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                               delete( $1 );
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
+                              std::cerr << "NumberInitializer\n";
                            }
                          | IDENTIFIER TypeModifier LPAREN MultipleArrayInitNum RPAREN
                            {
-                           $$ = new NodeAbstract();
-
+                              $$ = new NodeAbstract();
                            }
                          ;
 
@@ -2150,6 +2150,7 @@ ComplexPrimaryNoParenthesis : Literal
                               }
                             | MethodCall
                               {
+                                 std::cerr << "ComplexPrimary\n";
                                  $$ = $1;
                               }
                             | StreamCall
@@ -2201,6 +2202,7 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
 
 MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              {
+               std::cerr << "MethodCall\n";
                $$ = new MethodReferencing();
                ArgumentList *al = new MethodArgumentList();
                al->AdoptChildren( $3 );
@@ -2372,6 +2374,7 @@ DelayedName    :  DOLLAR
 
 QualifiedName  :  IDENTIFIER
                   {
+                     std::cerr << *$1 << "\n";
                      $$ = new QualifiedName( *$1 );
                      assert( $$ != nullptr );
                      delete( $1 );
