@@ -27,7 +27,7 @@ class Sum< class T extends Raft.number >
 
    void main( String args[]( null ) )
    {
-      var Raft.inputStream input_stream< float32 >( 
+      var Raft.inputStream input_stream< Type = float32 >( 
                              Raft.system.read( args[1], "list" ) );
       
       var Sum s< float32 >();

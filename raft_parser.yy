@@ -1816,16 +1816,7 @@ GenericInstantiation : QualifiedName EQUALS AllowedGenericInstTypes
                         $$->AdoptChildren( eq );
                      }
                      ;
-AllowedGenericInstTypes : QualifiedName
-                          {
-                              /** 
-                               * qn allows instantiations like
-                               * a.b to reference fields within
-                               * other classes
-                               */
-                              $$ = $1;
-                          }
-                        | Literal
+AllowedGenericInstTypes : Literal
                           {
                               $$ = $1;
                           }
@@ -1837,6 +1828,10 @@ AllowedGenericInstTypes : QualifiedName
                           {
                               $$ = $1;
                           }
+                        | Type
+                           {
+                              $$ = $1;
+                           }
                         ;
 
 ArraySize         :     ArraySize COMMA INT_TOKEN
