@@ -1116,6 +1116,7 @@ Parameter                : Type  DeclaratorName
 
 DeclaratorName           : IDENTIFIER TypeModifier
                            {
+                              std::cerr << "TypeModifier: " << *$1 << "\n";
                               $$ = new VariableDeclaration( *$1 );
                               $$->AdoptChildren( $2 );
                               delete( $1 );
@@ -1126,6 +1127,7 @@ DeclaratorName           : IDENTIFIER TypeModifier
                            }
                          | ObjectInitializer
                            {
+                              std::cerr << "ObjectInitializer\n";
                               $$ = $1;
                            }
                          | NumberInitializer
