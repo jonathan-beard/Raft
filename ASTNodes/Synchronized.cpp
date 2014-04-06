@@ -9,4 +9,6 @@ using namespace Node;
 
 Synchronized::Synchronized() : StorageModifier( "Synchronized" )
 {
+   class_tree.addRelation( typeid( Node::StorageModifier ).hash_code(),
+                           typeid( Node::Synchronized ).hash_code() );
 }

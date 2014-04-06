@@ -697,10 +697,8 @@ TypeDeclaration   :     ClassDeclaration
 
 ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE Body RBRACE
                         {
-                           //TODO 
                            NodeAbstract *cls( nullptr );
                            cls = new ClassDeclaration( *$3 );
-                           assert( cls != nullptr );
                            delete( $3 );
                            
                            cls->AdoptChildren( $1 );
@@ -714,7 +712,6 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
                         {
                            NodeAbstract *cls( nullptr );
                            cls = new ClassDeclaration( *$3 );
-                           assert( cls != nullptr );
                            delete( $3 );
 
                            cls->AdoptChildren( $1 );
@@ -725,13 +722,32 @@ ClassDeclaration  :     InstantModifier CLASS IDENTIFIER Generic Inherit LBRACE 
                         }
                   ;
 
+
+InstantModifier   :     FINAL SYSTEM
+                        {
+                           $$ = new Final();
+                           $$->MakeSibling( new System() );
+                        }
+                  |     FINAL
+                        {
+                           $$ = new Final();
+                        }
+                  |     ABSTRACT
+                        {
+                           $$ = new Abstract();
+                        }
+                  |     
+                        {
+                           $$ = new NoInstantiationModifier();
+                        }
+                  ;
+
 Generic  :  LCARROT GenericList RCARROT
             { 
                NodeAbstract *gl = new GenericList();
                $$ = gl;
                $$->AdoptChildren( $2 );
             }
-
          |  {  
                NodeAbstract *gl = new GenericList();
                $$ = gl;
@@ -1116,7 +1132,6 @@ Parameter                : Type  DeclaratorName
 
 DeclaratorName           : IDENTIFIER TypeModifier
                            {
-                              std::cerr << "TypeModifier: " << *$1 << "\n";
                               $$ = new VariableDeclaration( *$1 );
                               $$->AdoptChildren( $2 );
                               delete( $1 );
@@ -1127,7 +1142,6 @@ DeclaratorName           : IDENTIFIER TypeModifier
                            }
                          | ObjectInitializer
                            {
-                              std::cerr << "ObjectInitializer\n";
                               $$ = $1;
                            }
                          | NumberInitializer
@@ -1598,7 +1612,6 @@ NumberInitializer        : IDENTIFIER TypeModifier LPAREN Expression RPAREN
                               delete( $1 );
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $4 );
-                              std::cerr << "NumberInitializer\n";
                            }
                          | IDENTIFIER TypeModifier LPAREN MultipleArrayInitNum RPAREN
                            {
@@ -1630,24 +1643,6 @@ StrInitializer           : IDENTIFIER  TypeModifier LPAREN Literal RPAREN
                            }
                          ;
 
-InstantModifier   :     FINAL SYSTEM
-                        {
-                           $$ = new Final();
-                           $$->MakeSibling( new System() );
-                        }
-                  |     FINAL
-                        {
-                           $$ = new Final();
-                        }
-                  |     ABSTRACT
-                        {
-                           $$ = new Abstract();
-                        }
-                  |     
-                        {
-                           $$ = new NoInstantiationModifier();
-                        }
-                  ;
 
 
 
@@ -2147,7 +2142,6 @@ ComplexPrimaryNoParenthesis : Literal
                               }
                             | MethodCall
                               {
-                                 std::cerr << "ComplexPrimary\n";
                                  $$ = $1;
                               }
                             | StreamCall
@@ -2199,7 +2193,6 @@ FieldAccess :  NotJustName PERIOD IDENTIFIER
 
 MethodCall : QualifiedName LPAREN ArgumentList RPAREN
              {
-               std::cerr << "MethodCall\n";
                $$ = new MethodReferencing();
                ArgumentList *al = new MethodArgumentList();
                al->AdoptChildren( $3 );
@@ -2371,7 +2364,6 @@ DelayedName    :  DOLLAR
 
 QualifiedName  :  IDENTIFIER
                   {
-                     std::cerr << *$1 << "\n";
                      $$ = new QualifiedName( *$1 );
                      assert( $$ != nullptr );
                      delete( $1 );

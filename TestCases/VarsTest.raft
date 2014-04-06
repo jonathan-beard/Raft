@@ -1,10 +1,17 @@
 class Foo{
 @public:
-   void main( String args[](nill) )
+   void main( String args[]( null ) )
    {
-      int8  a( 0 );
-      float32 b( 2.3 );
+      /* basic declarations */
+      var int8    a( 0 );
+      var int16   b( 0 );
+      var int32   c( 0 );
+      var int64   d( 0 );
+      var float32 e( 2.3 );
+      var float64 f( 2.3 );
+      var float96 g( 2.3 );
 
-      int8 foo[8]( 0 );
+      /* array declarations */
+      var int8 foo[8]( 0 );
    }
 }

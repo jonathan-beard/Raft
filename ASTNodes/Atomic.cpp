@@ -9,4 +9,6 @@ using namespace Node;
 
 Atomic::Atomic() : StorageModifier( "Atomic" )
 {
+   class_tree.addRelation( typeid( Node::StorageModifier ).hash_code(),
+                           typeid( Node::Atomic ).hash_code() );
 }

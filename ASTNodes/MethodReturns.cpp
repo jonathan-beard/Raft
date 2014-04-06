@@ -9,4 +9,6 @@ using namespace Node;
 
 MethodReturns::MethodReturns() : NodeAbstract( "MethodReturns" )
 {
+   class_tree.addRelation( typeid( Node::NodeAbstract ).hash_code(),
+                           typeid( Node::MethodReturns ).hash_code() );
 }

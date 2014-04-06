@@ -10,7 +10,7 @@ endif
 include ./Visitors/Makefile
 include ./ASTNodes/Makefile
 
-DEBUG = -g
+DEBUG = -g 
 CFLAGS = -Wall -O0  $(DEBUG)
 CXXFLAGS = -Wall -O0 -I$(ASTDIR) -I$(VISITORDIR) -I. $(DEBUG) \
          -I/usr/local/include
