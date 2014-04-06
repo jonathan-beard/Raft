@@ -796,6 +796,7 @@ GenericRestrictions : EXTENDS Type
                     | EL LBRACE ClassList RBRACE 
                     {
                       $$ = new NodeAbstract();
+                      $$->AdoptChildren( $3 );
                     }
                     |
                     {
