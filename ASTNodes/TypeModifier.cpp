@@ -26,9 +26,3 @@ TypeModifier::~TypeModifier()
 { 
    /* nothing do destroy */
 }
-
-std::string
-TypeModifier::get_name()
-{
-   return( name );
-}

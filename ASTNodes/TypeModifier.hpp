@@ -15,8 +15,6 @@ public:
    TypeModifier();
    virtual ~TypeModifier();
    
-   virtual std::string get_name();
-
 protected:
    TypeModifier( const std::string n );
 };
