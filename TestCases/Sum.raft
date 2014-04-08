@@ -28,9 +28,10 @@ class Sum< class T extends Raft.number >
    void main( String args[]( null ) )
    {
       var Raft.inputStream input_stream< Type = float32 >( 
-                             Raft.system.read( args[1], "list" ) );
+                             Raft.systemio.read( args[1], "list" ) );
       
-      var Sum s< float32 >();
+      /** TODO fix grammar to make this work, should be a method call to init a var "s" */
+      var Sum s< Type = float32 >();
 
       var float32 avg( ( 
            s[[ $ ]]< order = OoO > @/ input_stream ) / input_stream.length() );

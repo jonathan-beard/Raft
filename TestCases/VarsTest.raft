@@ -10,8 +10,63 @@ class Foo{
       var float32 e( 2.3 );
       var float64 f( 2.3 );
       var float96 g( 2.3 );
+      var auto    h( 2.3 );
 
       /* array declarations */
-      var int8 foo[8]( 0 );
+      var int8 fooone[8]( 0 );
+      var int8 footwo[8]( [0] = 0, [1 ... 7] = 200 );
+   
+      /* init from method return */
+      var int8    a( Foo.returnInt8()  );
+      var int16   b( Foo.returnInt16()  );
+      var int32   c( Foo.returnInt32()  );
+      var int64   d( Foo.returnInt64()  );
+      var float32 e( Foo.returnFloat32() );
+      var float64 f( Foo.returnFloat64() );
+      var float96 g( Foo.returnFloat96() );
+      var auto    h( Foo.returnInt8() ); 
+      var int8 fooone[8]( Foo.returnInt8Array() );
+      
+   }
+
+@private:
+   static int8  returnInt8()
+   {
+      return( 8 );
+   }
+   static int16  returnInt16()
+   {
+      return( 16 );
+   }
+   static int32  returnInt32()
+   {
+      return( 32 );
+   }
+   static int64  returnInt64()
+   {
+      return( 64 );
+   }
+   static float32  returnFloat32()
+   {
+      return( 32 );
+   }
+   static float64  returnFloat64()
+   {
+      return( 64 );
+   }
+   static float96  returnFloat96()
+   {
+      return( 96 );
+   }
+   static String   returnString()
+   {
+      return( "TestString" );
+   }
+
+   /** return array **/
+   static int8[8]  returnInt8Array()
+   {
+      var int8 output( 155 );
+      return( output );
    }
 }

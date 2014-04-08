@@ -1,0 +1,15 @@
+class Foo{
+@public:
+   void main( String args[](null) )
+   {
+      var int8 one( Foo.initFromVarOne( "PassOne" ) );      
+      var int8 two( Foo.initFromVarTwo( "PassOne", "PassTwo" ) );      
+      var int8 complex( Foo.initFromComplex( args[1], "PassOne" ) );
+      
+      var int8 reallyComplex( Foo.Bar.initFromComplex( args[1], "PassOne" ) );
+  
+      var Raft.inputStream is( null ); 
+      var Raft.inputStream is( Foo.Bar.initFromComplex( args[1], "PassOne" ) ); 
+      var Raft.inputStream is_stream< Type = float32 >( Foo.Bar.initFromComplex( args[1], "PassOne" ) ); 
+   }
+}

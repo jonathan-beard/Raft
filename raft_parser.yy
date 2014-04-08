@@ -906,6 +906,7 @@ FieldDeclaration  :     FieldVariableDeclaration
 
 FieldVariableDeclaration  : VAR StorageModifier Type Initializer SEMI
                             {
+                              //TODO
                               $$ = new FieldVarDecl();
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $3 );
@@ -1056,6 +1057,10 @@ MethodModifier  : MethodInherits
                 | Streams
                   {
                      $$ = $1;
+                  }
+                | STATIC
+                  {
+                     $$ = new Static();
                   }
                 ;
 
