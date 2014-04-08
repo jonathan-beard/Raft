@@ -170,6 +170,8 @@
       class MapStatement;
       class LocalVarDecl;
       class MethodReturns;
+      class NoMethodModifier;
+      class Streams;
    }
 }
 
@@ -359,7 +361,8 @@
    #include  "MapStatement.hpp"
    #include  "LocalVarDecl.hpp"
    #include  "MethodReturns.hpp"
-
+   #include  "NoMethodModifier.hpp"
+   #include  "Streams.hpp"
    /* define proper yylex */
    static int yylex(Raft::Parser::semantic_type *yylval,
                     Raft::Scanner               &scanner,
@@ -1023,11 +1026,11 @@ MethodReturnType      : Type TypeModifier
 
 MethodDeclarationType : MethodDeclarator
                         {
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                       | StreamDeclarator
                         {
-                           $$->AdoptChildren( $1 );
+                           $$ = $1;
                         }
                       ;
 
@@ -1042,7 +1045,7 @@ MethodModifiers : MethodModifiers MethodModifier
                   }
                 |
                   {
-                     $$ = new NodeAbstract();
+                     $$ = new NoMethodModifier();
                   }
                 ;
 
@@ -1068,7 +1071,7 @@ MethodInherits :  IMPLEMENTS
 
 Streams        :  STREAMS
                   {
-                     $$ = new NodeAbstract();
+                     $$ = new Streams();
                   }
                ;
 
@@ -1263,6 +1266,7 @@ SelectionStatementInit  :
                         }
                     |   SIGNAL LPAREN QualifiedName RPAREN Statement
                         {
+                           //FIXME
                            $$ = new NodeAbstract();
                         }
                     ;
