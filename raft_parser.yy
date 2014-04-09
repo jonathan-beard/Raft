@@ -627,7 +627,6 @@ CompilationUnit   :     END
                         {
                            Node::Source *s( nullptr );
                            s = new Node::Source();
-                           assert( s != nullptr );
                            driver.set_root( s );
                            s->AdoptChildren( $1 );
                         }
@@ -664,7 +663,6 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        *$3 /* name   */  );
                            Node::Filename *f( nullptr );
                            f = new Node::Filename( *$3 );
-                           assert( f != nullptr );
                            f->SetOrigin( data );
                            $$ = f;
                            /* get rid of allocated string */
@@ -679,7 +677,6 @@ Filename          :     POUND    INT_TOKEN   STR_TOKEN
                                        $4 /* flags */ );
                            Node::Filename *f( nullptr );
                            f = new Node::Filename( *$3 );
-                           assert( f != nullptr );
                            f->SetOrigin( data );
                            f->set_name( *$3 );
                            
@@ -1342,7 +1339,6 @@ ReturnStatement   :  RETURN SEMI
                         //TODO
                         NodeAbstract *ret( nullptr );
                         ret = new NodeAbstract();
-                        assert( ret != nullptr );
 
                         ret->set_name( "Return" );
                         $$ = ret;
@@ -1351,10 +1347,8 @@ ReturnStatement   :  RETURN SEMI
                      {
                         NodeAbstract *ret( nullptr );
                         ret = new NodeAbstract();
-                        assert( ret != nullptr );
 
                         ret->set_name( "Return" );
-                        assert( $3 != nullptr );
                         ret->AdoptChildren( $3 );
                         
                         $$ = ret;
@@ -1366,7 +1360,6 @@ StreamInitializer: DLBRACKET StreamInitializers DRBRACKET
                      {  
                         NodeAbstract *node( nullptr );
                         node = new NodeAbstract();
-                        assert( node != nullptr );
                         node->set_name( "ReturnStreamInitializer" );
                         
                         node->AdoptChildren( $2 );
@@ -1378,7 +1371,6 @@ StreamInitializers   :  VOID
                      {
                         NodeAbstract *v( nullptr );
                         v = new NodeAbstract();
-                        assert( v != nullptr );
                         v->set_name("NoStream");
                         $$ = v;
                      }
@@ -1415,7 +1407,6 @@ Initializer :  MultiBoolInit
                {
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
-                  assert( ini != nullptr );
 
                   ini->set_name( "NumberInitializers" );
 
@@ -1427,7 +1418,6 @@ Initializer :  MultiBoolInit
                {
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
-                  assert( ini != nullptr );
                   
                   ini->set_name( "StringInitializers" );
 
@@ -1439,7 +1429,6 @@ Initializer :  MultiBoolInit
                {
                   NodeAbstract *ini( nullptr );
                   ini = new NodeAbstract();
-                  assert( ini != nullptr );
 
                   ini->set_name( "ObjectInitializers" );
 
@@ -2296,7 +2285,6 @@ AllocationExpression :  NEW Type TypeModifier LPAREN ArgumentList RPAREN
 StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                     {
                        $$ = new StreamReferencing();
-                       assert( $$ != nullptr );
                        $$->AdoptChildren( $1 );
                        $$->AdoptChildren( $2 );
                        $$->AdoptChildren( $3 );
@@ -2304,21 +2292,18 @@ StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                   | QualifiedName StreamProperties
                     {
                        $$ = new StreamReferencing();
-                       assert( $$ != nullptr );
                        $$->AdoptChildren( $1 );
                        $$->AdoptChildren( $2 );
                     }
                   | StreamProperties QualifiedName
                     {
                        $$ = new StreamReferencing();
-                       assert( $$ != nullptr );
                        $$->AdoptChildren( $1 );
                        $$->AdoptChildren( $2 );
                     }
                   | QualifiedName
                     {
                         $$ = new StreamReferencing();
-                        assert( $$ != nullptr );
                         $$->AdoptChildren( $1 );
                     }
                   ;
@@ -2327,7 +2312,6 @@ StreamProperties   : STREAMHACKL StreamPropertyOptions STREAMHACKR
                      {
                         StreamPropertyList *vs( nullptr );
                         vs = new StreamPropertyList();
-                        assert( vs != nullptr );
                         vs->AdoptChildren( $2 );
                         $$ = vs;
                      }
@@ -2337,7 +2321,6 @@ StreamPropertyOptions :  THREEDOTS
                          {
                            VariableStreams *vs = new 
                                           VariableStreams();
-                           assert( vs != nullptr );
                            $$ = vs;
                          }
                       |  StreamPropertyList
@@ -2348,7 +2331,6 @@ StreamPropertyOptions :  THREEDOTS
                          {
                            VariableStreams *vs = new 
                                           VariableStreams();
-                           assert( vs != nullptr );
                            vs->MakeSibling( $3 );
                            $$ = vs;
                          }
@@ -2388,20 +2370,17 @@ StreamOption         :  QualifiedName  EQUALS Literal
 DelayedName    :  DOLLAR
                   {
                      $$ = new DelayedName();
-                     assert( $$ != nullptr );
                   }
                ;
 
 QualifiedName  :  IDENTIFIER
                   {
                      $$ = new QualifiedName( *$1 );
-                     assert( $$ != nullptr );
                      delete( $1 );
                   }
                |  QualifiedName PERIOD IDENTIFIER
                   {
                      QualifiedName *qn = new QualifiedName( *$3 );
-                     assert( qn != nullptr );
                      delete( $3 );
                      $1->MakeSibling( qn );
                      $$ = $1;
@@ -2471,7 +2450,6 @@ LogicalUnaryOperator :  BANG
 Literal  :  STR_TOKEN
             {
                ValueBase *value = new Value<std::string>( *$1 );
-               assert( value != nullptr );
                $$ = value;
                delete( $1 );
             }
@@ -2480,13 +2458,11 @@ Literal  :  STR_TOKEN
 Number   :  INT_TOKEN
             {
                ValueBase *value = new Value<uintmax_t>( $1 );
-               assert( value != nullptr );
                $$ = value;
             }
          |  FLOAT_TOKEN
             {
                ValueBase *value = new Value<long double>( $1 );
-               assert( value != nullptr );
                $$ = value;
             }
          ;
@@ -2494,13 +2470,11 @@ Number   :  INT_TOKEN
 Boolean  :  TRUE
             {
                ValueBase *value = new Value<bool>( true );
-               assert( value != nullptr );
                $$ = value;
             }
          |  FALSE
             {
                ValueBase *value = new Value<bool>( false );
-               assert( value != nullptr );
                $$ = value;
             }
          ;
