@@ -427,6 +427,7 @@
 %token       ATPRIVATE  
 %token       ATPROTECTED 
 %token       SIGNAL
+%token       SENDSIGNAL
 %token       EL
 %token       RETURN  
 %token       VOID  
@@ -1268,6 +1269,11 @@ SelectionStatementInit  :
                            $$->AdoptChildren( new EmptyStatement() );
                         }
                     |   SIGNAL LPAREN QualifiedName RPAREN Statement
+                        {
+                           //FIXME
+                           $$ = new NodeAbstract();
+                        }
+                    |   SENDSIGNAL LPAREN QualifiedName RPAREN Statement
                         {
                            //FIXME
                            $$ = new NodeAbstract();

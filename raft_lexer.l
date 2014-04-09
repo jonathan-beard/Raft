@@ -113,6 +113,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "@private:"               { TOKEN( ATPRIVATE ); } /* visibility private */
 "@protected:"             { TOKEN( ATPROTECTED ); } /* visitility protected */
 "onsignal"              { TOKEN( SIGNAL ); }
+"sendsignal"            { TOKEN( SENDSIGNAL ); }
 "elof"                    { TOKEN( EL ); }
 "return"                { TOKEN( RETURN ); }
 "void"                  { TOKEN( VOID ); }
