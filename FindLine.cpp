@@ -91,7 +91,7 @@ FindLine::findLine( const std::string filename,
   
 
    std::string start( text.substr( 0,start_index ) );
-   std::string end( text.substr( end_index ) );
+   std::string end( text.substr( --end_index ) );
 
    std::stringstream output;
    output << start << " " << blue << phrase << normal << " " << end << "\n"; 

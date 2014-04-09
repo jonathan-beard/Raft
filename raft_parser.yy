@@ -432,6 +432,7 @@
 %token       VOID  
 %token       THIS  
 %token       SUPER
+%token       NEW
 %token       FOR  
 %token       FOREACH  
 %token       WHILE  
@@ -619,7 +620,7 @@
 %type    <node>    MethodReturnType
 %type    <node>    MethodInherits
 %type    <node>    Streams
-
+%type    <node>    AllocationExpression
 %%
 CompilationUnit   :     END
                   |     T
@@ -2126,6 +2127,10 @@ NotJustName :  SpecialName
                {
                   $$ = $1;
                }
+            |  AllocationExpression
+               {
+                  $$ = $1;
+               }
             ;
 
 ComplexPrimary :  LPAREN Expression RPAREN
@@ -2251,7 +2256,7 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
                ArgumentList *al = new StreamArgumentList();
                $$->AdoptChildren( al );
             }
-     | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
+/*     | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new StreamReferencing();
                assert( $$ != nullptr );
@@ -2270,8 +2275,23 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
                $1->MakeSibling( $3 );
                $$->AdoptChildren( $1 );
                $$->AdoptChildren( al );
-            }
+            }*/
            ;
+
+AllocationExpression :  NEW Type TypeModifier LPAREN ArgumentList RPAREN
+                        {
+                           $$ = new New();
+                           $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $3 );
+                           $$->AdoptChildren( $5 );
+                        }
+                     |  NEW Type TypeModifier LPAREN RPAREN
+                        {
+                           $$ = new New();
+                           $$->AdoptChildren( $2 );
+                           $$->AdoptChildren( $3 );
+                        }
+                     ;
 
 StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
                     {

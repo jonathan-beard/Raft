@@ -118,6 +118,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "void"                  { TOKEN( VOID ); }
 "this"                  { TOKEN( THIS ); }
 "super"                 { TOKEN( SUPER ); }
+"new"                   { TOKEN( NEW ); }
 "for"                   { TOKEN( FOR ); }
 "foreach"               { TOKEN( FOREACH ); }
 "while"                 { TOKEN( WHILE ); }
