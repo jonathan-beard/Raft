@@ -1,11 +1,3 @@
-" Vim syntax file " Language:	  Raft
-" Maintainer:	Claudio Fleiner <claudio@fleiner.com>
-" URL:		http://www.fleiner.com/vim/syntax/raft.vim
-" Last Change:	2010 March 23
-
-" Please check :help raft.vim for comments on some of the options available.
-
-" Quit when a syntax file was already loaded
 if !exists("main_syntax")
   if version < 600
     syntax clear
