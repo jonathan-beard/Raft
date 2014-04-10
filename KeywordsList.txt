@@ -50,10 +50,3 @@ for overriding both abstract and implemented super-class methods.
 autogen - keyword that indicates automatic synthesis of access 
 functions for private variables. The functions are named in the 
 following way: get_variable_name, set_variable_name. 
-
-AP.XXX - AP.anything can be a reserved system implemented type
-for the AP runtime.  This is set due to some limitations on how
-things are defined.  For instance, the language types for file
-extensions are defined in XML format, the outlines for each process
-are defined in AP code, therefore there has to be a way to 
-match the two up.  
