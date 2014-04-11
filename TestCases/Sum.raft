@@ -1,116 +1,29 @@
-/*
- * Sum - a test class for the Raft language.  This
- * is the first real app, as it was for the AutoPipe
- * streaming language.  This is also a generic class,
- * which accepts any class that extends Raft.number
- * as a type.  Alternatively a user could specify
- * class Sum< class T elof { int8, int32, int64, float32, float64 } >
- * to restrict the Sum class even further.
- * @author Jonathan Beard
- * @modified 9 April 2014
- */ 
-
 class Sum< class T extends Raft.number >
 {
-/**
- * @private, only visible to local class (i.e., scoped to Sum)
- */
 @private:
-   /**
-    * var tells the compiler we're about to declare a variable,
-    * T is the generic Type.  Raft requires that the user initialize
-    * all variables.  The cast function is provided by the base
-    * class which all objects and types extend, so we can use it 
-    * to cast zero to initialize our total var regardless of number type
-    * float, int, etc.
-    */
    var T total( T.cast( 0 ) );
 @public:
    
-   /**
-    * declaration of streaming function sum, with a single stream "in" of type
-    * T and a single return value T.  Within Raft all functions are fully synchronized
-    * that is, the access to global variables from a streaming function is 
-    * protected via monitors or some other lower level mechanism.  This is determined
-    * easily by finding the in-scope definitions of global variables.  We also don't
-    * allow public access to non-const variables, which makes the synchronization process
-    * a bit easier.  This is enforced at compile time, not via linguistic means.  There's
-    * also an unsynchronized keyword that could be added to remove the synchronization
-    * behavior and allow the programmer to use locking primitives.  
-    */
    streams T sum [[ T in ]]
    {
       
       total += in;
-      /**
-       * A function with a return value must return, but with
-       * streaming functions that reduce to a single value
-       * such as this one, the semantics are a bit different.  
-       * To return only when certain events happen, like EOD "End
-       * of Data," a signal must be sent from some "upstream" 
-       * kernel.  In this case, the return is delayed until
-       * a signal is received.  Or an error is thrown in which 
-       * case the whole streaming application exits.  I haven't
-       * fully specified the error handling mechanism, but I
-       * will eventually.
-       */
       onsignal( in.EOD )
       {
          return( total );
       }
    }
 
-   /**
-    * main always returns void, if an error is thrown we could pass the
-    * equivalent error code if needed.  The args array passes command 
-    * line arguments with the name of the main executable as the first
-    * element.  In keeping with the syntax, we can either set the args
-    * array to null or simply leave it uninitialized.  In either event
-    * the runtime will set the args array to proper values, ensuring
-    * at least the name of the main executable is set. 
-    */
    void main( String args[]( null ) )
    {
-      /**
-       * Eventually there will be multiple libraries, the streaming
-       * read is one which returns an input "stream" object that
-       * can be streamed from, with variable number of output 
-       * streams.  In this case we tell the compiler that we want
-       * the type of those streams to be float32, and that we're
-       * reading from a "list" format which is assumed to be delimited
-       * by spaces or new lines.
-       */
       var Raft.inputStream input_stream< Type = float32 >( 
                              Raft.io.read( args[1], "list" ) );
-      
-      /**
-       * the "auto" keyword is a bit of syntactic sugar for the 
-       * times when the return type is well defined, such as in this
-       * object initialization, now we don't have to re-write the 
-       * whole generic instantiation twice.
-       */
       var auto s( new Sum< Type = float32 >() );
 
-      /**
-       * Now we want to compute the average of the data file using the 
-       * Sum kernel (s)'s sum streaming function.  We'll let the runtime
-       * decide how many parallel sum functions there will be, and we'll
-       * also tell the compiler that the order of the sums doesn't matter,
-       * with the input stream modifier <: order = "OoO" :> where "OoO"
-       * stands for Out-of-Order.  The "$" operator captures the input 
-       * streams from the input_stream object.  The sum function demonstrates
-       * reduction since it goes from many streams to a single return value
-       * when it receives an "End of Data" signal from the input_stream
-       * object.  The first streaming kernel to receive the signal performs
-       * the action, the rest shut down gracefully.  
-       */
       var float32 avg( ( 
-            s.sum <: order = "OoO" :> [[ $ ]] @/ input_stream ) / input_stream.length() );
+            s.sum <: order = "OoO" :> [[ $ ]] @/ input_stream ) / 
+               input_stream.length() );
 
-      /**
-       * call the yet to be coded println function to print the simple mean of 
-       * our data set
-       */
       Raft.io.println( "Mean: " + avg );
    }
 }
