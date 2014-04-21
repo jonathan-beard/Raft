@@ -8,6 +8,7 @@ class Sum< class T extends Raft.number >
    {
       
       total += in;
+      
       onsignal( in.EOD )
       {
          return( total );
