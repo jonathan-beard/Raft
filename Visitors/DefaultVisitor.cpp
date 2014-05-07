@@ -11,6 +11,7 @@
 #include "DefaultVisitor.hpp"
 #include "NodeAbstract.hpp"
 
+#include "symtab.hpp"
 #include "data.hpp"
 
 using namespace Visitor;
@@ -20,7 +21,8 @@ using namespace Node;
 int64_t DefaultVisitor::indent_level = 0;
 
 DefaultVisitor::DefaultVisitor(Raft::Data &d) : 
-                               data( d )
+                               data( d ),
+                               sym_tab( nullptr )
 {
    /** 
     * NOTE: add a visitor for the base node, can be overriden later
@@ -30,7 +32,8 @@ DefaultVisitor::DefaultVisitor(Raft::Data &d) :
 }
 
 DefaultVisitor::DefaultVisitor( const DefaultVisitor &visitor ) :
-                                data( visitor.data )
+                                data( visitor.data ),
+                                sym_tab( visitor.sym_tab )
 {
    /* not much to copy at the moment */
 }

@@ -26,7 +26,7 @@ APCOMCPPOBJ = main data p prep options_vars \
 				  command_arguments set_options driver \
 				  common command_option_base \
               cpp_output_handler ClassTree \
-              FindLine
+              FindLine symtab 
 APCOMSOBJ =  raft_parser raft_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 

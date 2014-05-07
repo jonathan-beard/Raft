@@ -12,6 +12,7 @@
 
 namespace Raft{
    class Data;
+   class SymTab;
 }
 
 namespace Node{
@@ -51,8 +52,9 @@ protected:
    void increase_indent();
    void decrease_indent();
    
-   Raft::Data  &data;
-   FunctionMap visit_methods;
+   Raft::Data           &data;
+   FunctionMap          visit_methods;
+   Raft::SymTab         *sym_tab;
 private:
    /* for prettier printing of nodes */
    static int64_t indent_level;
