@@ -5,13 +5,13 @@ class Foo<int8 f(8)>{
     * can't assign any field variables outside of a body
     */
    
-   const int32 a( 0 );
-   int32 foo( 0 );
+   var const int32 a( 0 );
+   var int32 foo( 0 );
    
-   bool  f[4]( [1] = 0, [2] = 0 , [ ... ] =  0);
+   var bool  f[4]( [1] = 0, [2] = 0 , [ ... ] =  0);
    
 
-   Foo f( 1,2,3 );
+   var Foo f( 1,2,3 );
 
    /**
     * Foo - example of a constructor, will be called once
@@ -41,7 +41,7 @@ class Foo<int8 f(8)>{
 
 class Bar{
 @public:
-   void main( String args[](nill) )
+   void main( String args[](null) )
    {
    }
 }

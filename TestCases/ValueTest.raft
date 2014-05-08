@@ -1,7 +1,7 @@
 class Foo{
 @public:
-   void main( String args[](nill) )
+   void main( String args[](null) )
    {
-      int8 a( 1 );
+      var int8 a( 1 );
    }
 }

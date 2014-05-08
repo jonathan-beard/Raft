@@ -1,4 +1,4 @@
-class Foo< class Type, int32 array[2](1) > : extends Kernel{
+class Foo< class Type, int32 array > : extends Kernel{
 @public:
    
    streams [[int64 a]] Foo [[ int64 x, int32 a[100,2], int8 b ]]

@@ -1,21 +1,21 @@
 //Generic Class Test
 class Foo< class Type >{
 @public:
-   void main( String args[](nill) )
+   void main( String args[](null) )
    {
    }
 }
 
 class Foo< class Type elof { int8, float32 }  >{
 @public:
-   void main( String args[](nill) )
+   void main( String args[](null) )
    {
    }
 }
 
 class Foo< class Type extends Raft.number >{
 @public:
-   void main( String args[](nill) )
+   void main( String args[](null) )
    {
    }
 }

@@ -4,10 +4,10 @@ class Foo{
    void main( String args[](nill) )
    {
       /** static instantiation **/
-      int8 foo[8]( 0 );
+      var int8 foo[8]( 0 );
       /** inline array declaration **/
-      bool  f[4]( [1] = true, [2 ... 3] = false, [ ... ] = false );
-      bool  f[4]( [1] = true, [1, 2 ... 3] = false, [ ... ] = false );
+      var bool  f[4]( [1] = true, [2 ... 3] = false, [ ... ] = false );
+      var bool  f[4]( [1] = true, [1, 2 ... 3] = false, [ ... ] = false );
       f[ 1, 23 ... 2 ]  = 100;
       f[ 23 ... 2 ]  = 100;
       f[2] = 100;
