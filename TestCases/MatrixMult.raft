@@ -1,0 +1,4 @@
+class MatrixMult< class T extends Raft.number >{
+@public:
+   
+}
