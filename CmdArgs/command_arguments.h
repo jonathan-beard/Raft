@@ -35,7 +35,6 @@
 
 
 
-#include "data.hpp"
 #include "command_option_base.hpp"
 
 /**
@@ -46,9 +45,12 @@ class CmdArgs{
       /**
        * Default Constructor - 
        * @param   name - std::string, name of program using CmdArgs
-       * @param   d  - Raft::Data&, for error streams
+       * @param   user - std::ostream&, stream for user output
+       * @param   err  - std::ostream&, stream for error output
        */
-      CmdArgs(std::string name, Raft::Data &d);
+      CmdArgs(const std::string name,
+              std::ostream &user,
+              std::ostream &err );
       ~CmdArgs();
       /**
        * printArgs - print all the options
@@ -68,10 +70,19 @@ class CmdArgs{
        * command line 
        */
       void processArgs(int argc, char **argv);
+   
+      char** getOriginalArguments();
+      int    getOriginalArgumentCount();
+
+      bool  allMandatorySet();
    private:
       std::vector< OptionBase * > options;
       std::string                 name;
-      Raft::Data                  &data;
+      std::ostream                &userstream;
+      std::ostream                &errorstream;
+
+      char                        **argv;
+      int                         argc;
 };
 
  #endif /* END __CMDARGS_H__ */

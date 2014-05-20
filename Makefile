@@ -9,11 +9,12 @@ endif
 
 include ./Visitors/Makefile
 include ./ASTNodes/Makefile
+include ./CmdArgs/Makefile
 
 DEBUG = -g 
 CFLAGS = -Wall -O0  $(DEBUG)
 CXXFLAGS = -Wall -O0 -I$(ASTDIR) -I$(VISITORDIR) -I. $(DEBUG) \
-         -I/usr/local/include
+         -I/usr/local/include -I$(CMDARGSDIR) 
 CSTD = -std=c99
 CXXSTD = -std=c++11 $(DARWIN)
 
@@ -23,10 +24,10 @@ APHEXE = raft_h
 
 
 APCOMCPPOBJ = main data p prep options_vars \
-				  command_arguments set_options driver \
-				  common command_option_base \
+				  set_options driver common \
               cpp_output_handler ClassTree \
-              FindLine symtab 
+              FindLine symtab $(CMDARGSCPPCODE)
+              
 APCOMSOBJ =  raft_parser raft_lexer
 APCOMSOBJS = $(addsuffix .o, $(APCOMSOBJ) )
 APCOMLIBS = 

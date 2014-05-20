@@ -25,6 +25,8 @@ Set_Options::SetOptions( CmdArgs &cmd, Raft::Data &data )
                         v = true;
                         return( true ); 
                      },
+                     nullptr,
+                     false,
                      true ) );
    cmd.addOption( new Option< bool >( options.verbose,
                      "-v",
@@ -149,6 +151,8 @@ Set_Options::SetOptions( CmdArgs &cmd, Raft::Data &data )
                            std::string out(
                            Raft::Common::ExtractPathNoFileName( x, v ) );
                            return( out ); 
-                         } }}
+                         } }},
+                         nullptr,
+                         true /* mandatory */
                         ) );
 }

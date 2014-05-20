@@ -12,6 +12,7 @@ class OptionBase{
 public:
    OptionBase( const std::string flag,
                const std::string description,
+               bool  Mandatory = false,
                bool  isHelp = false );
 
    virtual ~OptionBase();
@@ -19,17 +20,26 @@ public:
 
    virtual bool setValue( const char *value ) = 0;
    virtual std::string toString() = 0;
-
+   /** 
+    * Returns true if the value has been set, useful for mandatory
+    * arguments
+    * @return bool
+    */
+   bool is_set();
+   
+   bool is_mandatory();
    bool is_help();
    std::string& get_flag();
    std::string& get_description();
 
 protected:
    std::string toString( const std::string defaultValue );
+   bool        set;
 
 private:
    std::string flag;
    std::string description;
    bool        help;
+   bool        mandatory;
 };
 #endif /* END _COMMAND_OPTION_BASE_HPP_ */

@@ -26,13 +26,15 @@
 #include <cassert>
 
 #include "command_arguments.h"
-#include "signalhooks.hpp"
 
 
 
-CmdArgs::CmdArgs(const std::string n, Raft::Data &d)
+CmdArgs::CmdArgs(const std::string n, 
+                 std::ostream &user,
+                 std::ostream &err )
    : name( n ),
-     data( d )
+     userstream( user ),
+     errorstream( err )
 {
   /* nothing to do here, move along */
 }
@@ -48,7 +50,7 @@ void CmdArgs::printArgs(){
    for_each( options.begin(),
              options.end(),
              [&]( OptionBase *option ){ 
-                  data.get_userstream() << 
+                  userstream << 
                         option->toString() << std::endl; } );
    std::cout << "End Options" << std::endl;
    std::cout << stars << std::endl;
@@ -62,6 +64,11 @@ CmdArgs::addOption(OptionBase *option){
 }
 
 void CmdArgs::processArgs(int argc, char **argv){
+   /* store for later just in case */
+   this->argc = argc;
+   this->argv = argv;
+
+   /* now on to the processing */
    std::queue< std::string > ignored_options;
    for(int i = 1 ; i < argc; i++)
    {
@@ -71,28 +78,56 @@ void CmdArgs::processArgs(int argc, char **argv){
                    /* given flag     */ (*it)->get_flag().c_str() ) == 0 )
          {
             /* increment past flag */
-          if(! (*it)->is_help() ) i++;
-          const bool success( (*it)->setValue(  argv[i]  ) );
-          if( success != true )
-          {
-             data.get_rf_errorstream() << "Invalid input for flag (" <<
+            if(! (*it)->is_help() )
+            {
+               i++;
+            }
+            const bool success( (*it)->setValue(  argv[i]  ) );
+            if( success != true )
+            {
+               errorstream << "Invalid input for flag (" <<
                 (*it)->get_flag() << ") : " << argv[i] << "\n";
-             raise( TERM_ERR_SIG );
-          }
-          goto END;
-       }
+            }
+            goto END;
+         }
     }
       ignored_options.push( std::string( argv[i] ) );
       END:;
    }
    
    if(! ignored_options.empty() ){
-      data.get_errorstream() << 
-         "The following options were unknown and ignored: " << std::endl;
+      errorstream << 
+         "The following options were unknown and ignored: \n";
    }
    while(! ignored_options.empty() ){
       std::string option = ignored_options.front();
       ignored_options.pop();
-      data.get_errorstream() << option << std::endl;
+      errorstream << option << std::endl;
    }
+}
+
+char**   
+CmdArgs::getOriginalArguments()
+{
+   return( argv );
+}
+
+int
+CmdArgs::getOriginalArgumentCount()
+{
+   return( argc );
+}
+
+bool
+CmdArgs::allMandatorySet()
+{
+   for( OptionBase *option : options )
+   {
+      if( option->is_mandatory() && ! option->is_set() )
+      {
+         std::cerr << "Option: " << option->toString() << "\n"; 
+         return( false );
+      }
+   }
+   return( true );
 }

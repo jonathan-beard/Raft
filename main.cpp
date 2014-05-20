@@ -75,7 +75,7 @@ main( const int argc, char **argv )
    raft_data.set_options_vars( &options );
    
    /* Get a Cmd State Object & Set Options */
-   CmdArgs cmd_args( argv[0] , raft_data );
+   CmdArgs cmd_args( argv[0], std::cout, std::cerr );
    
    Set_Options::SetOptions( cmd_args, raft_data );
    

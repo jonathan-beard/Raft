@@ -21,9 +21,12 @@
 
 OptionBase::OptionBase( const std::string Flag,
                         const std::string Description,
-                        bool  Help ) : flag( Flag ),
+                        bool  isMandatory,
+                        bool  isHelp ) : flag( Flag ),
                                        description( Description ),
-                                       help( Help )
+                                       mandatory( isMandatory ),
+                                       set( false ),
+                                       help( isHelp )
 {
    /* nothing to do here */
 }
@@ -45,7 +48,7 @@ OptionBase::toString( const std::string defaultValue )
      /* format the description + default properly */
      const size_t description_width( total_width - flag_width );
      std::stringstream desc;
-desc << "// " << description << ", default: " << defaultValue;
+desc << "// " << description << ", default: " << defaultValue << ", mandatory: " << (is_mandatory() ? "true" : "false" );
      const std::string desc_str( desc.str() );
      if(desc_str.length() > description_width){
         /* width needs to be shortened and made multi-line */
@@ -98,3 +101,14 @@ OptionBase::is_help()
 }
 
 
+bool 
+OptionBase::is_set()
+{
+   return( (this)->set );
+}
+
+bool 
+OptionBase::is_mandatory()
+{
+   return( (this)->mandatory );
+}
