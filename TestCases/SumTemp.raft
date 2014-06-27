@@ -4,7 +4,7 @@ class Sum< class T extends Raft.number >
    var static T total( T.cast( 0 ) );
 @public:
    
-   func T sum [[ T in ]]
+   stream sum [ T in ] -> ( T ) 
    {
       
       total += in;

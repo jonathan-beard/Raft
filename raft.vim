@@ -18,7 +18,7 @@ endif
 
 " some characters that cannot be in a raft program (outside a string)
 syn match raftError "[`]"
-syn match raftError "<<<\|\.\.\|=>\|<>\|||=\|&&=\|[^-]->\|\*\/"
+syn match raftError "<<<\|\.\.\|=>\|<>\|||=\|&&=\\|\*\/"
 syn match raftOK "\.\.\."
 
 " use separate name so that it can be deleted in raftcc.vim
@@ -38,11 +38,12 @@ syn keyword raftConstant	null
 syn match raftConstant          "\$" 
 " syn match raftConstant          '\#'
 syn keyword raftTypedef		this super
-syn keyword raftOperator	var new alloc free
+syn keyword raftOperator	func stream var new alloc free const
 syn keyword raftConditional     onsignal
-syn keyword raftType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto const struct
+syn keyword raftType		bool int8 int16 int32 int64 uint8 uint16 uint32 uint64 float32 float64 float96 String atomic nonatomic auto struct
 syn keyword raftType		void
 syn keyword raftStatement	return
+syn match   raftType "->"
 syn keyword raftStorageClass	static synchronized transient volatile final
 syn keyword raftExceptions	throw try catch finally
 syn keyword raftAssert		assert
@@ -58,7 +59,7 @@ syn keyword raftBranch		break continue nextgroup=raftUserLabelRef skipwhite
 syn match   raftUserLabelRef	"\k\+" contained
 syn match   raftVarArg		"\.\.\."
 syn keyword raftScopeDecl	@ports @public @protected @private @configs 
-syn keyword raftAnnotation overrides implements streams
+syn keyword raftAnnotation overrides implements
 if exists("raft_highlight_raft_lang_ids")
   let raft_highlight_all=1
 endif
