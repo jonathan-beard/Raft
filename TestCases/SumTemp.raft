@@ -2,7 +2,7 @@ class Sum< class T extends Raft.number >
 {
 @public:
   
-   stream sum [[ order< T , OoO > in ]] -> ( converge< T, + > total ) 
+   stream sum [[ order< T , OoO > in ]] -> ( reduce< T, + > total ) 
    {
       
       total += in;
@@ -21,7 +21,7 @@ class Sum< class T extends Raft.number >
 
       var float32 avg( ( 
             s.sum[[ $ ]] @/ input_stream ) / 
-               input_stream.length() );
+               input_stream.count() );
 
       Raft.io.println( "Mean: " + avg );
    }
