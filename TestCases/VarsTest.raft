@@ -11,6 +11,7 @@ class Foo{
       var float64 f( 2.3 );
       var float96 g( 2.3 );
       var auto    h( 2.3 );
+      var auto    h<100>( 2.3 );
 
       /* array declarations */
       var int8 fooone[8]( 0 );
