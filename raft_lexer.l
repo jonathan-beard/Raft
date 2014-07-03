@@ -88,15 +88,11 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ">>"                    { TOKEN( DRCARROT ); }
 "[["                    { TOKEN( DLBRACKET ); }
 "]]"                    { TOKEN( DRBRACKET ); }
-"<:"                    { TOKEN( STREAMHACKL ); }
-":>"                    { TOKEN( STREAMHACKR ); }
 "<"                     { TOKEN( LCARROT ); }
 ">"                     { TOKEN( RCARROT ); }
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
 "autogen"               { TOKEN( AUTOGEN );   } /* automagically generate get/set functions */
-"fork"                  { TOKEN( FORK );      } /* streaming kernel that forks */
-"converge"              { TOKEN( CONVERGE );  } /* streaming kernel designed to converge streams */
 "auto"                  { TOKEN( AUTO );      } /* infer return type and set LHS type to match */
 "final"                 { TOKEN( FINAL );     } /* no extending this class or method */
 "class"                 { TOKEN( CLASS );     } /* class */
@@ -106,9 +102,7 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 "overrides"             { TOKEN( OVERRIDES ); } /* functions mus thave this if they override s sub */
 "implements"            { TOKEN( IMPLEMENTS );} /* use if we implement an abstract or interface */
 "extends"               { TOKEN( EXTENDS ); }   /* use for classes to inherit from sub-classes */
-"streams"               { TOKEN( STREAMS ); }   /* use to define streaming methods or constructors */
-"lambda"                { TOKEN( LAMBDA ); }    /* define a lambda function */
-"lambdakernel"          { TOKEN( LAMBDAKERNEL ); } /* define a lambda streaming kernel */
+"stream"               { TOKEN( STREAM ); }    /* use to define streaming methods or constructors */
 "@public:"              { TOKEN( ATPUBLIC ); }  /* set visibility public */
 "@private:"               { TOKEN( ATPRIVATE ); } /* visibility private */
 "@protected:"             { TOKEN( ATPROTECTED ); } /* visitility protected */

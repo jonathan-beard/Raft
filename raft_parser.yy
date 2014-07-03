@@ -420,9 +420,7 @@
 %token       OVERRIDES  
 %token       IMPLEMENTS  
 %token       EXTENDS 
-%token       STREAMS
-%token       LAMBDA
-%token       LAMBDAKERNEL
+%token       STREAM
 %token       ATPUBLIC
 %token       ATPRIVATE  
 %token       ATPROTECTED 
@@ -486,12 +484,8 @@
 %token       FLOAT96  
 %token       POUND
 %token       STRING  
-%token       FORK
-%token       CONVERGE
 %token       SYNCHRONIZED
 %token       UNSYNCHRONIZED
-%token       STREAMHACKL
-%token       STREAMHACKR
 %token   <bval>      TRUE
 %token   <bval>      FALSE
 %token   <sval>      STR_TOKEN 
@@ -597,7 +591,6 @@
 %type    <node>    StreamDeclarator
 %type    <node>    DelayedName
 %type    <node>    StreamCall
-%type    <node>    StreamCallPrefixA
 %type    <node>    StreamProperties
 %type    <node>    StreamPropertyOptions
 %type    <node>    StreamPropertyList
@@ -620,7 +613,7 @@
 %type    <node>    MethodDeclarationType
 %type    <node>    MethodReturnType
 %type    <node>    MethodInherits
-%type    <node>    Streams
+%type    <node>    Stream
 %type    <node>    AllocationExpression
 %%
 CompilationUnit   :     END
@@ -1053,7 +1046,7 @@ MethodModifier  : MethodInherits
                   {
                      $$ = $1;
                   }
-                | Streams
+                | Stream
                   {
                      $$ = $1;
                   }
@@ -1073,7 +1066,7 @@ MethodInherits :  IMPLEMENTS
                   }
                 ;
 
-Streams        :  STREAMS
+Stream        :  STREAM
                   {
                      $$ = new Streams();
                   }
@@ -2236,7 +2229,7 @@ MethodCall : QualifiedName LPAREN ArgumentList RPAREN
            ;
 
 
-StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
+StreamCall :QualifiedName DLBRACKET ArgumentList DRBRACKET
             {
                $$ = new StreamReferencing();
                $$->AdoptChildren( $1 );
@@ -2244,33 +2237,13 @@ StreamCall :StreamCallPrefixA DLBRACKET ArgumentList DRBRACKET
                al->AdoptChildren( $3 );
                $$->AdoptChildren( al );
             }
-           | StreamCallPrefixA DLBRACKET DRBRACKET
+           | QualifiedName DLBRACKET DRBRACKET
             {
                $$ = new StreamReferencing();
                $$->AdoptChildren( $1 );
                ArgumentList *al = new StreamArgumentList();
                $$->AdoptChildren( al );
             }
-/*     | SpecialName PERIOD QualifiedName DLBRACKET ArgumentList DRBRACKET
-            {
-               $$ = new StreamReferencing();
-               assert( $$ != nullptr );
-               $1->MakeSibling( $3 );
-               ArgumentList *al = new StreamArgumentList();
-               assert( al != nullptr );
-               al->AdoptChildren( $5 );
-               al->AdoptChildren( $1 );
-               $$->MakeSibling( al );
-            }
-           | SpecialName PERIOD QualifiedName DLBRACKET DRBRACKET
-            {
-               $$ = new StreamReferencing();
-               assert( $$ != nullptr );
-               ArgumentList *al = new StreamArgumentList();
-               $1->MakeSibling( $3 );
-               $$->AdoptChildren( $1 );
-               $$->AdoptChildren( al );
-            }*/
            ;
 
 AllocationExpression :  NEW Type TypeModifier LPAREN ArgumentList RPAREN
@@ -2288,90 +2261,6 @@ AllocationExpression :  NEW Type TypeModifier LPAREN ArgumentList RPAREN
                         }
                      ;
 
-StreamCallPrefixA : StreamProperties QualifiedName StreamProperties
-                    {
-                       $$ = new StreamReferencing();
-                       $$->AdoptChildren( $1 );
-                       $$->AdoptChildren( $2 );
-                       $$->AdoptChildren( $3 );
-                    }
-                  | QualifiedName StreamProperties
-                    {
-                       $$ = new StreamReferencing();
-                       $$->AdoptChildren( $1 );
-                       $$->AdoptChildren( $2 );
-                    }
-                  | StreamProperties QualifiedName
-                    {
-                       $$ = new StreamReferencing();
-                       $$->AdoptChildren( $1 );
-                       $$->AdoptChildren( $2 );
-                    }
-                  | QualifiedName
-                    {
-                        $$ = new StreamReferencing();
-                        $$->AdoptChildren( $1 );
-                    }
-                  ;
-
-StreamProperties   : STREAMHACKL StreamPropertyOptions STREAMHACKR
-                     {
-                        StreamPropertyList *vs( nullptr );
-                        vs = new StreamPropertyList();
-                        vs->AdoptChildren( $2 );
-                        $$ = vs;
-                     }
-                  ;
-
-StreamPropertyOptions :  THREEDOTS
-                         {
-                           VariableStreams *vs = new 
-                                          VariableStreams();
-                           $$ = vs;
-                         }
-                      |  StreamPropertyList
-                         {
-                           $$ = $1;
-                         }
-                      |  THREEDOTS COMMA StreamPropertyList
-                         {
-                           VariableStreams *vs = new 
-                                          VariableStreams();
-                           vs->MakeSibling( $3 );
-                           $$ = vs;
-                         }
-                      ;
-
-StreamPropertyList   : StreamOption
-                       {
-                           $$ = $1;
-                       }
-                     | StreamPropertyList COMMA StreamOption
-                       {
-                           $1->MakeSibling( $3 );
-                           $$ = $1;
-                       }
-                     ;
-
-StreamOption         :  QualifiedName  EQUALS Literal
-                        {
-                           $$ = new StreamOption();
-                           $$->AdoptChildren( $1 );
-                           $$->AdoptChildren( $3 );
-                        }
-                     |  QualifiedName  EQUALS Number
-                        {
-                           $$ = new StreamOption();
-                           $$->AdoptChildren( $1 );
-                           $$->AdoptChildren( $3 );
-                        }
-                     |  QualifiedName  EQUALS Boolean
-                        {
-                           $$ = new StreamOption();
-                           $$->AdoptChildren( $1 );
-                           $$->AdoptChildren( $3 );
-                        }
-                     ;
 
 DelayedName    :  DOLLAR
                   {
