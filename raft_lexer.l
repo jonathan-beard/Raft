@@ -92,10 +92,12 @@ DIRECTIVE	         {WSCHAR}*#(.*\\\n)*.*
 ">"                     { TOKEN( RCARROT ); }
 ":"                     { TOKEN( COLON ); }
 ";"                     { TOKEN( SEMI ); }
+"->"                    { TOKEN( RETURNTYPE ); }
 "autogen"               { TOKEN( AUTOGEN );   } /* automagically generate get/set functions */
 "auto"                  { TOKEN( AUTO );      } /* infer return type and set LHS type to match */
 "final"                 { TOKEN( FINAL );     } /* no extending this class or method */
 "class"                 { TOKEN( CLASS );     } /* class */
+"func"                  { TOKEN( FUNC  );     }
 "system"                { TOKEN( SYSTEM);     } /* this is a system defined, not in Raft lang */
 "abstract"              { TOKEN( ABSTRACT );  } /* must be extended to instantiate */
 "interface"             { TOKEN( INTERFACE ); } /* only an interface, no implementation */

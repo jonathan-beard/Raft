@@ -615,6 +615,9 @@
 %type    <node>    MethodInherits
 %type    <node>    Stream
 %type    <node>    AllocationExpression
+%token   RETURNTYPE
+%token   FUNC
+
 %%
 CompilationUnit   :     END
                   |     T
@@ -1027,34 +1030,31 @@ MethodDeclarationType : MethodDeclarator
                         }
                       ;
 
-MethodModifiers : MethodModifiers MethodModifier
+MethodModifiers : MethodModifier MethodStorageModifier MethodInherits
                   {
+                     $1->AdoptChildren( $2 );
+                     $1->AdoptChildren( $3 );
                      $$ = $1;
-                     $$->MakeSibling( $2 );
-                  }
-                | MethodModifier
-                  {
-                     $$ = $1;
-                  }
-                |
-                  {
-                     $$ = new NoMethodModifier();
                   }
                 ;
 
-MethodModifier  : MethodInherits
+MethodModifier  : FUNC
                   {
-                     $$ = $1;
+                     $$ = new NodeAbstract( "Func" );
                   }
-                | Stream
+                | STREAM
                   {
-                     $$ = $1;
-                  }
-                | STATIC
-                  {
-                     $$ = new Static();
+                     $$ = new Streams();
                   }
                 ;
+
+MethodStorageModifier : STATIC
+                        {
+                           $$ = new NodeAbstract( "Static" );
+                        }
+                      |
+                      ;
+                
 
 MethodInherits :  IMPLEMENTS
                   {
@@ -1064,13 +1064,12 @@ MethodInherits :  IMPLEMENTS
                   {
                      $$ = new MethodOverrides();
                   }
+                | ABSTRACT
+                  {
+                     $$ = new AbstractNode( "Abstract" );
+                  }
                 ;
 
-Stream        :  STREAM
-                  {
-                     $$ = new Streams();
-                  }
-               ;
 
 MethodBody  :  Block
                {
