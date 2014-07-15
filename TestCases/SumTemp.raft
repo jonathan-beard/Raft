@@ -1,8 +1,8 @@
 class Sum< class T extends Raft.number >
 {
 @public:
-  
-   stream sum [[ order< T, out > in ]] -> ( reduce< T, + > total ) 
+ 
+   stream sum [[ order< T, OutOfOrder > in ]] -> ( reduce< T, + > total ) 
    {
       
       total += in;

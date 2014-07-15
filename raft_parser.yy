@@ -46,7 +46,6 @@
       class This;
       class QualifiedName;
       class DelayedName;
-      class StreamOption;
       class StreamPropertyList;
       class VariableStreams;
       class Referencing;
@@ -103,7 +102,8 @@
       class NoParameter;
       class Block;
       class EmptyBlock;
-      class StreamEdges; class StreamInput;
+      class StreamEdges; 
+      class StreamInput;
       class NoStreamInput;
       class StreamOutput;
       class NoStreamOutput;
@@ -237,7 +237,6 @@
    #include "This.hpp"
    #include "QualifiedName.hpp"
    #include "DelayedName.hpp"
-   #include "StreamOption.hpp"
    #include "StreamPropertyList.hpp"
    #include "VariableStreams.hpp"
    #include "Referencing.hpp"
@@ -515,7 +514,6 @@
 %type    <node>    ConstructorDeclaration
 %type    <node>    MultiObjectInit
 %type    <node>    StorageModifier
-%type    <node>    ClassInitializers
 %type    <node>    MethodBody
 %type    <node>    MethodDeclarator
 %type    <node>    ParameterList
@@ -585,16 +583,8 @@
 %type    <valnode>    Number
 %type    <valnode>    Boolean
 %type    <node>    Block
-%type    <node>    StreamInitializers
-%type    <node>    StreamInitializer
-%type    <node>    StreamInitializersB
-%type    <node>    StreamDeclarator
 %type    <node>    DelayedName
 %type    <node>    StreamCall
-%type    <node>    StreamProperties
-%type    <node>    StreamPropertyOptions
-%type    <node>    StreamPropertyList
-%type    <node>    StreamOption
 %type    <node>    StorageModifierI
 %type    <node>    GenericInstantiation
 %type    <node>    SelectiveArrayInitializerNum 
@@ -610,10 +600,8 @@
 %type    <node>    ClassList 
 %type    <node>    MethodModifiers
 %type    <node>    MethodModifier
-%type    <node>    MethodDeclarationType
-%type    <node>    MethodReturnType
 %type    <node>    MethodInherits
-%type    <node>    Stream
+%type    <node>    MethodReturns
 %type    <node>    AllocationExpression
 %token   RETURNTYPE
 %token   FUNC
@@ -899,14 +887,34 @@ FieldDeclaration  :     FieldVariableDeclaration
                   ;
 
 
-FieldVariableDeclaration  : VAR StorageModifier Type Initializer SEMI
-                            {
-                              //TODO
-                              $$ = new FieldVarDecl();
-                              $$->AdoptChildren( $2 );
-                              $$->AdoptChildren( $3 );
-                              $$->AdoptChildren( $4 );
-                            }
+FieldVariableDeclaration  : 
+                              VAR StorageModifier Type Initializer SEMI
+                              {
+                                $$ = new FieldVarDecl();
+                                $$->AdoptChildren( $2 );
+                                $$->AdoptChildren( $3 );
+                                $$->AdoptChildren( $4 );
+                              }
+                           |  CONST StorageModifier Type Initializer SEMI
+                              {
+                                //TODO
+                                $$ = new FieldVarDecl();
+                                $$->AdoptChildren( $2 );
+                                $$->AdoptChildren( $3 );
+                                $$->AdoptChildren( $4 );
+                              }
+                           | VAR  Type Initializer SEMI
+                              {
+                                $$ = new FieldVarDecl();
+                                $$->AdoptChildren( $2 );
+                                $$->AdoptChildren( $3 );
+                              }
+                           |  CONST  Type Initializer SEMI
+                              {
+                                $$ = new FieldVarDecl();
+                                $$->AdoptChildren( $2 );
+                                $$->AdoptChildren( $3 );
+                              }
                           ;
 
 StorageModifier  : StorageModifierI
@@ -918,12 +926,9 @@ StorageModifier  : StorageModifierI
                    $1->MakeSibling( $2 );
                    $$ = $1;
                  }
+                 ;
 
-StorageModifierI : CONST
-                  {
-                     $$ = new Constant();
-                  }
-                 | STATIC
+StorageModifierI : STATIC
                   {
                      $$ = new Static();
                   }
@@ -943,10 +948,6 @@ StorageModifierI : CONST
                   {
                      $$ = new Unsynchronized();
                   }
-                 |
-                  {
-                     $$ = new NoStorageModifier();
-                  }
                 ;
 
 
@@ -959,88 +960,47 @@ ConstructorDeclaration   : MethodDeclarator Block
                               cons->AdoptChildren( $2 );
                               $$ = cons;  
                            }
-                         | MethodDeclarator COLON ClassInitializers SEMI
-                           {
-                              NodeAbstract *cons( nullptr );
-                              cons = new ConstructorDeclaration();
-                              cons->AdoptChildren( $1 );
-                              cons->AdoptChildren( $3 );
-                              cons->AdoptChildren( new EmptyBody() );
-                              $$ = cons;  
-                           }
-                         | MethodDeclarator COLON ClassInitializers Block
-                           {
-                              NodeAbstract *cons( nullptr );
-                              cons = new ConstructorDeclaration();
-                              cons->AdoptChildren( $1 );
-                              cons->AdoptChildren( $3 );
-                              cons->AdoptChildren( $4 );
-                              $$ = cons;  
-                           }
                          ;
 
 
-
-ClassInitializers        : IDENTIFIER LPAREN Expression RPAREN
+MethodDeclaration        : MethodModifiers MethodDeclarator  MethodReturns MethodBody
                            {
-                              $$ = new ClassInitializer( *$1 );
-                              delete( $1 );
-                              $$->AdoptChildren( $3 );
-                           }
-                         | ClassInitializers COMMA IDENTIFIER LPAREN Expression RPAREN
-                           {
-                              NodeAbstract *node( new ClassInitializer( *$3 ) );
-                              delete( $3 );
-                              node->AdoptChildren( $5 );
-
-                              $1 -> AdoptChildren( node );
-                              $$ = $1;
-                           }
-                         ;
-
-
-MethodDeclaration        : MethodModifiers MethodReturnType MethodDeclarationType MethodBody
-                           {
-                              $$ = $3;
+                              $$ = $2;
                               $$->AdoptChildren( $1 );
-                              $$->AdoptChildren( $2 );
+                              $$->AdoptChildren( $3 );
                               $$->AdoptChildren( $4 );
                            }
                          ;
 
-MethodReturnType      : Type TypeModifier
-                        {
-                           $$ = new MethodReturns();
-                           $$->AdoptChildren( $1 );
-                           $$->AdoptChildren( $2 );
-                        }
-                      | StreamInitializer
-                        {
-                           $$ = $1;
-                        }
-                      ;
+MethodReturns          : RETURNTYPE LPAREN    ParameterList RPAREN
+                         {
+                           $$ = new NodeAbstract(  );
+                         }
+                       | RETURNTYPE DLBRACKET ParameterList DRBRACKET
+                         {
+                           $$ = new NodeAbstract(  );
+                         }
+                       ;
 
-MethodDeclarationType : MethodDeclarator
-                        {
-                           $$ = $1;
-                        }
-                      | StreamDeclarator
-                        {
-                           $$ = $1;
-                        }
-                      ;
 
-MethodModifiers : MethodModifier StorageModifier MethodInherits
+MethodModifiers : 
+                  MethodModifier StorageModifier MethodInherits
                   {
                      $1->AdoptChildren( $2 );
                      $1->AdoptChildren( $3 );
+                     $$ = $1;
+                  }
+                | MethodModifier MethodInherits
+                  {
+                     $1->AdoptChildren( $2 );
                      $$ = $1;
                   }
                 ;
 
 MethodModifier  : FUNC
                   {
-                     $$ = new NodeAbstract( "Func" );
+                     $$ = new NodeAbstract();
+                     $$->set_name( "Func" );
                   }
                 | STREAM
                   {
@@ -1060,7 +1020,8 @@ MethodInherits :  IMPLEMENTS
                   }
                 | ABSTRACT
                   {
-                     $$ = new AbstractNode( "Abstract" );
+                     $$ = new NodeAbstract( );
+                     $$->set_name( "Abstract" );
                   }
                 ;
 
@@ -1070,23 +1031,6 @@ MethodBody  :  Block
                   $$ = $1;
                }
             ;
-
-StreamDeclarator  :  IDENTIFIER StreamInitializer
-                     {
-                        $$ = new StreamingMethodDeclaration( *$1 );
-                        delete( $1 );
-                        NodeAbstract *temp = new StreamInput();
-                        temp->AdoptChildren( $2 );
-                        $$->AdoptChildren( temp );
-                     }
-                  |  IDENTIFIER DLBRACKET DRBRACKET
-                     {
-                        $$ = new StreamingMethodDeclaration( *$1 );
-                        delete( $1 );
-                        NodeAbstract *temp = new NoStreamInput();
-                        $$->AdoptChildren( temp );
-                     }
-                  ;
 
 
 MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
@@ -1102,6 +1046,25 @@ MethodDeclarator         : IDENTIFIER LPAREN ParameterList RPAREN
                               $$ = new MethodDeclaration( *$1 );
                               delete( $1 );
                               $$->AdoptChildren( new NoParameterList() );
+                           }
+                         | IDENTIFIER DLBRACKET ParameterList DRBRACKET
+                           {
+                              $$ = new StreamingMethodDeclaration( *$1 );
+                              delete( $1 );
+                              auto *temp( new StreamInput() );
+                              temp->AdoptChildren( $3 );
+                              $$->AdoptChildren( temp );
+                           }
+                         | IDENTIFIER LPAREN ParameterList RPAREN DLBRACKET ParameterList DRBRACKET
+                           {
+                              $$ = new StreamingMethodDeclaration( *$1 );
+                              delete( $1 );
+                              auto *param( new ParameterList() );
+                              auto *strem( new StreamInput() );
+                              param->AdoptChildren( $3 );
+                              strem->AdoptChildren( $6 );
+                              $$->AdoptChildren( param );
+                              $$->AdoptChildren( strem );
                            }
                          ;
 
@@ -1121,6 +1084,10 @@ Parameter                : Type  DeclaratorName
                               $$ = new SimpleParameter();
                               $$->AdoptChildren( $2 );
                               $$->AdoptChildren( $1 );
+                           }
+                         | Type
+                           {
+                              $$ = new SimpleParameter();
                            }
                          ;
 
@@ -1348,47 +1315,7 @@ ReturnStatement   :  RETURN SEMI
                   ;
 
 
-StreamInitializer: DLBRACKET StreamInitializers DRBRACKET
-                     {  
-                        NodeAbstract *node( nullptr );
-                        node = new NodeAbstract();
-                        node->set_name( "ReturnStreamInitializer" );
-                        
-                        node->AdoptChildren( $2 );
-                        $$ = node;
-                     }  
-                  ;
 
-StreamInitializers   :  VOID  
-                     {
-                        NodeAbstract *v( nullptr );
-                        v = new NodeAbstract();
-                        v->set_name("NoStream");
-                        $$ = v;
-                     }
-                     |  StreamInitializersB
-                     {
-                        $$ = $1;
-                     }
-                  ;
-
-StreamInitializersB  : Parameter
-                     {
-                        $$ = $1;
-                     }
-                     | StreamInitializers COMMA THREEDOTS
-                     {
-                        NodeAbstract *varargs( nullptr );
-                        varargs = new NodeAbstract();
-                        varargs->set_name( "ThreeDots" );
-                        varargs->AdoptChildren( $1 );
-                        $$ = varargs;
-                     }
-                     |  StreamInitializers COMMA Parameter
-                     {
-                        $$->MakeSibling( $3 );
-                     }
-                     ;
 
 
 Initializer :  MultiBoolInit
