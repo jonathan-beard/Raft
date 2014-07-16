@@ -1670,6 +1670,12 @@ ObjectType        :     QualifiedName
                            $$ = new ObjectType( "ObjectType" );
                            $$->AdoptChildren( $1 );
                         }
+                  |     QualifiedName LCARROT GenericInstantiation RCARROT
+                        {
+                           $$ = new ObjectType( "ObjectType" );
+                           $$->AdoptChildren( $1 );
+                           $$->AdoptChildren( $3 );
+                        }
                   ;
 
 TypeModifier      :     LBRACKET ArraySize RBRACKET
