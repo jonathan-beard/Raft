@@ -1,36 +1,16 @@
 class Sum< class T extends Raft.number >
 {
 @public:
-   /**
-    * streaming kernel, takes in a stream "in" which is wrapped in an order object
-    * which specifies out of order behavior but allows the user to access the order
-    * if they want.  The return type is specified with the "->" operator.  In this
-    * case we want to return a single parameter, "total" which is wrapped in a reduce
-    * object with the "+" operator as a template parameter.  This is returned "onsignal"
-    */
    stream sum [[ order< T, OutOfOrder > in ]] -> ( reduce< T, + > total ) 
    {
-      /**
-       * total is a stream local variable which is accessible by all the 
-       * "sum" kernels within this object.  The specifying the addition
-       * to this variable updates a kernel local copy which is reduced
-       * by the reduce kernel using the addition operator (specified above).
-       * There are other ways we could do this, but this is the most efficient.
-       */
       total += in;
-      /**
-       * signaling in this case triggers the return of the total
-       * parameter on End of Data.  It is called only once from a
-       * single kernel and returns the reduced version of total
-       * (reduced from all other streaming kernels).
-       */
       onsignal( in.EOD )
       {
          return( total );
       }
    }
 
-   void main( String args[]( null ) )
+   main( String args[]( null ) ) -> ( void )
    {
       var Raft.inputStream input_stream< Type = float32 >( 
                              Raft.io.read( args[1], "list" ) );

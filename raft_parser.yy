@@ -995,6 +995,10 @@ MethodModifiers :
                      $1->AdoptChildren( $2 );
                      $$ = $1;
                   }
+                | MethodModifier
+                  {
+                     $$ = $1;
+                  }
                 ;
 
 MethodModifier  : FUNC
@@ -1721,11 +1725,13 @@ GenericInstantiationList : GenericInstantiation
                            }
                          ;
 
-GenericInstantiation : QualifiedName EQUALS AllowedGenericInstTypes
+GenericInstantiation : IDENTIFIER EQUALS AllowedGenericInstTypes
                      {
                         $$ = new GenericInstantiation();
+                        $$->set_name( *$1 );
+                        delete( $1 );
                         NodeAbstract *eq( new Equals() );
-                        eq->AdoptChildren( $1 );
+                        
                         eq->AdoptChildren( $3 );
                         $$->AdoptChildren( eq );
                      }
@@ -2199,6 +2205,10 @@ QualifiedName  :  IDENTIFIER
                      delete( $3 );
                      $1->MakeSibling( qn );
                      $$ = $1;
+                  }
+               |  IDENTIFIER
+                  {
+                     //TODO
                   }
                ;
 
