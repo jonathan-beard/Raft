@@ -69,11 +69,11 @@ rafth: $(APHFILES)
 
 raft_parser: raft_parser.yy
 	bison -d -v raft_parser.yy
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c -o raft_parser.o raft_parser.tab.cc
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -Wno-deprecated-register -c -o raft_parser.o raft_parser.tab.cc
 
 raft_lexer: raft_lexer.l
 	flex --outfile=raft_lexer.yy.cc $<
-	$(CXX) $(CXXSTD) $(CXXFLAGS) -c raft_lexer.yy.cc -o raft_lexer.o
+	$(CXX) $(CXXSTD) $(CXXFLAGS) -Wno-deprecated-register -c raft_lexer.yy.cc -o raft_lexer.o
 
 rafth_parser: rafth_parser.yy
 	bison -d -v rafth_parser.yy
