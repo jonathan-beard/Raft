@@ -425,6 +425,7 @@
 %token       ATPROTECTED 
 %token       SIGNAL
 %token       SENDSIGNAL
+%token       FUNK
 %token       EL
 %token       RETURN  
 %token       VOID  

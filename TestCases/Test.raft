@@ -1,7 +1,7 @@
 class Foo{
 @public:
-      var int8 a( 9 );
-   void whooo()
+   //TODO, finish updating this "test" to the new syntax
+   func whooo() -> ( void )
    {
       a = whoo[[ ]];
       a = <...>whoo[[ ]];
