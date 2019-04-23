@@ -25,15 +25,15 @@ class Foo<int8 f(8)>{
    }
    
    /**
-    * Foo - example of a streaming kernel with
-    * a self named streaming function
+    * Foo - example of a lambda/streaming kernel with
+    * a self named function
     */
-   streams [[ int64 a ]] xoo [[ void ]]
+   lambda [[ int64 a ]] xoo [[ void ]]
    {
       /* do something */
    }
 
-   streams  [[bool c]] bar [[void]]
+   lambda  [[bool c]] bar [[void]]
    {
 
    }
